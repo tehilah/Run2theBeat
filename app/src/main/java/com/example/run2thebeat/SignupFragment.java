@@ -73,6 +73,7 @@ public class SignupFragment extends Fragment {
         });
     }
 
+
     private void createUser() {
         mAuth = FirebaseAuth.getInstance();
         Log.d("TAG", "createUser: here");
