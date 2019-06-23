@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "44317657863",
+    "firebase_url": "https://run2thebeat-cea0f.firebaseio.com",
+    "project_id": "run2thebeat-cea0f",
+    "storage_bucket": "run2thebeat-cea0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44317657863:android:88918bcbb4cf700b",
+        "android_client_info": {
+          "package_name": "com.example.run2thebeat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44317657863-iq6c1pm85n0en9hdklve995jeh1an7ks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.run2thebeat",
+            "certificate_hash": "814808e204401cdafaf0ba2de790acabf325887a"
+          }
+        },
+        {
+          "client_id": "44317657863-1vg2q1qf0vgfjkf2qg03r42ql0km63hc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUzH68LnikTPjAdTWYyQvSgEN7561qQHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44317657863-1vg2q1qf0vgfjkf2qg03r42ql0km63hc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
