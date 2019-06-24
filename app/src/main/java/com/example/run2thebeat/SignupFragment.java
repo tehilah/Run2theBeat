@@ -3,7 +3,6 @@ package com.example.run2thebeat;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -40,6 +38,10 @@ public class SignupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
         Button loginBtn = view.findViewById(R.id.btnLogin);
         signupBtn = view.findViewById(R.id.button3);
+        email = view.findViewById(R.id.editText);
+        password = view.findViewById(R.id.editText2);
+        confirmPassword = view.findViewById(R.id.editText3);
+
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,9 +54,7 @@ public class SignupFragment extends Fragment {
             }
         });
 
-        email = view.findViewById(R.id.editText);
-        password = view.findViewById(R.id.editText2);
-        confirmPassword = view.findViewById(R.id.editText3);
+
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
