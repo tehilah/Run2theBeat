@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/striped_background"
     tools:context=".MultipleChoiceActivity">
 
     <Button
@@ -22,7 +21,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="openMap"/>
+        />
 
     <Button
         android:id="@+id/button2"
@@ -39,5 +38,16 @@
         app:layout_constraintRight_toRightOf="parent"
         android:onClick="ChooseMusicGenres"
         app:layout_constraintTop_toBottomOf="@id/button1" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button2"
+        android:onClick="signOut"
+        android:text="Logout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

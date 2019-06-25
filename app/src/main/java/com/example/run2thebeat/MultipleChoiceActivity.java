@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MultipleChoiceActivity extends AppCompatActivity {
 
     @Override
@@ -21,8 +23,14 @@ public class MultipleChoiceActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void openMap(View view) {
-        Intent i = new Intent(this, MapsActivity.class);
-        startActivity(i);
+//    public void openMap(View view) {
+//        Intent i = new Intent(this, MapsActivity.class);
+//        startActivity(i);
+//    }
+
+    public void signOut(View view) {
+        FirebaseAuth.getInstance().signOut();
+        finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

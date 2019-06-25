@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="20dp"
+    android:layout_margin="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp">
+        
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="2dp"/>
+
+        <TextView
+            android:id="@+id/top_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Saturday night run"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/image"/>
+
+        <TextView
+            android:id="@+id/bottom_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.00 km"
+            android:textSize="15sp"
+            android:layout_below="@id/top_text"
+            android:layout_toEndOf="@+id/image"/>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

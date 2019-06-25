@@ -1,6 +1,8 @@
 package com.example.run2thebeat;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,15 +19,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
-
-
         final LoginFragment loginFragment = new LoginFragment();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
-            //todo: update UI
-//        updateUI(currentUser);
+            Intent i = new Intent(this, MultipleChoiceActivity.class);
+            startActivity(i);
+            finish();
         }
-        if (savedInstanceState == null) {
+        else if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, loginFragment)
                     .commit();
