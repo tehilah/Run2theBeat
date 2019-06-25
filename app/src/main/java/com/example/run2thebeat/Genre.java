@@ -1,11 +1,11 @@
 package com.example.run2thebeat;
 
-public class Genres {
+public class Genre {
 
-    String name = null;
-    Boolean selected = false;
+    private String name = null;
+    private Boolean selected = false;
 
-    public Genres(String name, Boolean selected) {
+    public Genre(String name, Boolean selected) {
         this.name = name;
         this.selected = selected;
     }
