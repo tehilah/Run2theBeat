@@ -23,9 +23,18 @@ public class RunFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button button = view.findViewById(R.id.button2);
+        Button button1 = view.findViewById(R.id.button1);
+        Button button2 = view.findViewById(R.id.button2);
 
-        button.setOnClickListener(new View.OnClickListener() {
+//        button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(getActivity(), MapsActivity.class);
+//                startActivity(i);
+//            }
+//        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), MusicListActivity.class);
@@ -34,9 +43,5 @@ public class RunFragment extends Fragment {
         });
     }
 
-//    public void openMap(View view) {
-//        Intent i = new Intent(this, MapsActivity.class);
-//        startActivity(i);
-//    }
 
 }

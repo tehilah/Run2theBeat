@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         final LoginFragment loginFragment = new LoginFragment();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){ // if user is signed in
-            Intent i = new Intent(this, MultipleChoiceActivity.class);
+            Intent i = new Intent(this, NavigationBarActivity.class);
             startActivity(i);
             finish();
         }
