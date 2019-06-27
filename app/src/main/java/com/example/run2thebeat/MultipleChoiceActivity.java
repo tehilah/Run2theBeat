@@ -1,13 +1,11 @@
 package com.example.run2thebeat;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
+import androidx.fragment.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
-import com.google.firebase.auth.FirebaseAuth;
+import android.view.MenuItem;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MultipleChoiceActivity extends AppCompatActivity {
 
@@ -15,22 +13,34 @@ public class MultipleChoiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiple_choice);
+
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setOnNavigationItemSelectedListener(navListener);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new RunFragment()).commit();
     }
 
-    public void ChooseMusicGenres(View view){
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
 
-        Intent i = new Intent(this, MusicListActivity.class);
-        startActivity(i);
-    }
+            switch(item.getItemId()){
+                case R.id.nav_run:
+                    selectedFragment = new RunFragment();
+                    break;
+                case R.id.nav_settings:
+                    selectedFragment = new SettingsFragment();
+                    break;
+                case R.id.nav_progress:
+                    selectedFragment = new ProgressFragment();
+                    break;
 
-//    public void openMap(View view) {
-//        Intent i = new Intent(this, MapsActivity.class);
-//        startActivity(i);
-//    }
-
-    public void signOut(View view) {
-        FirebaseAuth.getInstance().signOut();
-        finish();
-        startActivity(new Intent(this, MainActivity.class));
-    }
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    selectedFragment).commit();
+            return true;
+        }
+    };
 }

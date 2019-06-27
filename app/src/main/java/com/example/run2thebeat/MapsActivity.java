@@ -143,7 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view){
                 savePoints();
-                Intent i = new Intent(getApplicationContext(), SavedRunsActivity.class);
+                Intent i = new Intent(getApplicationContext(), ProgressFragment.cl);
                 startActivity(i);
                 finish();
             }
