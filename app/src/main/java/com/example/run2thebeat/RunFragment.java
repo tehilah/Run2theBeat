@@ -26,13 +26,13 @@ public class RunFragment extends Fragment {
         Button button1 = view.findViewById(R.id.button1);
         Button button2 = view.findViewById(R.id.button2);
 
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getActivity(), MapsActivity.class);
-//                startActivity(i);
-//            }
-//        });
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override

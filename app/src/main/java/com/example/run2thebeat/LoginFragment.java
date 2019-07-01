@@ -84,6 +84,7 @@ public class LoginFragment extends Fragment {
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", "onComplete: "+email.getText().toString()+ ", "+ password.getText().toString());
 
                         }
 
