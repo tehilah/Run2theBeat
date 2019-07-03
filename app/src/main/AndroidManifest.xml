@@ -20,12 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RunningScreen"></activity>
-         <activity android:name=".SongListActivity">
-         android:name="com.example.run2thebeat.RnningScreen"
-         android:label="@string/app_name"
-         android:launchMode="singleTop"
-         android:screenOrientation="portrait"
-         </activity>
+        <activity android:name=".SongListActivity"></activity>
         <activity android:name=".RunDetailsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

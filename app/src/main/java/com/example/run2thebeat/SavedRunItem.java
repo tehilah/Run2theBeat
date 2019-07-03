@@ -3,11 +3,11 @@ package com.example.run2thebeat;
 public class SavedRunItem {
 
     private int mImageResource;
-    private String mText1;
-    private String mText2;
+    private String mText1; // description of the day, e.g. Sunday night run
+    private String mText2; // how many km, e.g. 5.5km
 
-    public SavedRunItem(int imageRecource, String text1, String text2){
-        mImageResource = imageRecource;
+    public SavedRunItem(int imageResource, String text1, String text2){
+        mImageResource = imageResource;
         mText1 = text1;
         mText2 = text2;
     }
