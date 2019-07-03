@@ -35,15 +35,9 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 public class ProgressFragment extends Fragment {
     public static final String CONFIRM_DELETE = "Are you sure you want to delete?";
 
-    private ArrayList<SavedRunItem> savedRuns;
-    private RecyclerView mRecyclerView;
     private ProgressAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser currentUser = mAuth.getCurrentUser();
-    private CollectionReference routeRef = db.collection(currentUser.getUid())
-            .document("Document Routes").collection("Routes");
+    private CollectionReference routeRef;
 
     @Nullable
     @Override
@@ -54,7 +48,18 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeCollectionRefs();
         buildRecyclerView(view);
+    }
+
+    private void initializeCollectionRefs() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            routeRef = db.collection(currentUser.getUid())
+                    .document("Document Routes").collection("Routes");
+
+        }
     }
 
     private void buildRecyclerView(View view) {
@@ -63,8 +68,8 @@ public class ProgressFragment extends Fragment {
                 .setQuery(query, SavedRunItem.class)
                 .build();
         mAdapter = new ProgressAdapter(options);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -125,7 +130,6 @@ public class ProgressFragment extends Fragment {
                 mAdapter.notifyDataSetChanged();
             }
         });
-
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
