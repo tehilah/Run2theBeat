@@ -68,22 +68,21 @@ public class SongListActivity extends AppCompatActivity {
     }
 
     public void getSongList() {//retrieve the audio file information
+        songList.clear();
         ArrayList<String> selectedGeners = (ArrayList<String>) getIntent().getSerializableExtra("generes");
 
         for (int i=0; i<selectedGeners.size(); i++){
             String genere = selectedGeners.get(i);
-            Log.d(TAG, "gggg :"+genere);
             for (int j=0; j<allSongsList.size();j++){
                 Song song = allSongsList.get(j);
                 if(song.getGenre().equals(genere)){
-                    songList.add(song);
+                    if(!songList.contains(song)){
+                        songList.add(song);
+                    }
+
                 }
             }
         }
-    }
-
-    private void clearSongList(){
-        songList.clear();
     }
 
 }

@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.storage.FirebaseStorage;
-
 public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs;
     private LayoutInflater songInf;
@@ -83,4 +81,5 @@ public class SongAdapter extends BaseAdapter {
                 }
             });
     }
+
 }
