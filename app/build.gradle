@@ -8,7 +8,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.myTest.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.13.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.myTest:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.myTest.espresso:espresso-core:3.1.0-alpha4'
 }
 apply plugin: 'com.google.gms.google-services'

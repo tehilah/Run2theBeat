@@ -23,12 +23,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +45,7 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private ExecutorService executor = Executors.newCachedThreadPool();
     private CollectionReference routeRef;
     private LinearLayout linlaHeaderProgress;
+    private ArrayList<LatLng> latLngs;
 
 
     @Override
@@ -57,11 +64,9 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private void initializeCollectionRefs() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            routeRef =  db.collection(currentUser.getUid())
-                    .document("Document Routes")
-                    .collection("Routes")
-                    .document("01 Jul 2019, 15:20:41").collection("Points");
+        if (currentUser != null) {
+            routeRef = db.collection(currentUser.getUid())
+                    .document("Document Routes").collection("Routes");
 
         }
     }
@@ -75,10 +80,19 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         loadSavedRoute(googleMap);
     }
 
-    private void drawPolyline(ArrayList<LatLng> allPoints, GoogleMap googleMap) {
-        PolylineOptions rectLine = new PolylineOptions().width(20).color(Color.parseColor("#fd9771")).addAll(allPoints);
+    private void drawPolyline(GoogleMap googleMap) {
+        PolylineOptions rectLine = new PolylineOptions().width(20)
+                .color(Color.parseColor("#fd9771"))
+                .addAll(latLngs);
         googleMap.addPolyline(rectLine);
 
+    }
+
+    private void convertPointToLatlng(ArrayList<Point> points) {
+        latLngs = new ArrayList<>();
+        for(Point point:points){
+            latLngs.add(new LatLng(point.getLatitude(), point.getLongitude()));
+        }
     }
 
     private void loadSavedRoute(final GoogleMap googleMap) {
@@ -86,18 +100,14 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                routeRef.orderBy("id", Query.Direction.ASCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                routeRef.document("bgMZ49AZaIPyDHdYF5wU").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                            Map<String, Object> location = query.getData();
-                            Double latitude = Double.valueOf(location.get("latitude").toString());
-                            Double longitude = Double.valueOf(location.get("longitude").toString());
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            allPoints.add(latLng);
-                        }
-                        drawPolyline(allPoints, googleMap);
-                        moveCamera(allPoints.get(0), 17f, googleMap);
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Route route = documentSnapshot.toObject(Route.class);
+                        ArrayList<Point> points = route.getPoints();
+                        convertPointToLatlng(points);
+                        drawPolyline(googleMap);
+                        moveCamera(latLngs.get(0), 17f, googleMap);
                         linlaHeaderProgress.setVisibility(View.GONE);
                     }
                 });
@@ -108,4 +118,5 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
+
 }

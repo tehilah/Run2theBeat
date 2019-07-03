@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,7 +19,6 @@ import android.widget.Button;
 import android.widget.Toast;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -37,18 +35,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.model.Document;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -62,26 +55,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // vars
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
     private CollectionReference collectionUserRef;
     private CollectionReference collectionRouteRef;
     private Button mSaveBtn;
     private LocationManager locationManager;
-    private ArrayList<HashMap> allPoints = new ArrayList<>();
+    private ArrayList<Point> allPoints;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LatLng lastLocation;
     private LocationCallback mLocationCallback;
-    private DateFormat df = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.getDefault());
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private DateFormat df;
+    private ExecutorService executor;
+    private Route route;
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
-
-        df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+        initVariables();
+        initUser();
 
         if (mLocationPermissionsGranted) {
             Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
@@ -96,6 +90,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
             updateLocation();
         }
+    }
+
+    private void initVariables() {
+        db = FirebaseFirestore.getInstance();
+        executor = Executors.newCachedThreadPool();
+        df = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.getDefault());
+        df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+        allPoints = new ArrayList<>();
     }
 
     private void updateLocation() {
@@ -137,14 +139,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         getLocationPermission();
-        getUser();
     }
 
-    private void getUser() {
+    private void initUser() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            collectionUserRef =  db.collection(currentUser.getUid());
+        if (currentUser != null) {
+            collectionUserRef = db.collection(currentUser.getUid());
             collectionRouteRef = collectionUserRef.document("Document Routes").collection("Routes");
         }
     }
@@ -266,13 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void savePoint(LatLng point) {
-        HashMap<String, Object> location = new HashMap<>();
-        String timestamp = df.format(new Date());
-        location.put("latitude", point.latitude);
-        location.put("longitude", point.longitude);
-        location.put("id", timestamp);
-        allPoints.add(location);
-        Toast.makeText(MapsActivity.this, "saved point", Toast.LENGTH_SHORT).show();
+        allPoints.add(new Point(point.latitude, point.longitude));
     }
 
 
@@ -282,15 +277,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                CollectionReference collectionPointsRef = collectionRouteRef
-                        .document(timestamp)
-                        .collection("Points");
-                for (HashMap map : allPoints) {
-                    collectionPointsRef.add(map);
-                }
+                route = new Route(timestamp, allPoints, FormatDate.getTimeOfDay());
+                collectionRouteRef.add(route);
             }
 
         });
         Toast.makeText(MapsActivity.this, "map saved", Toast.LENGTH_SHORT).show();
     }
+
+
+
 }
