@@ -1,6 +1,8 @@
 package com.example.run2thebeat;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,29 +75,20 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     private void convertPointToLatlng(ArrayList<Point> points) {
         latLngs = new ArrayList<>();
-        for(Point point:points){
+        for (Point point : points) {
             latLngs.add(new LatLng(point.getLatitude(), point.getLongitude()));
         }
     }
 
     private void loadSavedRoute(final GoogleMap googleMap) {
         final ArrayList<LatLng> allPoints = new ArrayList<>();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                routeRef.document("bgMZ49AZaIPyDHdYF5wU").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Route route = documentSnapshot.toObject(Route.class);
-                        ArrayList<Point> points = route.getPoints();
-                        convertPointToLatlng(points);
-                        drawPolyline(googleMap);
-                        moveCamera(latLngs.get(0), 17f, googleMap);
-                        linlaHeaderProgress.setVisibility(View.GONE);
-                    }
-                });
-            }
-        });
+        Intent i = getIntent();
+        Bundle args = i.getBundleExtra("BUNDLE");
+        ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
+        convertPointToLatlng(points);
+        drawPolyline(googleMap);
+        moveCamera(latLngs.get(0), 17f, googleMap);
+        linlaHeaderProgress.setVisibility(View.GONE);
     }
 
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
