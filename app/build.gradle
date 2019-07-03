@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.13.0'
+    implementation 'com.google.firebase:firebase-storage:16.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.myTest:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.myTest.espresso:espresso-core:3.1.0-alpha4'

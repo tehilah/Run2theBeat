@@ -23,6 +23,17 @@
         android:layout_gravity="center"
         android:text="choose selected genres"/>
 
+    <Button
+        android:id="@+id/start_run_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Start Run"/>
+
+
+
+
+
     <ListView
         android:id="@+id/list_view1"
         android:layout_width="wrap_content"

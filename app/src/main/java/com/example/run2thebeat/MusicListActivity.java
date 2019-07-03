@@ -3,8 +3,8 @@ package com.example.run2thebeat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +17,10 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class MusicListActivity extends AppCompatActivity {
+    private String TAG = "MusicListActivity";
     MyCustomAdapter dataAdapter = null;
 
     @Override
@@ -31,10 +31,11 @@ public class MusicListActivity extends AppCompatActivity {
         displayListView();
         Log.d("TAG", "checklist: here5");
         checkButtonClicked();
+        checkStartRunClicked();
     }
 
     private void displayListView() {
-        String[] genre_names = {"pop", "Avant-garde", "Electronic", "Hip hop", "Latin", "Country",
+        String[] genre_names = {"Pop", "Avant-garde", "Electronic", "Hip hop", "Latin", "Country",
                 "Jazz", "Rock", "Rap", "R&B and soul"};
 
         ArrayList<Genre> genresList = new ArrayList<>();
@@ -50,7 +51,6 @@ public class MusicListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Genre genre = (Genre) parent.getItemAtPosition(position);
                 Toast.makeText(getApplicationContext(), "clicked on row: "+genre.getName(), Toast.LENGTH_SHORT).show();
-
             }
         });
     }
@@ -64,10 +64,13 @@ public class MusicListActivity extends AppCompatActivity {
             this.genreList.addAll(genres);
         }
 
+        public ArrayList<Genre> getGenreList() {
+            return genreList;
+        }
+
         private class ViewHolder{
             TextView genre_name;
             CheckBox checkBox;
-
         }
 
         @NonNull
@@ -87,14 +90,12 @@ public class MusicListActivity extends AppCompatActivity {
 
                 holder.checkBox.setOnClickListener(new View.OnClickListener()
                 {
-
                     @Override
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
                         Genre genre = (Genre) cb.getTag();
                         Toast.makeText(getApplicationContext(), "clicked on Checkbox: "+genre.getName(), Toast.LENGTH_SHORT).show();
                         genre.setSelected(cb.isChecked());
-
                     }
                 });
             }
@@ -109,7 +110,6 @@ public class MusicListActivity extends AppCompatActivity {
 
             return convertView;
         }
-
     }
 
     public void checkButtonClicked(){
@@ -128,6 +128,27 @@ public class MusicListActivity extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void checkStartRunClicked(){
+
+        Button startRunButton = findViewById(R.id.start_run_button);
+        final Intent intent = new Intent(this,RunningScreen.class);
+        startRunButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Genre> genreList = dataAdapter.genreList;
+                ArrayList<String> selectedGeneres = new ArrayList<String>();
+                for (int i=0; i<genreList.size(); i++){
+                    Genre genre = genreList.get(i);
+                    if(genre.getSelected()){
+                        selectedGeneres.add(genre.getName());
+                    }
+                }
+                intent.putExtra("generes",selectedGeneres);
+                startActivity(intent);
             }
         });
     }
