@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -38,6 +40,7 @@ public class ProgressFragment extends Fragment {
     private ProgressAdapter mAdapter;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference routeRef;
+
 
     @Nullable
     @Override
@@ -106,6 +109,9 @@ public class ProgressFragment extends Fragment {
                 Intent i = new Intent(getContext(), RunDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("POINTS", route.getPoints());
+                bundle.putString("DURATION", route.getDuration());
+                bundle.putString("DISTANCE", route.getDistance());
+//                i.putExtra("DURATION", route.getDuration());
                 i.putExtras(bundle);
                 startActivity(i);
             }

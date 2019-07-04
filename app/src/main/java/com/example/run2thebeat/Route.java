@@ -8,15 +8,20 @@ public class Route {
 
     private String mTimestamp;
     private ArrayList<Point> mPoints;
+    private String mDuration;
+    private String mDistance;
     private String mDateDescription; // e.g. tuesday night, sunday morning...
 
     public Route() {
     }
 
-    public Route(String timestamp, ArrayList<Point> points, String dateDescription) {
+    public Route(String timestamp, ArrayList<Point> points, String dateDescription, String duration
+            , String distance) {
         mTimestamp = timestamp;
         mPoints = points;
         mDateDescription = dateDescription;
+        mDuration = duration;
+        mDistance = distance;
     }
 
     public String getDate() {
@@ -41,6 +46,22 @@ public class Route {
 
     public void setDateDescription(String mDateDescription) {
         this.mDateDescription = mDateDescription;
+    }
+
+    public String getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String duration) {
+        this.mDuration = duration;
+    }
+
+    public String getDistance() {
+        return mDistance;
+    }
+
+    public void setDistance(String distance) {
+        this.mDistance = distance;
     }
 
 }

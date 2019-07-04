@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +21,9 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private SupportMapFragment mMap;
     private LinearLayout linlaHeaderProgress;
     private ArrayList<LatLng> latLngs;
+    private TextView duration;
+    private TextView distance;
+
 
 
     @Override
@@ -32,6 +36,8 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         linlaHeaderProgress.setVisibility(View.VISIBLE);
         mMap = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mMap.getMapAsync(this);//remember getMap() is deprecated!
+        duration = findViewById(R.id.duration);
+        distance = findViewById(R.id.distance);
     }
 
 
@@ -42,7 +48,7 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     private void drawPolyline(GoogleMap googleMap) {
         PolylineOptions rectLine = new PolylineOptions().width(20)
-                .color(Color.parseColor("#fd9771"))
+                .color(Color.parseColor("#035aff"))
                 .addAll(latLngs);
         googleMap.addPolyline(rectLine);
 
@@ -57,6 +63,10 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     private void loadSavedRoute(final GoogleMap googleMap) {
         ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
+        String dur = this.getIntent().getExtras().getString("DURATION");
+        String dist = this.getIntent().getExtras().getString("DISTANCE");
+        duration.setText(dur);
+        distance.setText(dist);
         convertPointToLatlng(points);
         drawPolyline(googleMap);
         moveCamera(latLngs.get(0), 17f, googleMap);

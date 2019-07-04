@@ -1,8 +1,10 @@
 package com.example.run2thebeat;
 
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
-public class FormatDate {
+public class FormatDateTimeDist {
 
     public static String getTimeOfDay(){
         Calendar c = Calendar.getInstance();
@@ -40,5 +42,19 @@ public class FormatDate {
             default:
                 return null;
         }
+    }
+
+    public static String getTime(long millis) {
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis)-(60* TimeUnit.MILLISECONDS.toHours(millis)),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        );
+    }
+
+    public static String getDist(double dist) {
+        return String.format(Locale.getDefault(), "%.04s",
+                dist / 1000);
     }
 }

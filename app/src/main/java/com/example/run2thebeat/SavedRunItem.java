@@ -12,7 +12,6 @@ public class SavedRunItem {
         mImageResource = R.drawable.ic_running;
         dateDescription = text1;
         date = text2;
-
     }
 
     public int getImageResource() {
@@ -26,4 +25,5 @@ public class SavedRunItem {
     public String getDate() {
         return date;
     }
+
 }
