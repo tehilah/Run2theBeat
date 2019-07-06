@@ -1,23 +1,52 @@
 package com.example.run2thebeat;
+<<<<<<< HEAD
+=======
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+<<<<<<< HEAD
+=======
+
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import java.io.Serializable;
+>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 
 public class ProgressFragment extends Fragment {
-    private ArrayList<SavedRunItem> savedRuns;
-    private RecyclerView mRecyclerView;
-    private MyAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    public static final String CONFIRM_DELETE = "Are you sure you want to delete?";
+
+    private ProgressAdapter mAdapter;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference routeRef;
+
 
     @Nullable
     @Override
@@ -28,32 +57,104 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        savedRuns = new ArrayList<>();
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Sunday morning run", "10.00 km") );
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Tuesday Afternoon run", "3.00 km") );
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Friday evening run", "6.5 km") );
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Wednesday night run", "4.3 km") );
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Monday morning run", "7.00 km") );
-        savedRuns.add(new SavedRunItem(R.drawable.ic_running, "Sunday afternoon run", "8.5 km") );
-
+        initializeCollectionRefs();
         buildRecyclerView(view);
     }
 
+    private void initializeCollectionRefs() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            routeRef = db.collection(currentUser.getUid())
+                    .document("Document Routes").collection("Routes");
+
+        }
+    }
+
     private void buildRecyclerView(View view) {
-        mRecyclerView = view.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true); // todo: delete this if not working right
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new MyAdapter(savedRuns);
+        Query query = routeRef.orderBy("date", Query.Direction.DESCENDING);
+        FirestoreRecyclerOptions<SavedRunItem> options = new FirestoreRecyclerOptions.Builder<SavedRunItem>()
+                .setQuery(query, SavedRunItem.class)
+                .build();
+        mAdapter = new ProgressAdapter(options);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new MyAdapter.OnItemClickListener() {
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
-            public void onItemClick(int position) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                getDialog(viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                new RecyclerViewSwipeDecorator.Builder(getContext(), c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.recycler_view_item_swipe_right_background))
+                        .addSwipeRightActionIcon(R.drawable.delete_white)
+                        .addSwipeRightLabel(getString(R.string.action_delete))
+                        .setSwipeRightLabelColor(Color.WHITE)
+                        .create()
+                        .decorate();
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+            }
+        }).attachToRecyclerView(mRecyclerView);
+        mAdapter.setOnItemClickListener(new ProgressAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot ds, int position) {
+                Route route = ds.toObject(Route.class);
                 Toast.makeText(getContext(), "clicked item: "+(""+position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getContext(), RunDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("POINTS", route.getPoints());
+                bundle.putString("DURATION", route.getDuration());
+                bundle.putString("DISTANCE", route.getDistance());
+//                i.putExtra("DURATION", route.getDuration());
+                i.putExtras(bundle);
                 startActivity(i);
             }
         });
+    }
+
+    public void getDialog(final RecyclerView.ViewHolder viewHolder) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder
+                .setMessage(CONFIRM_DELETE)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, delete message
+                        mAdapter.deleteItem(viewHolder.getAdapterPosition());
+
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
     }
 }

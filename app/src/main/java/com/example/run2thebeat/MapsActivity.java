@@ -7,18 +7,32 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.internal.Constants;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -36,6 +50,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.maps.android.SphericalUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,21 +60,24 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener{
     // constants
     private static final float DEFAULT_ZOOM = 16f;
     private static final String TAG = "MapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    public static final String BROADCAST_DETECTED_ACTIVITY = "activity_intent";
+    static final long DETECTION_INTERVAL_IN_MILLISECONDS = 30 * 1000;
+    public static final int CONFIDENCE = 70;
+
     // vars
     private GoogleMap mMap;
+    private Double distance = 0.0;
     private Boolean mLocationPermissionsGranted = false;
     private FirebaseFirestore db;
     private CollectionReference collectionUserRef;
     private CollectionReference collectionRouteRef;
-    private Button mSaveBtn;
-    private LocationManager locationManager;
     private ArrayList<Point> allPoints;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest locationRequest;
@@ -68,6 +86,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DateFormat df;
     private ExecutorService executor;
     private Route route;
+    private Button mButtonStop;
+    private Chronometer chronometer;
+    private boolean mTimerRunning;
+    private long pauseOffset;
+    private TextView previewDist;
+
 
 
     @Override
@@ -76,20 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         initVariables();
         initUser();
-
-        if (mLocationPermissionsGranted) {
-            Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
-            getDeviceLocation();
-
-            if (ActivityCompat.checkSelfPermission(this, FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    COURSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "permission was not granted", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            mMap.setMyLocationEnabled(true);
-            updateLocation();
-        }
+        getDeviceLocation();
     }
 
     private void initVariables() {
@@ -98,13 +109,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         df = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.getDefault());
         df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
         allPoints = new ArrayList<>();
+        mButtonStop = findViewById(R.id.stop_button);
+        chronometer = findViewById(R.id.chronometer);
+        previewDist = findViewById(R.id.distance);
+
+
     }
 
     private void updateLocation() {
         locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setFastestInterval(2000)
-                .setInterval(4000);
+                .setInterval(10000);
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -118,7 +134,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         "lat: " + locationResult.getLastLocation().getLatitude() + "\n" +
                         "long: " + locationResult.getLastLocation().getLongitude());
                 drawPolyline(newLocation);
-                moveCamera(newLocation, DEFAULT_ZOOM);
+//                moveCamera(newLocation, DEFAULT_ZOOM);
+                if (mTimerRunning) {
+                    updateDistance(newLocation);
+                }
                 lastLocation = newLocation;
                 savePoint(newLocation);
 
@@ -136,9 +155,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
 
         getLocationPermission();
+
     }
 
     private void initUser() {
@@ -151,12 +172,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getDeviceLocation() {
+
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         try {
             if (mLocationPermissionsGranted) {
-
+                mMap.setMyLocationEnabled(true);
                 final Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -169,7 +190,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 moveCamera(loc,
                                         DEFAULT_ZOOM);
                                 savePoint(loc);
-                                Log.d(TAG, "onComplete: location exists");
                             } else {
                                 Log.d(TAG, "onComplete: location is null");
                             }
@@ -182,6 +202,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage());
         }
+    }
+
+    public void updateDistance(LatLng location) {
+        distance += SphericalUtil.computeDistanceBetween(lastLocation, location);
+        Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
+
+// Location.distanceBetween(
+//                lastLocation.latitude,
+//                lastLocation.longitude,
+//                location.latitude,
+//                location.longitude,
+//                results);
     }
 
     private void moveCamera(LatLng latLng, float zoom) {
@@ -270,21 +302,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         allPoints.add(new Point(point.latitude, point.longitude));
     }
 
+    public void startChronometer(View v) {
+        if (!mTimerRunning) {
+            chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+            chronometer.start();
+            mTimerRunning = true;
+            mButtonStop.setVisibility(View.GONE);
+            updateLocation();
+            previewDist.setText(FormatDateTimeDist.getDist(distance));
+        }
+    }
 
-    public void saveMap(View view) {
+    public void pauseChronometer(View v) {
+        if (mTimerRunning) {
+            chronometer.stop();
+            pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
+            mTimerRunning = false;
+        }
+        mButtonStop.setVisibility(View.VISIBLE);
+    }
+
+    public void stopChronometer(View v) {
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         final String timestamp = df.format(new Date());
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                route = new Route(timestamp, allPoints, FormatDate.getTimeOfDay());
+//                String dist = String.format(Locale.getDefault(), "%d.",
+                route = new Route(timestamp, allPoints, FormatDateTimeDist.getTimeOfDay(),
+                        FormatDateTimeDist.getTime(pauseOffset), FormatDateTimeDist.getDist(distance));
                 collectionRouteRef.add(route);
+                pauseOffset = 0;
             }
 
         });
+        chronometer.setBase(SystemClock.elapsedRealtime());
         Toast.makeText(MapsActivity.this, "map saved", Toast.LENGTH_SHORT).show();
     }
-
 
 
 }
