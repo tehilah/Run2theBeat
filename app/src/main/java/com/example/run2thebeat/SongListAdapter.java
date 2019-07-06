@@ -1,0 +1,118 @@
+package com.example.run2thebeat;
+import android.view.ViewGroup;
+import java.util.ArrayList;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+
+public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongViewHolder>  {
+    private ArrayList<Song> songList;
+    private OnItemClickListener mListener;
+    private OnPlayClickListener mPlayListener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
+    public interface OnPlayClickListener{
+        void onPlayClick();
+    }
+
+    public void setOnPlayClickListener(OnPlayClickListener listener){
+        mPlayListener = listener;
+    }
+
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    public static class SongViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView songName;
+        public TextView artist;
+        public ImageButton pausePlayButton;
+        public ImageButton nextButton;
+        public SongViewHolder(@NonNull View item, final OnItemClickListener listener , final OnPlayClickListener playListener) {
+            super(item);
+            songName = item.findViewById(R.id.song_title);
+            artist = item.findViewById(R.id.song_artist);
+            pausePlayButton = item.findViewById(R.id.play_pause);
+            nextButton = item.findViewById(R.id.next_song);
+            item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+            if (pausePlayButton != null) {
+                pausePlayButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (playListener != null) {
+                            int position = getAdapterPosition();
+                            if (position != RecyclerView.NO_POSITION) {
+                                playListener.onPlayClick();
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+
+        public SongListAdapter(ArrayList<Song> mySongList){
+            songList = mySongList;
+        }
+
+
+    @NonNull
+    @Override
+    public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
+        if(viewType == R.layout.song){
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent,false);
+        }
+
+        else {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song,parent,false);
+        }
+        return new SongViewHolder(v,mListener,mPlayListener);
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
+        Song songItem = songList.get(position);
+        holder.artist.setText(songItem.getArtist());
+        holder.songName.setText(songItem.getTitle());
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return songList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == 0) ? R.layout.currently_playing_song: R.layout.song;
+    }
+
+
+}

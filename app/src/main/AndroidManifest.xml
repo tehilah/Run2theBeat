@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RunningScreen"></activity>
-        <activity android:name=".SongListActivity"></activity>
+        <activity android:name=".SongListFragment"></activity>
         <activity android:name=".RunDetailsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

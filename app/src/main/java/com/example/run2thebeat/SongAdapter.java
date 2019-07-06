@@ -63,7 +63,7 @@ public class SongAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     MediaPlayer mediaPlayer = new MediaPlayer();
-                    String songURL = SongListActivity.songsAndUrl.get(currSong);
+                    String songURL = SongListFragment.songsAndUrl.get(currSong);
 
                     try {
                         mediaPlayer.setDataSource(songURL);
