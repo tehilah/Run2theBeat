@@ -13,6 +13,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private ArrayList<Song> songList;
     private OnItemClickListener mListener;
     private OnPlayClickListener mPlayListener;
+    private OnNextClickListener mNextListener;
+    private OnPrviousClickListener mPreviousListener;
+
 
     public interface OnItemClickListener{
         void onItemClick(int position);
@@ -31,6 +34,18 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         mPlayListener = listener;
     }
 
+    public interface OnNextClickListener{
+        void onNextClick();
+    }
+
+    public void setOnNextClickListener(OnNextClickListener listener){mNextListener = listener;}
+
+    public interface OnPrviousClickListener{
+        void onPreviousClick();
+    }
+
+    public void setOnPreviousClickListener(OnPrviousClickListener listener){mPreviousListener = listener;}
+
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -41,18 +56,23 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public TextView artist;
         public ImageButton pausePlayButton;
         public ImageButton nextButton;
-        public SongViewHolder(@NonNull View item, final OnItemClickListener listener , final OnPlayClickListener playListener) {
+        public ImageButton previousButton;
+
+        public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
+                              final OnPrviousClickListener previousListener) {
             super(item);
             songName = item.findViewById(R.id.song_title);
             artist = item.findViewById(R.id.song_artist);
             pausePlayButton = item.findViewById(R.id.play_pause);
             nextButton = item.findViewById(R.id.next_song);
+            nextButton = item.findViewById(R.id.next_song);
+            previousButton = item.findViewById(R.id.previos_song);
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
                         int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
+                        if (position != RecyclerView.NO_POSITION && position != 0) {
                             listener.onItemClick(position);
                         }
                     }
@@ -67,7 +87,36 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                             if (position != RecyclerView.NO_POSITION) {
                                 playListener.onPlayClick();
                             }
+                        }
+                    }
+                });
+            }
 
+            if (nextButton != null) {
+                nextButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (nextListener != null) {
+                            int position = getAdapterPosition();
+                            if (position != RecyclerView.NO_POSITION) {
+                                nextListener.onNextClick();
+
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (previousButton!= null) {
+                previousButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (previousListener != null) {
+                            int position = getAdapterPosition();
+                            if (position != RecyclerView.NO_POSITION) {
+                                previousListener.onPreviousClick();
+
+                            }
                         }
                     }
                 });
@@ -92,7 +141,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         else {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song,parent,false);
         }
-        return new SongViewHolder(v,mListener,mPlayListener);
+        return new SongViewHolder(v,mListener,mPlayListener,mNextListener,mPreviousListener);
     }
 
 
@@ -101,7 +150,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         Song songItem = songList.get(position);
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
-    }
+
+}
 
 
     @Override

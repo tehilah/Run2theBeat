@@ -20,11 +20,12 @@ import android.widget.TextView;
 public class SongListFragment extends Fragment {
 
     private String TAG = "SongListFragment";
-    private ArrayList<Song> songList = new ArrayList<>();
+    public static ArrayList<Song> songList = new ArrayList<>();
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private MediaPlayer mediaPlayer  = new MediaPlayer();
+    private int currentlyPlayingPosition =1;
 
 
     private static ArrayList<Song> allSongsList =new ArrayList<Song>();
@@ -50,6 +51,8 @@ public class SongListFragment extends Fragment {
         createDictionaries();
 
         buildRecyclerView(view);
+        playSong(1);
+
 
     }
 
@@ -75,19 +78,34 @@ public class SongListFragment extends Fragment {
     public void getSongList() {
         //retrieve the audio file information
         songList.clear();
+        songList.add(new Song(000,"","",""));
         ArrayList<String> selectedGeners = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
 
-        for (int i=0; i<selectedGeners.size(); i++){
-            String genere = selectedGeners.get(i);
-            for (int j=0; j<allSongsList.size();j++){
+        if(selectedGeners.size() ==0) {//no generes selected
+            for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
-                if(song.getGenre().equals(genere)){
-                    if(!songList.contains(song)){
-                        songList.add(song);
-                    }
-
+                if (!songList.contains(song)) {
+                    songList.add(song);
                 }
             }
+        }
+        else {
+            for (int i = 0; i < selectedGeners.size(); i++) {
+                String genere = selectedGeners.get(i);
+                for (int j = 0; j < allSongsList.size(); j++) {
+                    Song song = allSongsList.get(j);
+                    if (song.getGenre().equals(genere)) {
+                        if (!songList.contains(song)) {
+                            songList.add(song);
+                        }
+
+                    }
+                }
+            }
+        }
+
+        if(songList.size()>1){
+            songList.set(0,songList.get(1));
         }
 
     }
@@ -104,7 +122,6 @@ public class SongListFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 playSong(position);
-                swapeItem(position,0);
             }
         });
 
@@ -114,10 +131,26 @@ public class SongListFragment extends Fragment {
                 playOrPause(view);
             }
         });
+
+        mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
+            @Override
+            public void onNextClick() {
+                playSong(currentlyPlayingPosition+1);
+            }
+        });
+        mAdapter.setOnPreviousClickListener(new SongListAdapter.OnPrviousClickListener() {
+            @Override
+            public void onPreviousClick() {
+                playSong(currentlyPlayingPosition-1);
+            }
+        });
         
     }
 
-    public void playSong(int position) {
+    public void playSong(final int position) {
+        if(position<=0 || position>=songList.size()){
+            return;
+        }
         if(mediaPlayer.isPlaying()){
             mediaPlayer.stop();
         }
@@ -138,14 +171,38 @@ public class SongListFragment extends Fragment {
                 }
             });
             mediaPlayer.prepare();
+            swapeItem(position);
+            currentlyPlayingPosition = position;
         } catch (IOException o) {
 
         }
+
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.reset();
+                if(position < songList.size()-1){
+                    playSong(position+1);
+                }
+
+            }
+        });
+
     }
 
-    public void swapeItem(int fromPosition,int toPosition){
-        Collections.swap(songList, fromPosition, toPosition);
-        mAdapter.notifyItemMoved(fromPosition, toPosition);
+    public void swapeItem(int position){
+        Song nowPlaying = songList.get(position);
+        songList.set(0,nowPlaying) ;
+        ArrayList<Song> newList = new ArrayList<Song>();
+        newList.addAll(songList);
+        songList.clear();
+        songList.addAll(newList);
+
+//        Collections.swap(songList, fromPosition, toPosition);
+
+        mAdapter.notifyDataSetChanged();
     }
 
 

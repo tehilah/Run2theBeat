@@ -19,6 +19,7 @@
         android:text="Main Content"
         android:textSize="16sp" />
 
+
     <FrameLayout
         android:id="@+id/list_fragment"
         android:layout_width="match_parent"

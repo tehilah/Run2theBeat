@@ -24,6 +24,7 @@ public class RunningScreen extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
                 new SongListFragment()).commit();
 
+
     }
 
 
