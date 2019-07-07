@@ -60,16 +60,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener{
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     // constants
     private static final float DEFAULT_ZOOM = 16f;
     private static final String TAG = "MapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    public static final String BROADCAST_DETECTED_ACTIVITY = "activity_intent";
-    static final long DETECTION_INTERVAL_IN_MILLISECONDS = 30 * 1000;
-    public static final int CONFIDENCE = 70;
 
     // vars
     private GoogleMap mMap;
@@ -91,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mTimerRunning;
     private long pauseOffset;
     private TextView previewDist;
-
+    private double prevDist = 0.0;
 
 
     @Override
@@ -119,8 +116,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateLocation() {
         locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setFastestInterval(2000)
-                .setInterval(10000);
+                .setFastestInterval(2000) // 2 seconds
+                .setInterval(5000); // 5 seconds
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -136,11 +133,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawPolyline(newLocation);
 //                moveCamera(newLocation, DEFAULT_ZOOM);
                 if (mTimerRunning) {
-                    updateDistance(newLocation);
+                    if(updateDistance(newLocation)){ // if location really changed
+                        lastLocation = newLocation;
+                        savePoint(newLocation);
+                    }
                 }
-                lastLocation = newLocation;
-                savePoint(newLocation);
-
             }
         };
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, getMainLooper());
@@ -204,16 +201,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void updateDistance(LatLng location) {
-        distance += SphericalUtil.computeDistanceBetween(lastLocation, location);
-        Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
-
-// Location.distanceBetween(
-//                lastLocation.latitude,
-//                lastLocation.longitude,
-//                location.latitude,
-//                location.longitude,
-//                results);
+    public boolean updateDistance(LatLng location) {
+        double curDist = SphericalUtil.computeDistanceBetween(lastLocation, location);
+        if (Math.abs(curDist - prevDist) >= 0.1) {
+            distance += curDist;
+            Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
     }
 
     private void moveCamera(LatLng latLng, float zoom) {
