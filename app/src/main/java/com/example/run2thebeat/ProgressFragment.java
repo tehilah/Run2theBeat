@@ -1,10 +1,10 @@
 package com.example.run2thebeat;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
->>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
+//>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.io.Serializable;
->>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
+//>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
