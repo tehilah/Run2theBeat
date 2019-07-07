@@ -36,7 +36,6 @@ public class NavigationBarActivity extends AppCompatActivity {
                 case R.id.nav_progress:
                     selectedFragment = new ProgressFragment();
                     break;
-
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     selectedFragment).commit();
