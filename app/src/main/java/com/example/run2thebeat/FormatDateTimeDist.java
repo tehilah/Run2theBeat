@@ -57,4 +57,10 @@ public class FormatDateTimeDist {
         return String.format(Locale.getDefault(), "%.04s",
                 dist / 1000);
     }
+
+//    public static String getAvgPace(double time){
+//        return String.format(Locale.getDefault(), "%d'%02d''",
+//
+//        );
+//    }
 }

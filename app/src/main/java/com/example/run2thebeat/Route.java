@@ -11,17 +11,21 @@ public class Route {
     private String mDuration;
     private String mDistance;
     private String mDateDescription; // e.g. tuesday night, sunday morning...
+    private int avgBPM = 0;
+    private String avgPace;
 
     public Route() {
     }
 
     public Route(String timestamp, ArrayList<Point> points, String dateDescription, String duration
-            , String distance) {
+            , String distance, int averageBPM, String averagePace) {
         mTimestamp = timestamp;
         mPoints = points;
         mDateDescription = dateDescription;
         mDuration = duration;
         mDistance = distance;
+        avgBPM = averageBPM;
+        avgPace = averagePace;
     }
 
     public String getDate() {
@@ -64,4 +68,19 @@ public class Route {
         this.mDistance = distance;
     }
 
+    public int getAvgBPM() {
+        return avgBPM;
+    }
+
+    public void setAvgBPM(int avgBPM) {
+        this.avgBPM = avgBPM;
+    }
+
+    public String getAvgPace() {
+        return avgPace;
+    }
+
+    public void setAvgPace(String avgPace) {
+        this.avgPace = avgPace;
+    }
 }

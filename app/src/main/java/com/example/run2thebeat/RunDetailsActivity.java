@@ -23,6 +23,8 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private ArrayList<LatLng> latLngs;
     private TextView duration;
     private TextView distance;
+    private TextView avgBPM;
+    private TextView avgPace;
 
 
 
@@ -38,6 +40,8 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         mMap.getMapAsync(this);//remember getMap() is deprecated!
         duration = findViewById(R.id.duration);
         distance = findViewById(R.id.distance);
+        avgBPM = findViewById(R.id.bpm);
+        avgPace = findViewById(R.id.avg_pace);
     }
 
 
@@ -65,8 +69,12 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
         String dur = this.getIntent().getExtras().getString("DURATION");
         String dist = this.getIntent().getExtras().getString("DISTANCE");
+        String pace = this.getIntent().getExtras().getString("AVG_PACE");
+        int bpm = this.getIntent().getExtras().getInt("AVG_BPM");
         duration.setText(dur);
         distance.setText(dist);
+        avgBPM.setText(String.valueOf(bpm));
+        avgPace.setText(pace);
         convertPointToLatlng(points);
         drawPolyline(googleMap);
         moveCamera(latLngs.get(0), 17f, googleMap);

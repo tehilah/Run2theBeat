@@ -6,11 +6,10 @@
     android:orientation="vertical"
     tools:context=".MapsActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:gravity="center">
 
         <Chronometer
             android:id="@+id/chronometer"
@@ -23,9 +22,86 @@
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@id/chronometer"
             android:text="0"
             android:textSize="20sp" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@id/distance"
+            android:text="0"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/avg_bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/bpm"
+            android:text="0"
+            android:layout_marginRight="50dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/avg_pace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avg_bpm"
+            android:text="0"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/elapsed_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chronometer"
+            android:text="Elapsed time"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/distance_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/distance"
+            android:layout_marginLeft="110dp"
+            android:text="Distance"
+            android:textSize="10sp" />
+        <TextView
+            android:id="@+id/bpm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bpm"
+            android:layout_toRightOf="@+id/distance_title"
+            android:layout_marginLeft="35dp"
+            android:text="BPM"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/avg_bpm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avg_bpm"
+            android:layout_toRightOf="@+id/bpm_title"
+            android:layout_marginLeft="35dp"
+            android:text="avg. BPM"
+            android:textSize="10sp" />
+
+
+
+        <TextView
+            android:id="@+id/avg_pace_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avg_pace"
+            android:layout_toRightOf="@+id/avg_bpm_title"
+            android:layout_marginLeft="35dp"
+            android:text="avg. pace"
+            android:textSize="10sp" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/start_button"
@@ -38,6 +114,7 @@
         android:id="@+id/pause_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:onClick="pauseChronometer"
         android:text="Pause" />
 
@@ -46,8 +123,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="stopChronometer"
-        android:visibility="gone"
-        android:text="Stop" />
+        android:text="Stop"
+        android:visibility="gone" />
 
     <fragment
         android:id="@+id/map"

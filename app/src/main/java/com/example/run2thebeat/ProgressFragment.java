@@ -1,24 +1,16 @@
 package com.example.run2thebeat;
-//<<<<<<< HEAD
-//=======
+
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-//>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-//<<<<<<< HEAD
-//=======
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,10 +18,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
-import java.io.Serializable;
-//>>>>>>> a219f635852624f6ccf0e745867f723cd6d7f64f
-import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -117,6 +105,8 @@ public class ProgressFragment extends Fragment {
                 bundle.putParcelableArrayList("POINTS", route.getPoints());
                 bundle.putString("DURATION", route.getDuration());
                 bundle.putString("DISTANCE", route.getDistance());
+                bundle.putInt("AVG_BPM", route.getAvgBPM());
+                bundle.putString("AVG_PACE", route.getAvgPace());
 //                i.putExtra("DURATION", route.getDuration());
                 i.putExtras(bundle);
                 startActivity(i);

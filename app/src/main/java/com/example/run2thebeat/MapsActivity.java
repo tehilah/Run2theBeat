@@ -7,17 +7,19 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Intent;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
@@ -26,13 +28,6 @@ import android.widget.Toast;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.internal.Constants;
-import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -60,7 +55,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, SensorEventListener {
     // constants
     private static final float DEFAULT_ZOOM = 16f;
     private static final String TAG = "MapActivity";
@@ -89,15 +84,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long pauseOffset;
     private TextView previewDist;
     private double prevDist = 0.0;
+    private SensorManager sensorManager;
+    private TextView tv_bpm;
+    private TextView tv_avg_bpm;
+    private TextView tv_avg_pace;
+    private Sensor countSensor;
+    private int stepsCounter = 0;
+    private int curBPM;
+    private ArrayList<Integer> stepsPerKm;
+    private Button startBtn;
+    private Button pauseBtn;
+    private int sumBPM = 0;
+    private int countBPM = 0; // save counter to calculate average bpm
+    private double avgPace = 0;
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        initVariables();
+        getLocationPermission();
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
-        initVariables();
         initUser();
         getDeviceLocation();
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                long elapsedTime = SystemClock.elapsedRealtime()
+                        - chronometer.getBase();
+                Log.d(TAG, "onChronometerTick: " + String.valueOf(elapsedTime));
+                if ((elapsedTime % 60000 > 0) && (elapsedTime % 60000 <= 1000)) {
+                    Log.d(TAG, "onChronometerTick: got it");
+                    updateBPM();
+                }
+            }
+        });
+    }
+
+    private void updatePace() {
+        long elapsedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
+        avgPace = elapsedTime / (60*distance);
+        tv_avg_pace.setText(String.valueOf(avgPace));
     }
 
     private void initVariables() {
@@ -109,8 +143,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mButtonStop = findViewById(R.id.stop_button);
         chronometer = findViewById(R.id.chronometer);
         previewDist = findViewById(R.id.distance);
-
-
+        tv_bpm = findViewById(R.id.bpm);
+        tv_avg_bpm = findViewById(R.id.avg_bpm);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepsPerKm = new ArrayList<>();
+        startBtn = findViewById(R.id.start_button);
+        pauseBtn = findViewById(R.id.pause_button);
+        tv_avg_pace = findViewById(R.id.avg_pace);
     }
 
     private void updateLocation() {
@@ -133,30 +172,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawPolyline(newLocation);
 //                moveCamera(newLocation, DEFAULT_ZOOM);
                 if (mTimerRunning) {
-                    if(updateDistance(newLocation)){ // if location really changed
+                    if (updateDistance(newLocation)) { // if location really changed
                         lastLocation = newLocation;
                         savePoint(newLocation);
+                        updatePace();
                     }
+//                    updateBPM();
                 }
             }
         };
+        if (mFusedLocationProviderClient == null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        }
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, getMainLooper());
+
     }
 
     private void drawPolyline(LatLng newLocation) {
         PolylineOptions rectLine = new PolylineOptions().width(40).color(Color.BLUE).add(lastLocation, newLocation);
         mMap.addPolyline(rectLine);
         Log.d(TAG, "drawPolyline: added line");
-    }
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_maps);
-
-        getLocationPermission();
-
     }
 
     private void initUser() {
@@ -206,6 +241,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (Math.abs(curDist - prevDist) >= 0.1) {
             distance += curDist;
             Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
+            previewDist.setText(FormatDateTimeDist.getDist(distance));
             return true;
         }
         return false;
@@ -288,9 +324,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPause() {
         super.onPause();
-        if (mFusedLocationProviderClient != null) {
-            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        Log.d(TAG, "Method: onPause");
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this, countSensor);
         }
+        // todo: figure out why this crashes the app
+//        if (mFusedLocationProviderClient != null) {
+//            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+//        }
     }
 
     private void savePoint(LatLng point) {
@@ -304,7 +345,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mTimerRunning = true;
             mButtonStop.setVisibility(View.GONE);
             updateLocation();
-            previewDist.setText(FormatDateTimeDist.getDist(distance));
+            v.setEnabled(false);
+            pauseBtn.setEnabled(true);
+        }
+    }
+
+    private void updateBPM() {
+        if (stepsCounter > 0) {
+            tv_bpm.setText(String.valueOf(stepsCounter));
+            curBPM = stepsCounter;
+            stepsCounter = 0;
+            Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "updateBPM: cur bpm " + String.valueOf(curBPM));
+            Log.d(TAG, "updateBPM: average1 bpm " + String.valueOf(sumBPM));
+            sumBPM += curBPM;
+            countBPM++;
+            int curAvgBpm = sumBPM / countBPM;
+            tv_avg_bpm.setText(String.valueOf(curAvgBpm));
+            Log.d(TAG, "updateBPM: average2 bpm " + String.valueOf(curAvgBpm));
+
         }
     }
 
@@ -313,19 +372,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             mTimerRunning = false;
+            mButtonStop.setVisibility(View.VISIBLE);
         }
-        mButtonStop.setVisibility(View.VISIBLE);
+        v.setEnabled(false);
+        startBtn.setEnabled(true);
     }
 
     public void stopChronometer(View v) {
+        Log.d(TAG, "Method: stopChronometer");
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         final String timestamp = df.format(new Date());
         executor.execute(new Runnable() {
             @Override
             public void run() {
-//                String dist = String.format(Locale.getDefault(), "%d.",
-                route = new Route(timestamp, allPoints, FormatDateTimeDist.getTimeOfDay(),
-                        FormatDateTimeDist.getTime(pauseOffset), FormatDateTimeDist.getDist(distance));
+                int bpm = countBPM == 0 ? 0 : sumBPM / countBPM; // check in case the user did not move and he tries to save the map. we avoid dividing by zero
+                route = new Route(timestamp, allPoints,
+                        FormatDateTimeDist.getTimeOfDay(),
+                        FormatDateTimeDist.getTime(pauseOffset),
+                        FormatDateTimeDist.getDist(distance),
+                        bpm,
+                        String.valueOf(avgPace));
                 collectionRouteRef.add(route);
                 pauseOffset = 0;
             }
@@ -335,5 +401,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(MapsActivity.this, "map saved", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Method: onResume");
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        if (countSensor != null) {
+            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        } else {
+            Toast.makeText(this, "Sensor not found", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "Method: onStop:");
+        super.onStop();
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this, countSensor);
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor sensor = event.sensor;
+        if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+            stepsCounter++;
+        }
+//        if(pauseOffset%60 == 0){
+//            Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
+//            tv_bpm.setText(String.valueOf(stepsCounter));
+//            curBPM = stepsCounter;
+//            stepsCounter = 0;
+//        }
+        Log.d(TAG, "onSensorChanged: steps: " + String.valueOf(stepsCounter));
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
+
+
+//todo: in order to use this app in background I need to save all the parameters (elapsed time, distance, steps) in a shared pointer and then load them in onResume. or look into using a Service
