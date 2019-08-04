@@ -35,8 +35,8 @@ public class MusicListActivity extends AppCompatActivity {
     }
 
     private void displayListView() {
-        String[] genre_names = {"Pop", "Avant-garde", "Electronic", "Hip hop", "Latin", "Country",
-                "Jazz", "Rock", "Rap", "R&B and soul"};
+        String[] genre_names = {"pop", "avant-garde", "electronic", "hip hop", "latin", "country",
+                "jazz", "rock", "rap", "rbandsoul"};
 
         ArrayList<Genre> genresList = new ArrayList<>();
         for (String genre_name: genre_names){

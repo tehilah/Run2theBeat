@@ -1,10 +1,8 @@
 package com.example.run2thebeat;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,27 +12,32 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
 
 public class SongListFragment extends Fragment {
 
     private String TAG = "SongListFragment";
-    public static ArrayList<Song> songList = new ArrayList<>();
+    public ArrayList<Song> songList = new ArrayList<>();
+    public static ArrayList<Song> selectedPlaylist = new ArrayList<>();
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private MediaPlayer mediaPlayer  = new MediaPlayer();
     private int currentlyPlayingPosition =1;
+    private Button finishRunButton;
+
 
 
     private static ArrayList<Song> allSongsList =new ArrayList<Song>();
-    public static Map<Song,String> songsAndUrl = new HashMap<Song,String>();
-    private static Song popNum1 = new Song(1,"I Dont Care","Ed Sheeran & Justin Bieber ","Pop");
-    private static Song popNum2 = new Song(2,"Faith","Stevie Wonder ft. Ariana Grande","Pop");
-    private static Song popNum3 = new Song(3,"Bananas"," static and benel","Pop");
-    private static Song countryNum1 = new Song(4,"Before He Cheats","Carrie Underwood","Country");
-    private static Song countryNum2 = new Song(5,"Heartache On The Dance Floor","Jon Pardi","Country");
+    private static Song popNum1 = new Song(1,"I Dont Care","Ed Sheeran & Justin Bieber ","pop","Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
+    private static Song popNum2 = new Song(2,"Faith","Stevie Wonder ft. Ariana Grande","pop","Stevie Wonder - Faith ft. Ariana Grande.mp3");
+    private static Song popNum3 = new Song(3,"Bananas"," static and benel","pop","סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
+    private static Song countryNum1 = new Song(4,"Before He Cheats","Carrie Underwood","country","Carrie Underwood - Before He Cheats.mp3");
+    private static Song countryNum2 = new Song(5,"Heartache On The Dance Floor","Jon Pardi","country","Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
 
 
     @Override
@@ -48,11 +51,8 @@ public class SongListFragment extends Fragment {
 
         createSongList();
         getSongList();
-        createDictionaries();
-
         buildRecyclerView(view);
         playSong(1);
-
 
     }
 
@@ -65,20 +65,10 @@ public class SongListFragment extends Fragment {
         allSongsList.add(countryNum2);
     }
 
-    public static void createDictionaries() {
-
-        songsAndUrl.put(popNum1,"https://firebasestorage.googleapis.com/v0/b/run-2-the-beat.appspot.com/o/pop%2FEd%20Sheeran%20%26%20Justin%20Bieber%20I%20Dont%20Care%20(Official%20Audio).mp3?alt=media&token=2bba621d-45f8-40ad-a6c1-3386b8117fcf");
-        songsAndUrl.put(popNum2,"https://firebasestorage.googleapis.com/v0/b/run-2-the-beat.appspot.com/o/pop%2FStevie%20Wonder%20-%20Faith%20ft.%20Ariana%20Grande.mp3?alt=media&token=0dde674b-bad1-4342-85d1-674c86bbad17");
-        songsAndUrl.put(popNum3,"https://firebasestorage.googleapis.com/v0/b/run-2-the-beat.appspot.com/o/pop%2F%D7%A1%D7%98%D7%98%D7%99%D7%A7%20%D7%95%D7%91%D7%9F%20%D7%90%D7%9C%20%D7%AA%D7%91%D7%95%D7%A8%D7%99%20-%20%D7%91%D7%A0%D7%A0%D7%95%D7%AA%20(Prod.%20By%20Jordi).mp3?alt=media&token=c3edc41a-fb55-4f7b-9f5d-c79b58033bf6");
-        songsAndUrl.put(countryNum1,"https://firebasestorage.googleapis.com/v0/b/run-2-the-beat.appspot.com/o/country%2FCarrie%20Underwood%20-%20Before%20He%20Cheats.mp3?alt=media&token=9c06a18b-0f42-4855-8ebe-996ff9e0f8f7");
-        songsAndUrl.put(countryNum2,"https://firebasestorage.googleapis.com/v0/b/run-2-the-beat.appspot.com/o/country%2FJon%20Pardi%20-%20Heartache%20On%20The%20Dance%20Floor%20(Audio).mp3?alt=media&token=229ad0c5-e110-455e-a501-cdd9b43a0df9");
-
-    }
-
     public void getSongList() {
         //retrieve the audio file information
         songList.clear();
-        songList.add(new Song(000,"","",""));
+        songList.add(new Song(000,"","","","")); //currently playing song. set to nothing at first
         ArrayList<String> selectedGeners = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
 
         if(selectedGeners.size() ==0) {//no generes selected
@@ -104,10 +94,12 @@ public class SongListFragment extends Fragment {
             }
         }
 
-        if(songList.size()>1){
+        if(songList.size()>1){ //we set the first song in the list to be the first song from songList
+            //because we are going to play it right away
             songList.set(0,songList.get(1));
         }
 
+        selectedPlaylist = songList;
     }
 
 
@@ -155,28 +147,28 @@ public class SongListFragment extends Fragment {
             mediaPlayer.stop();
         }
         mediaPlayer = new MediaPlayer();
-
         Song song = songList.get(position);
-        String songURL = songsAndUrl.get(song);
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
+
+        // Create a storage reference from our app
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        storageRef.child(song.getGenre()).child(song.getFullName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+            try {
+                mediaPlayer.setDataSource(uri.toString());
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        mp.start();
+                    }
+                });
+                mediaPlayer.prepareAsync();
+                swapeItem(position);
+                currentlyPlayingPosition = position;
+            } catch (IOException o) { }
         }
-
-        try {
-            mediaPlayer.setDataSource(songURL);
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            mediaPlayer.prepare();
-            swapeItem(position);
-            currentlyPlayingPosition = position;
-        } catch (IOException o) {
-
-        }
-
+        });
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -199,9 +191,6 @@ public class SongListFragment extends Fragment {
         newList.addAll(songList);
         songList.clear();
         songList.addAll(newList);
-
-//        Collections.swap(songList, fromPosition, toPosition);
-
         mAdapter.notifyDataSetChanged();
     }
 
@@ -218,6 +207,5 @@ public class SongListFragment extends Fragment {
         }
 
     }
-
 
 }
