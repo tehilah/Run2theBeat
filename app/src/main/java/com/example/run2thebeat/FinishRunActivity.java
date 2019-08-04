@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class FinishRunActivity extends AppCompatActivity {
     public ArrayList<Song> playlist;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,5 +17,7 @@ public class FinishRunActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.playlist_fragment,
                 new FinishPlaylistFragment()).commit();
+
+
     }
 }
