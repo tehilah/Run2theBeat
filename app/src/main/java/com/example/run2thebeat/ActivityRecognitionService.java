@@ -41,3 +41,5 @@ public class ActivityRecognitionService extends IntentService {
         return false;
     }
 }
+
+//todo delete this

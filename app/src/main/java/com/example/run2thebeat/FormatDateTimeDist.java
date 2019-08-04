@@ -58,9 +58,9 @@ public class FormatDateTimeDist {
                 dist / 1000);
     }
 
-//    public static String getAvgPace(double time){
-//        return String.format(Locale.getDefault(), "%d'%02d''",
-//
-//        );
-//    }
+    public static String getAvgPace(double minutes){
+        int seconds = (int) ((minutes % 1) * 60);
+        int min = (int) minutes;
+        return min + "." + seconds;
+    }
 }

@@ -86,7 +86,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double prevDist = 0.0;
     private SensorManager sensorManager;
     private TextView tv_bpm;
-    private TextView tv_avg_bpm;
     private TextView tv_avg_pace;
     private Sensor countSensor;
     private int stepsCounter = 0;
@@ -130,8 +129,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updatePace() {
         long elapsedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
-        avgPace = elapsedTime / (60*distance);
-        tv_avg_pace.setText(String.valueOf(avgPace));
+        avgPace = elapsedTime / (60*distance); // minutes per km
+        String pace = FormatDateTimeDist.getAvgPace(avgPace);
+        tv_avg_pace.setText(pace);
     }
 
     private void initVariables() {
@@ -144,7 +144,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         chronometer = findViewById(R.id.chronometer);
         previewDist = findViewById(R.id.distance);
         tv_bpm = findViewById(R.id.bpm);
-        tv_avg_bpm = findViewById(R.id.avg_bpm);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepsPerKm = new ArrayList<>();
         startBtn = findViewById(R.id.start_button);
@@ -169,7 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "onLocationResult: \n " +
                         "lat: " + locationResult.getLastLocation().getLatitude() + "\n" +
                         "long: " + locationResult.getLastLocation().getLongitude());
-                drawPolyline(newLocation);
+//                drawPolyline(newLocation);
 //                moveCamera(newLocation, DEFAULT_ZOOM);
                 if (mTimerRunning) {
                     if (updateDistance(newLocation)) { // if location really changed
@@ -361,7 +360,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             sumBPM += curBPM;
             countBPM++;
             int curAvgBpm = sumBPM / countBPM;
-            tv_avg_bpm.setText(String.valueOf(curAvgBpm));
             Log.d(TAG, "updateBPM: average2 bpm " + String.valueOf(curAvgBpm));
 
         }

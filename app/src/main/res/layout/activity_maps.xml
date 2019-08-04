@@ -1,112 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/run_background2"
     android:orientation="vertical"
     tools:context=".MapsActivity">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <Chronometer
-            android:id="@+id/chronometer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
-            android:textSize="20sp" />
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
-            android:layout_toRightOf="@id/chronometer"
-            android:text="0"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/bpm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
-            android:layout_toRightOf="@id/distance"
-            android:text="0"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/avg_bpm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/bpm"
-            android:text="0"
-            android:layout_marginRight="50dp"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/avg_pace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/avg_bpm"
-            android:text="0"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/elapsed_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/chronometer"
-            android:text="Elapsed time"
-            android:textSize="10sp" />
+            android:fontFamily="@font/impact"
+            android:text="0.00"
+            android:textColor="#2A2E43"
+            android:textSize="94sp" />
 
         <TextView
             android:id="@+id/distance_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/distance"
-            android:layout_marginLeft="110dp"
-            android:text="Distance"
-            android:textSize="10sp" />
-        <TextView
-            android:id="@+id/bpm_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/bpm"
-            android:layout_toRightOf="@+id/distance_title"
-            android:layout_marginLeft="35dp"
-            android:text="BPM"
-            android:textSize="10sp" />
+            android:fontFamily="@font/impact"
+            android:text="KILOMETERS"
+            android:textColor="#2A2E43"
+            android:textSize="20sp" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/avg_bpm_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/avg_bpm"
-            android:layout_toRightOf="@+id/bpm_title"
-            android:layout_marginLeft="35dp"
-            android:text="avg. BPM"
-            android:textSize="10sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal">
 
-
-
-        <TextView
+        <ImageView
             android:id="@+id/avg_pace_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/avg_pace"
-            android:layout_toRightOf="@+id/avg_bpm_title"
-            android:layout_marginLeft="35dp"
-            android:text="avg. pace"
-            android:textSize="10sp" />
+            android:layout_weight="0.33"
+            android:gravity="center"
+            android:src="@drawable/chronometer" />
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/bpm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:text="BPM"
+            android:textColor="#2A2E43"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/elapsed_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:gravity="center"
+            android:src="@drawable/elapsed_time" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/avg_pace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avg_pace_title"
+            android:layout_weight="0.4"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#2A2E43"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bpm_title"
+            android:layout_toRightOf="@id/avg_pace"
+            android:layout_weight="0.4"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#2A2E43"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/elapsed_time"
+            android:layout_toRightOf="@id/bpm"
+            android:layout_weight="0.2"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:textColor="#2A2E43"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:background="#0000"
+            android:src="@drawable/pause"
+             />
+
+        <ImageButton
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="35dp"
+            android:background="#0000"
+            android:src="@drawable/stop"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_weight="0.5" />
+
+        <ImageButton
+            android:id="@+id/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:background="#0000"
+            android:src="@drawable/play"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_weight="0.5" />
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:onClick="startChronometer"
         android:text="Start" />
 
@@ -126,9 +195,5 @@
         android:text="Stop"
         android:visibility="gone" />
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+
 </LinearLayout>
