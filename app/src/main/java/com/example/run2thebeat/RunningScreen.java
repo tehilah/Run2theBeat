@@ -28,9 +28,11 @@ public class RunningScreen extends AppCompatActivity {
 
         finishRun.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 intent.putExtra("selectedPlaylist",SongListFragment.selectedPlaylist);
                 startActivity(intent);
+
             }
         });
 

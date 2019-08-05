@@ -1,10 +1,5 @@
 package com.example.run2thebeat;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 public class PlaylistItem {
     public ArrayList<Song> mPlayList;
 

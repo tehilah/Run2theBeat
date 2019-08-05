@@ -1,31 +1,38 @@
 package com.example.run2thebeat;
 
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class FinishPlaylistFragment extends Fragment {
     public ArrayList<Song> selectedPlaylist = new ArrayList<>();
+    private String TAG = "FinishPlaylistFragment";
     private SelectedPlaylistAdapter mAdapter;
     private RecyclerView playlistRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -35,6 +42,7 @@ public class FinishPlaylistFragment extends Fragment {
     private CollectionReference collectionUserRef;
     private CollectionReference collectionPlaylistRef;
     private ExecutorService executor = Executors.newCachedThreadPool();
+    public static MediaPlayer mediaPlayer  = new MediaPlayer();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceState) {
@@ -63,9 +71,18 @@ public class FinishPlaylistFragment extends Fragment {
         mAdapter.setOnItemClickListener(new SelectedPlaylistAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                playSong(position);
             }
         });
-        savePlaylist = (Button) view.findViewById(R.id.save_playlist_button);
+
+        mAdapter.setOnDeleteClickListener(new SelectedPlaylistAdapter.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                selectedPlaylist.remove(position);
+                mAdapter.notifyItemRemoved(position);
+            }
+        });
+        savePlaylist = view.findViewById(R.id.save_playlist_button);
         savePlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,8 +102,6 @@ public class FinishPlaylistFragment extends Fragment {
                 StringBuffer responseText = new StringBuffer();
                 responseText.append("Playlist saved");
                 Toast.makeText(getContext(),responseText,Toast.LENGTH_LONG).show();
-
-
             }
         });
 
@@ -101,5 +116,50 @@ public class FinishPlaylistFragment extends Fragment {
             collectionPlaylistRef = collectionUserRef.document("Document playlist").collection("Playlists");
         }
     }
+
+
+
+    public void playSong(final int position) {
+        if(position<0 || position>=selectedPlaylist.size()){
+            return;
+        }
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+        }
+        mediaPlayer = new MediaPlayer();
+        Song song = selectedPlaylist.get(position);
+
+        // Create a storage reference from our app
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        storageRef.child(song.getGenre()).child(song.getFullName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                try {
+                    mediaPlayer.setDataSource(uri.toString());
+                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                    mediaPlayer.prepareAsync();
+                } catch (IOException o) { }
+            }
+        });
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.reset();
+                if(position < selectedPlaylist.size()-1){
+                    playSong(position+1);
+                }
+            }
+        });
+
+    }
+
 
 }
