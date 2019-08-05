@@ -5,10 +5,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -20,8 +25,14 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +75,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
 
     // vars
+    private AnimatorSet animatorSet;
+    private ColorStateList oldColor;
+    private ImageView avg_pace_icon;
+    private ImageView elapsed_time_icon;
+    private TextView bpm_title;
+    private TextView distance_title;
+    private LinearLayout layout;
+    private ImageButton stop;
+    private ImageButton play;
+    private ImageButton pause;
     private GoogleMap mMap;
     private Double distance = 0.0;
     private Boolean mLocationPermissionsGranted = false;
@@ -125,6 +146,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        stop.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(MapsActivity.this, "long clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 
     private void updatePace() {
@@ -149,6 +178,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startBtn = findViewById(R.id.start_button);
         pauseBtn = findViewById(R.id.pause_button);
         tv_avg_pace = findViewById(R.id.avg_pace);
+        pause = findViewById(R.id.pause);
+        play = findViewById(R.id.play);
+        stop = findViewById(R.id.stop);
+        layout = findViewById(R.id.linear_layout);
+        avg_pace_icon = findViewById(R.id.avg_pace_img);
+        elapsed_time_icon = findViewById(R.id.elapsed_time_img);
+        bpm_title = findViewById(R.id.bpm_title);
+        distance_title = findViewById(R.id.distance_title);
+
     }
 
     private void updateLocation() {
@@ -440,6 +478,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    public void pause(View view) {
+        play.setVisibility(View.VISIBLE);
+        stop.setVisibility(View.VISIBLE);
+        view.setVisibility(View.GONE);
+        oldColor =  bpm_title.getTextColors();
+        layout.setBackgroundResource(R.drawable.run_background_play);
+        avg_pace_icon.setImageResource(R.drawable.chronometer_white);
+        elapsed_time_icon.setImageResource(R.drawable.elapsed_time_white);
+        bpm_title.setTextColor(Color.WHITE);
+        distance_title.setTextColor(Color.WHITE);
+        tv_bpm.setTextColor(Color.WHITE);
+        tv_avg_pace.setTextColor(Color.WHITE);
+        chronometer.setTextColor(Color.WHITE);
+        previewDist.setTextColor(Color.WHITE);
+        startBlinkingAnimation();
+
+    }
+
+
+    public void play(View view) {
+        animatorSet.end();
+        stop.setVisibility(View.GONE);
+        view.setVisibility(View.GONE);
+        pause.setVisibility(View.VISIBLE);
+        layout.setBackgroundResource(R.drawable.run_background_pause);
+        avg_pace_icon.setImageResource(R.drawable.chronometer);
+        elapsed_time_icon.setImageResource(R.drawable.elapsed_time);
+        bpm_title.setTextColor(oldColor);
+        distance_title.setTextColor(oldColor);
+        tv_bpm.setTextColor(oldColor);
+        tv_avg_pace.setTextColor(oldColor);
+        chronometer.setTextColor(oldColor);
+        previewDist.setTextColor(oldColor);
+    }
+
+    public void startBlinkingAnimation(){
+        animatorSet = new AnimatorSet();
+        animatorSet.playTogether(createAnimator(previewDist), createAnimator(distance_title),
+                createAnimator(bpm_title), createAnimator(tv_bpm), createAnimator(tv_avg_pace),
+                createAnimator(chronometer), createAnimator(avg_pace_icon), createAnimator(elapsed_time_icon));
+        animatorSet.start();
+
+    }
+
+    public ObjectAnimator createAnimator(View v){
+        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "alpha", 0.5f);
+        animator.setDuration(800);
+//        animator.setEvaluator(new ArgbEvaluator());
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setRepeatMode(Animation.REVERSE);
+        animator.setRepeatCount(Animation.INFINITE);
+        animator.setTarget(v);
+        return animator;
+    }
+
 }
 
 
