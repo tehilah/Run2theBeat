@@ -12,6 +12,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -36,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,7 +57,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.google.maps.android.SphericalUtil;
 
 import java.text.DateFormat;
@@ -99,10 +103,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DateFormat df;
     private ExecutorService executor;
     private Route route;
-    private Button mButtonStop;
     private Chronometer chronometer;
     private boolean mTimerRunning;
-    private long pauseOffset;
+    private long pauseOffset = 0;
     private TextView previewDist;
     private double prevDist = 0.0;
     private SensorManager sensorManager;
@@ -112,12 +115,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int stepsCounter = 0;
     private int curBPM;
     private ArrayList<Integer> stepsPerKm;
-    private Button startBtn;
-    private Button pauseBtn;
     private int sumBPM = 0;
     private int countBPM = 0; // save counter to calculate average bpm
     private double avgPace = 0;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,6 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         initUser();
         getDeviceLocation();
+        initChronometer();
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
@@ -150,15 +151,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stop.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(MapsActivity.this, "long clicked", Toast.LENGTH_SHORT).show();
+                try {
+                    stopChronometer();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         });
     }
 
+
     private void updatePace() {
         long elapsedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
-        avgPace = elapsedTime / (60*distance); // minutes per km
+        avgPace = elapsedTime / (60 * distance); // minutes per km
         String pace = FormatDateTimeDist.getAvgPace(avgPace);
         tv_avg_pace.setText(pace);
     }
@@ -166,17 +172,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void initVariables() {
         db = FirebaseFirestore.getInstance();
         executor = Executors.newCachedThreadPool();
-        df = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.getDefault());
+        df = new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.getDefault());
         df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
         allPoints = new ArrayList<>();
-        mButtonStop = findViewById(R.id.stop_button);
         chronometer = findViewById(R.id.chronometer);
         previewDist = findViewById(R.id.distance);
         tv_bpm = findViewById(R.id.bpm);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepsPerKm = new ArrayList<>();
-        startBtn = findViewById(R.id.start_button);
-        pauseBtn = findViewById(R.id.pause_button);
         tv_avg_pace = findViewById(R.id.avg_pace);
         pause = findViewById(R.id.pause);
         play = findViewById(R.id.play);
@@ -186,6 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         elapsed_time_icon = findViewById(R.id.elapsed_time_img);
         bpm_title = findViewById(R.id.bpm_title);
         distance_title = findViewById(R.id.distance_title);
+        oldColor = distance_title.getTextColors();
 
     }
 
@@ -206,15 +210,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "onLocationResult: \n " +
                         "lat: " + locationResult.getLastLocation().getLatitude() + "\n" +
                         "long: " + locationResult.getLastLocation().getLongitude());
-//                drawPolyline(newLocation);
-//                moveCamera(newLocation, DEFAULT_ZOOM);
+
                 if (mTimerRunning) {
                     if (updateDistance(newLocation)) { // if location really changed
                         lastLocation = newLocation;
                         savePoint(newLocation);
                         updatePace();
                     }
-//                    updateBPM();
                 }
             }
         };
@@ -224,12 +226,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, getMainLooper());
 
     }
-
-    private void drawPolyline(LatLng newLocation) {
-        PolylineOptions rectLine = new PolylineOptions().width(40).color(Color.BLUE).add(lastLocation, newLocation);
-        mMap.addPolyline(rectLine);
-        Log.d(TAG, "drawPolyline: added line");
-    }
+//
+//    private void drawPolyline(LatLng newLocation) {
+//        PolylineOptions rectLine = new PolylineOptions().width(40).color(Color.BLUE).add(lastLocation, newLocation);
+//        mMap.addPolyline(rectLine);
+//        Log.d(TAG, "drawPolyline: added line");
+//    }
 
     private void initUser() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -380,12 +382,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
             chronometer.start();
             mTimerRunning = true;
-            mButtonStop.setVisibility(View.GONE);
             updateLocation();
-            v.setEnabled(false);
-            pauseBtn.setEnabled(true);
+            play(v);
         }
     }
+
+    private void initChronometer() {
+        chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+        chronometer.start();
+        mTimerRunning = true;
+        updateLocation();
+    }
+
 
     private void updateBPM() {
         if (stepsCounter > 0) {
@@ -394,12 +402,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             stepsCounter = 0;
             Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "updateBPM: cur bpm " + String.valueOf(curBPM));
-            Log.d(TAG, "updateBPM: average1 bpm " + String.valueOf(sumBPM));
             sumBPM += curBPM;
             countBPM++;
-            int curAvgBpm = sumBPM / countBPM;
-            Log.d(TAG, "updateBPM: average2 bpm " + String.valueOf(curAvgBpm));
-
         }
     }
 
@@ -408,26 +412,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             mTimerRunning = false;
-            mButtonStop.setVisibility(View.VISIBLE);
         }
-        v.setEnabled(false);
-        startBtn.setEnabled(true);
+        pause(v);
     }
 
-    public void stopChronometer(View v) {
+    public void stopChronometer() throws ParseException {
         Log.d(TAG, "Method: stopChronometer");
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-        final String timestamp = df.format(new Date());
+        final Date date = df.parse(df.format(new Date()));
+        final String duration = FormatDateTimeDist.getTime(pauseOffset);
+        final String dist = FormatDateTimeDist.getDist(distance);
+        final String title = FormatDateTimeDist.getTimeOfDay();
+        final String avg_pace =   tv_avg_pace.getText().toString();
+        final int avgBpm = countBPM == 0 ? 0 : sumBPM / countBPM; // check in case the user did not move and he tries to save the map. we avoid dividing by zero
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                int bpm = countBPM == 0 ? 0 : sumBPM / countBPM; // check in case the user did not move and he tries to save the map. we avoid dividing by zero
-                route = new Route(timestamp, allPoints,
-                        FormatDateTimeDist.getTimeOfDay(),
-                        FormatDateTimeDist.getTime(pauseOffset),
-                        FormatDateTimeDist.getDist(distance),
-                        bpm,
-                        String.valueOf(avgPace));
+                route = new Route(date, allPoints, title, duration, dist, avgBpm,
+                        avg_pace);
                 collectionRouteRef.add(route);
                 pauseOffset = 0;
             }
@@ -435,6 +437,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         chronometer.setBase(SystemClock.elapsedRealtime());
         Toast.makeText(MapsActivity.this, "map saved", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, FinishRunScreenActivity.class);
+        intent.putExtra("AVG_PACE", avg_pace);
+        intent.putExtra("DURATION", duration);
+        intent.putExtra("KM", dist);
+        intent.putExtra("AVG_BPM", avgBpm);
+        Log.d(TAG, "avgBPM: "+avgBpm);
+        intent.putExtra("TITLE", title);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -465,12 +476,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
             stepsCounter++;
         }
-//        if(pauseOffset%60 == 0){
-//            Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
-//            tv_bpm.setText(String.valueOf(stepsCounter));
-//            curBPM = stepsCounter;
-//            stepsCounter = 0;
-//        }
         Log.d(TAG, "onSensorChanged: steps: " + String.valueOf(stepsCounter));
     }
 
@@ -483,7 +488,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         play.setVisibility(View.VISIBLE);
         stop.setVisibility(View.VISIBLE);
         view.setVisibility(View.GONE);
-        oldColor =  bpm_title.getTextColors();
         layout.setBackgroundResource(R.drawable.run_background_play);
         avg_pace_icon.setImageResource(R.drawable.chronometer_white);
         elapsed_time_icon.setImageResource(R.drawable.elapsed_time_white);
@@ -494,27 +498,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         chronometer.setTextColor(Color.WHITE);
         previewDist.setTextColor(Color.WHITE);
         startBlinkingAnimation();
-
     }
 
 
     public void play(View view) {
         animatorSet.end();
-        stop.setVisibility(View.GONE);
-        view.setVisibility(View.GONE);
-        pause.setVisibility(View.VISIBLE);
-        layout.setBackgroundResource(R.drawable.run_background_pause);
-        avg_pace_icon.setImageResource(R.drawable.chronometer);
-        elapsed_time_icon.setImageResource(R.drawable.elapsed_time);
         bpm_title.setTextColor(oldColor);
         distance_title.setTextColor(oldColor);
         tv_bpm.setTextColor(oldColor);
         tv_avg_pace.setTextColor(oldColor);
         chronometer.setTextColor(oldColor);
         previewDist.setTextColor(oldColor);
+        stop.setVisibility(View.GONE);
+        view.setVisibility(View.GONE);
+        pause.setVisibility(View.VISIBLE);
+        layout.setBackgroundResource(R.drawable.run_background_pause);
+        avg_pace_icon.setImageResource(R.drawable.chronometer);
+        elapsed_time_icon.setImageResource(R.drawable.elapsed_time);
     }
 
-    public void startBlinkingAnimation(){
+    public void startBlinkingAnimation() {
         animatorSet = new AnimatorSet();
         animatorSet.playTogether(createAnimator(previewDist), createAnimator(distance_title),
                 createAnimator(bpm_title), createAnimator(tv_bpm), createAnimator(tv_avg_pace),
@@ -523,8 +526,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public ObjectAnimator createAnimator(View v){
-        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "alpha", 0.5f);
+    public ObjectAnimator createAnimator(View v) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "alpha", 0.5f, 1f);
         animator.setDuration(800);
 //        animator.setEvaluator(new ArgbEvaluator());
         animator.setInterpolator(new LinearInterpolator());

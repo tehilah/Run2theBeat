@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true"
-    tools:context=".RunDetailsActivity">
+    tools:context=".FinishRunScreenActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,33 +12,54 @@
         android:background="#2A2E43"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="start"
+                android:layout_weight="1"
+                android:text="Title: Sunday Evening Run"
+                android:textColor="#FFF" />
+
+            <Button
+                android:id="@+id/btn_done"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|center"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:text="Done"
+                android:onClick="finish"
+                android:textColor="#FFFF" />
+        </LinearLayout>
+
+
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="250dp">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|top"
-                android:background="@android:color/transparent"
-                android:text="Done"
-                android:textColor="#2A2E43"
-                android:visibility="visible" />
+
         </fragment>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="5dp"
+            android:layout_height="9dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="10dp"
-            android:background="#D8D8D8"/>
+            android:background="#16D8D8D8" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="150dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -55,7 +76,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:text="6'53''"
+                    android:text="0"
                     android:textColor="#ffff"
                     android:textSize="20sp" />
 
@@ -66,7 +87,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:text="31:29"
+                    android:text="0:00"
                     android:textColor="#FFFF"
                     android:textSize="20sp" />
 
@@ -118,7 +139,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:text="5.20"
+                    android:text="0.0"
                     android:textColor="#ffff"
                     android:textSize="20sp" />
 
@@ -129,7 +150,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:text="140"
+                    android:text="0"
                     android:textColor="#FFFF"
                     android:textSize="20sp" />
 
@@ -172,16 +193,15 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="9dp"
             android:layout_marginTop="10dp"
-            android:background="#D8D8D8"/>
+            android:layout_marginBottom="8dp"
+            android:background="#16D8D8D8" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView

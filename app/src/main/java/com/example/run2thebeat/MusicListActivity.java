@@ -135,20 +135,27 @@ public class MusicListActivity extends AppCompatActivity {
     public void checkStartRunClicked(){
 
         Button startRunButton = findViewById(R.id.start_run_button);
-        final Intent intent = new Intent(this,RunningScreen.class);
+//        final Intent intent = new Intent(this,RunningScreen.class);
+//        startRunButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArrayList<Genre> genreList = dataAdapter.genreList;
+//                ArrayList<String> selectedGeneres = new ArrayList<String>();
+//                for (int i=0; i<genreList.size(); i++){
+//                    Genre genre = genreList.get(i);
+//                    if(genre.getSelected()){
+//                        selectedGeneres.add(genre.getName());
+//                    }
+//                }
+//                intent.putExtra("generes",selectedGeneres);
+//                startActivity(intent);
+//            }
+//        });
+        final Intent i = new Intent(this, MapsActivity.class);
         startRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Genre> genreList = dataAdapter.genreList;
-                ArrayList<String> selectedGeneres = new ArrayList<String>();
-                for (int i=0; i<genreList.size(); i++){
-                    Genre genre = genreList.get(i);
-                    if(genre.getSelected()){
-                        selectedGeneres.add(genre.getName());
-                    }
-                }
-                intent.putExtra("generes",selectedGeneres);
-                startActivity(intent);
+                startActivity(i);
             }
         });
     }

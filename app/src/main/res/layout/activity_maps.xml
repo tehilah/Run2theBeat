@@ -93,7 +93,7 @@
             android:id="@+id/avg_pace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
+            android:layout_weight="0.333333"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:text="0"
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/avg_pace"
-            android:layout_weight="0.4"
+            android:layout_weight="0.333333"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:text="0"
@@ -120,8 +120,7 @@
             android:id="@+id/chronometer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/bpm"
-            android:layout_weight="0.2"
+            android:layout_weight="0.333333"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:textColor="#2A2E43"
@@ -143,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:background="#0000"
-            android:onClick="pause"
+            android:onClick="pauseChronometer"
             android:src="@drawable/pause"
              />
 
@@ -165,36 +164,11 @@
             android:layout_marginBottom="30dp"
             android:background="#0000"
             android:src="@drawable/play"
-            android:onClick="play"
             android:visibility="gone"
+            android:onClick="startChronometer"
             app:layout_constraintHorizontal_weight="0.5" />
 
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:onClick="startChronometer"
-        android:text="Start" />
-
-    <Button
-        android:id="@+id/pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:onClick="pauseChronometer"
-        android:text="Pause" />
-
-    <Button
-        android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="stopChronometer"
-        android:text="Stop"
-        android:visibility="gone" />
-
 
 </LinearLayout>

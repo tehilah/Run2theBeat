@@ -8,6 +8,14 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.type.Date;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,9 +37,11 @@ public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, Prog
 
     @Override
     protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull SavedRunItem currentItem) {
+        DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
         holder.mImageView.setImageResource(currentItem.getImageResource());
         holder.mTextView1.setText(currentItem.getDateDescription());
-        holder.mTextView2.setText(currentItem.getDate());
+        holder.mTextView2.setText(df.format(currentItem.getDate()));
     }
 
     @NonNull

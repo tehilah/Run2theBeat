@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FinishRunActivity"></activity>
+        <activity android:name=".FinishRunScreenActivity"></activity>
+        <activity android:name=".FinishRunActivity" />
         <activity android:name=".RunningScreen" /> <!-- <activity android:name=".SongListFragment"></activity> -->
         <activity android:name=".RunDetailsActivity" />
         <!--

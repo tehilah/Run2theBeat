@@ -1,12 +1,18 @@
 package com.example.run2thebeat;
 
 
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.ServerTimestamp;
+import java.util.Date;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 
 public class Route {
 
-    private String mTimestamp;
+    private @ServerTimestamp Date mTimestamp;
+
     private ArrayList<Point> mPoints;
     private String mDuration;
     private String mDistance;
@@ -17,9 +23,9 @@ public class Route {
     public Route() {
     }
 
-    public Route(String timestamp, ArrayList<Point> points, String dateDescription, String duration
+    public Route(Date date, ArrayList<Point> points, String dateDescription, String duration
             , String distance, int averageBPM, String averagePace) {
-        mTimestamp = timestamp;
+        mTimestamp = date;
         mPoints = points;
         mDateDescription = dateDescription;
         mDuration = duration;
@@ -28,11 +34,11 @@ public class Route {
         avgPace = averagePace;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return mTimestamp;
     }
 
-    public void setDate(String mDate) {
+    public void setDate(Date mDate) {
         this.mTimestamp = mDate;
     }
 
