@@ -1,35 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#2A2E43">
 
-    <Button
-        android:id="@+id/button1"
+    <TextView
+        android:id="@+id/choose_existing_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_button"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_marginTop="140dp"
-        android:layout_gravity="center"
-        android:text="Choose existing\n playlist"
-        android:textColor="#ffff"
-        android:textSize="18sp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Choose Existing Playlist"
+        android:textColor="#AA7A33"
+        android:textSize="25sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <FrameLayout
+        android:id="@+id/saved_playlists_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/choose_existing_playlist"
+        android:background="#2A2E43"
+        />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/round_button"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:onClick="chooseMusicGenres"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:layout_gravity="center"
-        android:text="Choose new\n playlist"
+        android:text="Choose new playlist"
         android:textColor="#ffff"
-        android:textSize="18sp" />
+        android:background="@drawable/button_round_corners_purple"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
