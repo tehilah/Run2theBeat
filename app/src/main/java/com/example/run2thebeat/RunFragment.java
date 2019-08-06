@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,16 +24,17 @@ public class RunFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button button1 = view.findViewById(R.id.button1);
+        //Button button1 = view.findViewById(R.id.button1);
+        TextView chooseExistingPlaylist = view.findViewById(R.id.choose_existing_playlist);
         Button button2 = view.findViewById(R.id.button2);
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), MapsActivity.class);
-                startActivity(i);
-            }
-        });
+//        button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(getActivity(), MapsActivity.class);
+//                startActivity(i);
+//            }
+//        });
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +43,9 @@ public class RunFragment extends Fragment {
                 startActivity(i);
             }
         });
+
+        getChildFragmentManager().beginTransaction().replace(R.id.saved_playlists_fragment,
+                new ShowPlaylistsFragment()).commit();
     }
 
 

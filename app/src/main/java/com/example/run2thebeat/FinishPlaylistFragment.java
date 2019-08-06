@@ -68,12 +68,6 @@ public class FinishPlaylistFragment extends Fragment {
         mAdapter = new SelectedPlaylistAdapter(selectedPlaylist);
         playlistRecyclerView.setAdapter(mAdapter);
         playlistRecyclerView.setLayoutManager(layoutManager);
-        mAdapter.setOnItemClickListener(new SelectedPlaylistAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                playSong(position);
-            }
-        });
 
         mAdapter.setOnDeleteClickListener(new SelectedPlaylistAdapter.OnDeleteClickListener() {
             @Override
@@ -116,50 +110,5 @@ public class FinishPlaylistFragment extends Fragment {
             collectionPlaylistRef = collectionUserRef.document("Document playlist").collection("Playlists");
         }
     }
-
-
-
-    public void playSong(final int position) {
-        if(position<0 || position>=selectedPlaylist.size()){
-            return;
-        }
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
-        }
-        mediaPlayer = new MediaPlayer();
-        Song song = selectedPlaylist.get(position);
-
-        // Create a storage reference from our app
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        storageRef.child(song.getGenre()).child(song.getFullName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                try {
-                    mediaPlayer.setDataSource(uri.toString());
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-                    mediaPlayer.prepareAsync();
-                } catch (IOException o) { }
-            }
-        });
-
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.stop();
-                mp.reset();
-                if(position < selectedPlaylist.size()-1){
-                    playSong(position+1);
-                }
-            }
-        });
-
-    }
-
 
 }
