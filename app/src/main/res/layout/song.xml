@@ -12,33 +12,40 @@
         android:id="@+id/icon_delete_song"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_delete_song"
+        android:src="@mipmap/delete"
+        android:visibility="gone"
+        android:background="@android:color/transparent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/song_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:text="I Dont Care"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/icon_delete_song"
-        app:layout_constraintRight_toLeftOf="@+id/icon_delete_song"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
         android:id="@+id/song_artist"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:text="Ed Sheeran and Justin Beiber "
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="#000000"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="7dp"
+        app:layout_constraintEnd_toStartOf="@+id/icon_delete_song"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/song_title" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

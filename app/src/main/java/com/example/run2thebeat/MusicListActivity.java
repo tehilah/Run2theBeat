@@ -3,8 +3,10 @@ package com.example.run2thebeat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +19,13 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class MusicListActivity extends AppCompatActivity {
     private String TAG = "MusicListActivity";
     MyCustomAdapter dataAdapter = null;
+    public static final String PREFS_NAME = "MyPref";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +43,23 @@ public class MusicListActivity extends AppCompatActivity {
                 "jazz", "rock", "rap", "rbandsoul"};
 
         ArrayList<Genre> genresList = new ArrayList<>();
-        for (String genre_name: genre_names){
+        for (String genre_name : genre_names) {
             Genre genre = new Genre(genre_name, false);
             genresList.add(genre);
         }
-        dataAdapter = new MyCustomAdapter(this, R.layout.lv_item, R.id.genre,genresList);
+        dataAdapter = new MyCustomAdapter(this, R.layout.lv_item, R.id.genre, genresList);
         ListView listView = findViewById(R.id.list_view1);
         listView.setAdapter(dataAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Genre genre = (Genre) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), "clicked on row: "+genre.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "clicked on row: " + genre.getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private class MyCustomAdapter extends ArrayAdapter<Genre>{
+    private class MyCustomAdapter extends ArrayAdapter<Genre> {
         private ArrayList<Genre> genreList;
 
         public MyCustomAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull ArrayList<Genre> genres) {
@@ -68,7 +72,7 @@ public class MusicListActivity extends AppCompatActivity {
             return genreList;
         }
 
-        private class ViewHolder{
+        private class ViewHolder {
             TextView genre_name;
             CheckBox checkBox;
         }
@@ -79,7 +83,7 @@ public class MusicListActivity extends AppCompatActivity {
             super.getView(position, convertView, parent);
 
             ViewHolder holder = null;
-            if(convertView == null){
+            if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = vi.inflate(R.layout.lv_item, null);
 
@@ -88,8 +92,7 @@ public class MusicListActivity extends AppCompatActivity {
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
                 convertView.setTag(holder);
 
-                holder.checkBox.setOnClickListener(new View.OnClickListener()
-                {
+                holder.checkBox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
@@ -98,8 +101,7 @@ public class MusicListActivity extends AppCompatActivity {
                         genre.setSelected(cb.isChecked());
                     }
                 });
-            }
-            else{
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
@@ -112,7 +114,7 @@ public class MusicListActivity extends AppCompatActivity {
         }
     }
 
-    public void checkButtonClicked(){
+    public void checkButtonClicked() {
         Button button = findViewById(R.id.find_selected);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,10 +123,10 @@ public class MusicListActivity extends AppCompatActivity {
                 responseText.append("The following were selected...\n");
                 ArrayList<Genre> genreList = dataAdapter.genreList;
 
-                for (int i=0; i<genreList.size(); i++){
+                for (int i = 0; i < genreList.size(); i++) {
                     Genre genre = genreList.get(i);
-                    if(genre.getSelected()){
-                        responseText.append("\n"+genre.getName());
+                    if (genre.getSelected()) {
+                        responseText.append("\n" + genre.getName());
                     }
                 }
                 Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
@@ -132,31 +134,38 @@ public class MusicListActivity extends AppCompatActivity {
         });
     }
 
-    public void checkStartRunClicked(){
+    public void checkStartRunClicked() {
 
         Button startRunButton = findViewById(R.id.start_run_button);
-//        final Intent intent = new Intent(this,RunningScreen.class);
-//        startRunButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ArrayList<Genre> genreList = dataAdapter.genreList;
-//                ArrayList<String> selectedGeneres = new ArrayList<String>();
-//                for (int i=0; i<genreList.size(); i++){
-//                    Genre genre = genreList.get(i);
-//                    if(genre.getSelected()){
-//                        selectedGeneres.add(genre.getName());
-//                    }
-//                }
-//                intent.putExtra("generes",selectedGeneres);
-//                startActivity(intent);
-//            }
-//        });
-        final Intent i = new Intent(this, MapsActivity.class);
+        final Intent intent = new Intent(getBaseContext(), CountDownActivity.class);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
         startRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(i);
+                int count = 0;
+                ArrayList<Genre> genreList = dataAdapter.genreList;
+                ArrayList<String> selectedGenres = new ArrayList<String>();
+                for (int i=0; i<genreList.size(); i++){
+                    Genre genre = genreList.get(i);
+                    if(genre.getSelected()){
+                        count++;
+                        editor.putString("genre"+String.valueOf(count), genre.getName());
+                        selectedGenres.add(genre.getName());
+                        editor.putInt("num_selected", count);
+                    }
+                }
+                editor.apply();
+//                intent.putExtra("generes",selectedGenres);
+                startActivity(intent);
             }
         });
+//        final Intent i = new Intent(this, MapsActivity.class);
+//        startRunButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(i);
+//            }
+//        });
     }
 }

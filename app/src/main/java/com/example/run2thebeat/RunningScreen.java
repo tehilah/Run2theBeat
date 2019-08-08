@@ -16,8 +16,8 @@ public class RunningScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running_screen);
-        TextView textView = (TextView)findViewById(R.id.running_details);
-        Button finishRun = (Button)findViewById(R.id.stop_run_button);
+//        TextView textView = (TextView)findViewById(R.id.running_details);
+//        Button finishRun = (Button)findViewById(R.id.stop_run_button);
         final Intent intent = new Intent(this,FinishRunActivity.class);
 
 
@@ -26,15 +26,15 @@ public class RunningScreen extends AppCompatActivity {
                 new SongListFragment()).commit();
 
 
-        finishRun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                intent.putExtra("selectedPlaylist",SongListFragment.selectedPlaylist);
-                startActivity(intent);
-
-            }
-        });
+//        finishRun.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                intent.putExtra("selectedPlaylist",SongListFragment.selectedPlaylist);
+//                startActivity(intent);
+//
+//            }
+//        });
 
 
 

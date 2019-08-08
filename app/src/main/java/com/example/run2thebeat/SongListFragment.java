@@ -1,19 +1,25 @@
 package com.example.run2thebeat;
+
 import java.io.IOException;
 import java.util.ArrayList;
+
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,38 +32,44 @@ public class SongListFragment extends Fragment {
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private MediaPlayer mediaPlayer  = new MediaPlayer();
-    private int currentlyPlayingPosition =1;
-    private Button finishRunButton;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private int currentlyPlayingPosition = 1;
+    private TextView tv_artist;
 
 
-
-    private static ArrayList<Song> allSongsList =new ArrayList<Song>();
-    private static Song popNum1 = new Song(1,"I Dont Care","Ed Sheeran & Justin Bieber ","pop","Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
-    private static Song popNum2 = new Song(2,"Faith","Stevie Wonder ft. Ariana Grande","pop","Stevie Wonder - Faith ft. Ariana Grande.mp3");
-    private static Song popNum3 = new Song(3,"Bananas"," static and benel","pop","סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
-    private static Song countryNum1 = new Song(4,"Before He Cheats","Carrie Underwood","country","Carrie Underwood - Before He Cheats.mp3");
-    private static Song countryNum2 = new Song(5,"Heartache On The Dance Floor","Jon Pardi","country","Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
+    private static ArrayList<Song> allSongsList = new ArrayList<Song>();
+    private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
+    private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3");
+    private static Song popNum3 = new Song(3, "Bananas", " static and benel", "pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
+    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3");
+    private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
 
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container,@NonNull Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_song_list, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view,savedInstanceState);
-
+        super.onViewCreated(view, savedInstanceState);
         createSongList();
         getSongList();
         buildRecyclerView(view);
         playSong(1);
 
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.reset();
+            }
+        });
+
     }
 
 
-    public void createSongList(){
+    public void createSongList() {
         allSongsList.add(popNum1);
         allSongsList.add(popNum2);
         allSongsList.add(popNum3);
@@ -68,23 +80,28 @@ public class SongListFragment extends Fragment {
     public void getSongList() {
         //retrieve the audio file information
         songList.clear();
-        songList.add(new Song(000,"","","","")); //currently playing song. set to nothing at first
-        ArrayList<String> selectedGeners = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
+        songList.add(new Song(000, "", "", "", "")); //currently playing song. set to nothing at first
+        SharedPreferences sp = getActivity().getSharedPreferences("myPref", 0);
+        ArrayList<String> selectedGenres = new ArrayList<>();
+        int numSelected = sp.getInt("num_selected", 0);
+        for (int i = 1; i <= numSelected; i++) {
+            selectedGenres.add(sp.getString("genre" + String.valueOf(i), ""));
+        }
+//        ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
 
-        if(selectedGeners.size() ==0) {//no generes selected
+        if (selectedGenres.size() == 0) {//no generes selected
             for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
                 if (!songList.contains(song)) {
                     songList.add(song);
                 }
             }
-        }
-        else {
-            for (int i = 0; i < selectedGeners.size(); i++) {
-                String genere = selectedGeners.get(i);
+        } else {
+            for (int i = 0; i < selectedGenres.size(); i++) {
+                String genre = selectedGenres.get(i);
                 for (int j = 0; j < allSongsList.size(); j++) {
                     Song song = allSongsList.get(j);
-                    if (song.getGenre().equals(genere)) {
+                    if (song.getGenre().equals(genre)) {
                         if (!songList.contains(song)) {
                             songList.add(song);
                         }
@@ -94,16 +111,16 @@ public class SongListFragment extends Fragment {
             }
         }
 
-        if(songList.size()>1){ //we set the first song in the list to be the first song from songList
+        if (songList.size() > 1) { //we set the first song in the list to be the first song from songList
             //because we are going to play it right away
-            songList.set(0,songList.get(1));
+            songList.set(0, songList.get(1));
         }
 
         selectedPlaylist = songList;
     }
 
 
-    public void buildRecyclerView(final View view){
+    public void buildRecyclerView(final View view) {
         songRecyclerView = view.findViewById(R.id.list);
         songRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
@@ -127,23 +144,23 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
             public void onNextClick() {
-                playSong(currentlyPlayingPosition+1);
+                playSong(currentlyPlayingPosition + 1);
             }
         });
         mAdapter.setOnPreviousClickListener(new SongListAdapter.OnPrviousClickListener() {
             @Override
             public void onPreviousClick() {
-                playSong(currentlyPlayingPosition-1);
+                playSong(currentlyPlayingPosition - 1);
             }
         });
-        
+
     }
 
     public void playSong(final int position) {
-        if(position<=0 || position>=songList.size()){
+        if (position <= 0 || position >= songList.size()) {
             return;
         }
-        if(mediaPlayer.isPlaying()){
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
         }
         mediaPlayer = new MediaPlayer();
@@ -155,38 +172,39 @@ public class SongListFragment extends Fragment {
         storageRef.child(song.getGenre()).child(song.getFullName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-            try {
-                mediaPlayer.setDataSource(uri.toString());
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                mediaPlayer.prepareAsync();
-                swapeItem(position);
-                currentlyPlayingPosition = position;
-            } catch (IOException o) { }
-        }
-        });
-
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.stop();
-                mp.reset();
-                if(position < songList.size()-1){
-                    playSong(position+1);
+                try {
+                    mediaPlayer.setDataSource(uri.toString());
+                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
+                    mediaPlayer.prepareAsync();
+                    swapItem(position);
+                    currentlyPlayingPosition = position;
+                } catch (IOException o) {
                 }
-
             }
         });
 
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                mp.stop();
+//                mp.reset();
+//                if (position < songList.size() - 1) {
+//                    playSong(position + 1);
+//                }
+//
+//            }
+//        });
+
     }
 
-    public void swapeItem(int position){
+    public void swapItem(int position) {
         Song nowPlaying = songList.get(position);
-        songList.set(0,nowPlaying) ;
+        songList.set(0, nowPlaying);
         ArrayList<Song> newList = new ArrayList<Song>();
         newList.addAll(songList);
         songList.clear();
@@ -195,17 +213,39 @@ public class SongListFragment extends Fragment {
     }
 
 
-    public void playOrPause(View view){
-        ImageButton imageButton = (ImageButton)view.findViewById(R.id.play_pause);
-        if(mediaPlayer.isPlaying()){
+    public void playOrPause(View view) {
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.play_pause);
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             imageButton.setImageResource(R.drawable.ic_play);
-        }
-        else {
+        } else {
             mediaPlayer.start();
             imageButton.setImageResource(R.drawable.ic_pause);
         }
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.release();
+            }
+        });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.release();
+            }
+        });
+    }
 }
