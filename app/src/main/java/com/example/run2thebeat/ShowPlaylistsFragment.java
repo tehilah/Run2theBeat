@@ -1,22 +1,17 @@
 package com.example.run2thebeat;
 
+import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,10 +60,7 @@ public class ShowPlaylistsFragment extends Fragment {
 //                public void run() {
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
-                            Map<String,Object> map = doc.getData();
-                            ArrayList<Song> songList = (ArrayList<Song>) map.get("mPlayList");
-                            String mDate = (String) map.get("mDate");
-                            PlaylistItem playlistItem = new PlaylistItem(songList,mDate);
+                            PlaylistItem playlistItem = doc.toObject(PlaylistItem.class);
                             playlistsList.add(playlistItem);
                         }
                         buildRecyclerView(view);
@@ -78,10 +70,7 @@ public class ShowPlaylistsFragment extends Fragment {
                     }
 //                }
 //            });
-            Log.d(TAG, "PLAYLIST SIZE "+ playlistsList.size());
-
         });
-        Log.d(TAG, "PLAYLIST SIZE "+ playlistsList.size());
     }
 
     public void buildRecyclerView(View v){
@@ -91,6 +80,16 @@ public class ShowPlaylistsFragment extends Fragment {
         mAdapter = new PlaylistAdapter(playlistsList);
         playlistsRecyclerView.setAdapter(mAdapter);
         playlistsRecyclerView.setLayoutManager(layoutManager);
+        mAdapter.setOnItemClickListener(new PlaylistAdapter.OnItemClickListener() {
+            final Intent intent = new Intent(getContext(),SongsOfAPlaylistActivity.class);
+            @Override
+            public void onItemClick(int position) {
+
+                intent.putExtra("selectedPlaylist",playlistsList.get(position).mPlayList);
+                startActivity(intent);
+
+            }
+        });
 
     }
 
