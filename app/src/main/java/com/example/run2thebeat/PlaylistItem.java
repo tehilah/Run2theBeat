@@ -1,6 +1,7 @@
 package com.example.run2thebeat;
+import java.io.Serializable;
 import java.util.ArrayList;
-public class PlaylistItem {
+public class PlaylistItem implements Serializable {
     public ArrayList<Song> mPlayList;
 
     public String mDate;

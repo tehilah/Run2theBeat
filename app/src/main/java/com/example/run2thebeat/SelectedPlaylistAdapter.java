@@ -1,5 +1,4 @@
 package com.example.run2thebeat;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlaylistAdapter.SongViewHolder>{
 
     private ArrayList<Song> songList;
-//    private SelectedPlaylistAdapter.OnItemClickListener mListener;
     private SelectedPlaylistAdapter.OnDeleteClickListener mDelete;
     public ImageButton imageButton;
 
-//    public interface OnItemClickListener{
-//        void onItemClick(int position);
-//    }
-//
-//    public void setOnItemClickListener(SelectedPlaylistAdapter.OnItemClickListener listener){
-//        mListener = listener;
-//    }
 
     public interface OnDeleteClickListener{
         void onDeleteClick(int position);
@@ -40,23 +31,11 @@ public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlayli
         public TextView songName;
         public TextView artist;
         public ImageButton deleteSongButton;
-        public SongViewHolder(@NonNull final View item/*, final SelectedPlaylistAdapter.OnItemClickListener listener*/ , final SelectedPlaylistAdapter.OnDeleteClickListener deleteListener){
+        public SongViewHolder(@NonNull final View item , final SelectedPlaylistAdapter.OnDeleteClickListener deleteListener){
             super(item);
             songName = item.findViewById(R.id.song_title);
             artist = item.findViewById(R.id.song_artist);
             deleteSongButton = item.findViewById(R.id.icon_delete_song);
-//            item.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (listener != null ) {
-//                        int position = getAdapterPosition();
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            listener.onItemClick(position);
-//                        }
-//                    }
-//                }
-//            });
-
             item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -86,15 +65,13 @@ public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlayli
     @Override
     public SelectedPlaylistAdapter.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent,false);
 
-        return new SelectedPlaylistAdapter.SongViewHolder(v/*,mListener*/,mDelete);
-
+        return new SelectedPlaylistAdapter.SongViewHolder(v,mDelete);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SelectedPlaylistAdapter.SongViewHolder holder, final int position) {
-        final Song songItem = songList.get(position);
+        Song songItem = songList.get(position);
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
 

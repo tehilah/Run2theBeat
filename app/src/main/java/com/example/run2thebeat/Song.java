@@ -9,6 +9,7 @@ public class Song implements Serializable {
     private String artist;
     private String genre;
     private String fullName;
+    public Song(){}
 
     public Song(long songID, String songTitle, String songArtist, String songGenre, String songfullName) {
         id=songID;

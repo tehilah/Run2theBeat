@@ -10,18 +10,42 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private ArrayList<PlaylistItem> playlistsList;
+    private OnItemClickListener mListener;
+
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+
+    public void setOnItemClickListener(PlaylistAdapter.OnItemClickListener listener){
+        mListener = listener;
+    }
+
 
     public static class PlaylistViewHolder extends RecyclerView.ViewHolder{
         public ImageView playlistImage;
         public TextView avg_bpm;
         public TextView km;
-        public PlaylistViewHolder(@NonNull View item) {
+        public PlaylistViewHolder(@NonNull View item, PlaylistAdapter.OnItemClickListener listener) {
             super(item);
             playlistImage = item.findViewById(R.id.image_of_playlist);
             avg_bpm = item.findViewById(R.id.avg_bpm);
             km = item.findViewById(R.id.km);
+            item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -31,7 +55,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     @Override
     public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist, parent, false);
-        return new PlaylistViewHolder(v);
+        return new PlaylistViewHolder(v,mListener);
     }
 
 
