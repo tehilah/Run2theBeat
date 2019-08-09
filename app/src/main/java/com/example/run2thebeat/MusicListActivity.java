@@ -34,7 +34,7 @@ public class MusicListActivity extends AppCompatActivity {
         Log.d("TAG", "checklist: here1");
         displayListView();
         Log.d("TAG", "checklist: here5");
-        checkButtonClicked();
+//        checkButtonClicked();
         checkStartRunClicked();
     }
 
@@ -114,25 +114,25 @@ public class MusicListActivity extends AppCompatActivity {
         }
     }
 
-    public void checkButtonClicked() {
-        Button button = findViewById(R.id.find_selected);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StringBuffer responseText = new StringBuffer();
-                responseText.append("The following were selected...\n");
-                ArrayList<Genre> genreList = dataAdapter.genreList;
-
-                for (int i = 0; i < genreList.size(); i++) {
-                    Genre genre = genreList.get(i);
-                    if (genre.getSelected()) {
-                        responseText.append("\n" + genre.getName());
-                    }
-                }
-                Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
+//    public void checkButtonClicked() {
+////        Button button = findViewById(R.id.find_selected);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                StringBuffer responseText = new StringBuffer();
+//                responseText.append("The following were selected...\n");
+//                ArrayList<Genre> genreList = dataAdapter.genreList;
+//
+//                for (int i = 0; i < genreList.size(); i++) {
+//                    Genre genre = genreList.get(i);
+//                    if (genre.getSelected()) {
+//                        responseText.append("\n" + genre.getName());
+//                    }
+//                }
+//                Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
     public void checkStartRunClicked() {
 

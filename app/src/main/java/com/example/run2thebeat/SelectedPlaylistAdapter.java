@@ -1,9 +1,5 @@
 package com.example.run2thebeat;
-<<<<<<< HEAD
-
 import android.graphics.Color;
-=======
->>>>>>> 48e5964506209fd875acd5bdfebec987ae4fa088
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
