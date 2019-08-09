@@ -22,22 +22,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:gravity="start"
                 android:layout_weight="1"
+                android:gravity="start"
                 android:text="Title: Sunday Evening Run"
-                android:textColor="#FFF" />
+                android:textColor="#FFF"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_done"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right|center"
                 android:layout_marginEnd="10dp"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="Done"
+                android:gravity="right|center"
                 android:onClick="finish"
-                android:textColor="#FFFF" />
+                android:text="Done"
+                android:textColor="#FFFF"
+                android:textSize="20sp" />
         </LinearLayout>
 
 
@@ -201,14 +203,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="15dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/roboto_bold"
                 android:text="Review Playlist"
                 android:textColor="#FF4F9A"
                 android:textSize="18sp" />
@@ -230,8 +234,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/play_list_recycler"
+                android:layout_gravity="center"
                 android:layout_marginTop="15dp"
+                android:background="@drawable/round_corners"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
                 android:text="Save Playlist"
+                android:textColor="#FF4F9A"
                 android:textColorHighlight="#FF4F9A"
                 android:textSize="16sp"
                 android:textStyle="bold" />

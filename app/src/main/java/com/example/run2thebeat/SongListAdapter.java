@@ -1,4 +1,5 @@
 package com.example.run2thebeat;
+import android.text.method.ScrollingMovementMethod;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
@@ -62,11 +63,14 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                               final OnPrviousClickListener previousListener) {
             super(item);
             songName = item.findViewById(R.id.song_title);
+            songName.setSelected(true);
             artist = item.findViewById(R.id.song_artist);
+            artist.setSelected(true);
+//            artist.setMovementMethod(new ScrollingMovementMethod());
             pausePlayButton = item.findViewById(R.id.play_pause);
             nextButton = item.findViewById(R.id.next_song);
             nextButton = item.findViewById(R.id.next_song);
-            previousButton = item.findViewById(R.id.previos_song);
+            previousButton = item.findViewById(R.id.previous_song);
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

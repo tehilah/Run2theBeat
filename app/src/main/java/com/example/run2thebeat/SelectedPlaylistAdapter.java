@@ -1,4 +1,9 @@
 package com.example.run2thebeat;
+<<<<<<< HEAD
+
+import android.graphics.Color;
+=======
+>>>>>>> 48e5964506209fd875acd5bdfebec987ae4fa088
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +78,10 @@ public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlayli
     public void onBindViewHolder(@NonNull SelectedPlaylistAdapter.SongViewHolder holder, final int position) {
         Song songItem = songList.get(position);
         holder.artist.setText(songItem.getArtist());
+        holder.artist.setTextColor(Color.WHITE);
         holder.songName.setText(songItem.getTitle());
+        holder.songName.setTextColor(Color.WHITE);
+        holder.deleteSongButton.setVisibility(View.VISIBLE);
 
     }
 

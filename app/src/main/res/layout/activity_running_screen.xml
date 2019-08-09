@@ -1,58 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
     sothree:umanoPanelHeight="68dp"
-    sothree:umanoShadowHeight="4dp"
-    >
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    sothree:umanoShadowHeight="4dp">
 
-        <TextView
-            android:id="@+id/running_details"
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/run_background_pause"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Main Content"
-            android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            />
-        <Button
-            android:id="@+id/stop_run_button"
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/impact"
+                android:text="0.00"
+                android:textColor="#2A2E43"
+                android:textSize="94sp" />
+
+            <TextView
+                android:id="@+id/distance_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/impact"
+                android:text="KILOMETERS"
+                android:textColor="#2A2E43"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Stop Run"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/running_details"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/avg_pace_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.33"
+                android:gravity="center"
+                android:src="@drawable/chronometer" />
+
+            <TextView
+                android:id="@+id/bpm_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="BPM"
+                android:textColor="#2A2E43"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/elapsed_time_img"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:gravity="center"
+                android:src="@drawable/elapsed_time" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/avg_pace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.333333"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#2A2E43"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/bpm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/avg_pace"
+                android:layout_weight="0.333333"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#2A2E43"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.333333"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:textColor="#2A2E43"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/pause"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="30dp"-->
+                <!--android:background="#0000"-->
+                <!--android:onClick="pauseChronometer"-->
+                <!--android:src="@drawable/pause"-->
+                <!--android:visibility="visible" />-->
+
+
+            <ImageButton
+                android:id="@+id/stop"
+                app:layout_constraintHorizontal_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="35dp"
+                android:background="#0000"
+                android:longClickable="true"
+                android:src="@drawable/stop"
+                android:visibility="gone" />
+
+
+            <ImageButton
+                android:id="@+id/play"
+                app:layout_constraintHorizontal_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:background="#0000"
+                android:onClick="startChronometer"
+                android:src="@drawable/play"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+    </LinearLayout>
 
 
     <FrameLayout
         android:id="@+id/list_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center|top"/>
+        android:gravity="center|top" />
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
