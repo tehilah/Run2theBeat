@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true"
+    android:layout_height="match_parent"
+    android:background="@drawable/genres"
+    android:orientation="vertical"
+    android:paddingStart="40dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="10dp"
     tools:context=".MusicListActivity">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/genres"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:text="Music Genres"
+        android:textColor="#AA7A33"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/list_view1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </ListView>
+
+    <Button
+        android:id="@+id/start_run_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_round_corner_orange"
         android:paddingStart="40dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp"
-       >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Music Genres"
-            android:textColor="#AA7A33"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+        android:paddingEnd="40dp"
+        android:text="START RUN"
+        android:textColor="#FFFF" />
+</LinearLayout>
 
 
-        <ListView
-            android:id="@+id/list_view1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-        </ListView>
-
-        <Button
-            android:id="@+id/start_run_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Start Run" />
-    </LinearLayout>
-</ScrollView>

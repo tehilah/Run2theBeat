@@ -15,7 +15,7 @@
     </corners>
 
     <stroke
-        android:color="@android:color/holo_purple"
+        android:color="@android:color/white"
         android:width="1dp">
     </stroke>
 

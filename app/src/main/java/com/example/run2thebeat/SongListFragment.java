@@ -3,9 +3,11 @@ package com.example.run2thebeat;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
+
+import static com.example.run2thebeat.MusicListActivity.PREFS_NAME;
 
 public class SongListFragment extends Fragment {
 
@@ -53,6 +58,7 @@ public class SongListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "getSongList: created");
         createSongList();
         getSongList();
         buildRecyclerView(view);
@@ -87,9 +93,13 @@ public class SongListFragment extends Fragment {
         for (int i = 1; i <= numSelected; i++) {
             selectedGenres.add(sp.getString("genre" + String.valueOf(i), ""));
         }
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.apply();
 //        ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
 
         if (selectedGenres.size() == 0) {//no generes selected
+            Log.d(TAG, "getSongList: size 0");
             for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
                 if (!songList.contains(song)) {
@@ -97,6 +107,7 @@ public class SongListFragment extends Fragment {
                 }
             }
         } else {
+            Log.d(TAG, "getSongList: "+selectedGenres.size());
             for (int i = 0; i < selectedGenres.size(); i++) {
                 String genre = selectedGenres.get(i);
                 for (int j = 0; j < allSongsList.size(); j++) {

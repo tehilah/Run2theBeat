@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGray">#2A2E43</color>
-    <color name="recycler_view_item_swipe_right_background">#FF0000</color>
+    <color name="light_green_color">#547B8978</color>
+    <color name="dark_green_color">#7B8978</color>
+    <color name="clear_white_color">#4BFFFFFF</color>
 </resources>

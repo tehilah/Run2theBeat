@@ -9,4 +9,15 @@
         <item name="android:windowActionBarOverlay">true</item>
     </style>
 
+    <style name="activated" parent="AppTheme">
+        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+    </style>
+
+    <style name="CheckBoxTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#2DFFFFFF</item>
+        <item name="colorControlActivated">#7B8978</item>
+    </style>
+
+
+
 </resources>
