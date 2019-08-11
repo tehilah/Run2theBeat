@@ -32,7 +32,7 @@ public class SongListFragment extends Fragment {
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    public static MediaPlayer mediaPlayer = new MediaPlayer();
     private int currentlyPlayingPosition = 1;
     private TextView tv_artist;
 
