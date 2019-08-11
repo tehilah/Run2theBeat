@@ -123,6 +123,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
+                new SongListFragment()).commit();
         initVariables();
         getLocationPermission();
     }
@@ -158,8 +160,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                new SongListFragment()).commit();
+
+
 
     }
 
