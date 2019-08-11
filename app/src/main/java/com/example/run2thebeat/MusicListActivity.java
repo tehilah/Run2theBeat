@@ -115,13 +115,23 @@ public class MusicListActivity extends AppCompatActivity {
                 holder.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
 
                 view.setTag(holder);
+
+                holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CheckBox cb = (CheckBox) v;
+                        Genre genre = (Genre) cb.getTag();
+                        Toast.makeText(getApplicationContext(), "clicked on Checkbox: " + genre.getName(), Toast.LENGTH_SHORT).show();
+                        genre.setSelected(cb.isChecked());
+                    }
+                });
             } else
                 holder = (ViewHolder) view.getTag();
 
             Genre genre = genreList.get(i);
             holder.genreName.setText(genre.getName());
             holder.checkBox.setChecked(genre.getSelected());
-
+            holder.checkBox.setTag(genre);
 
             return view;
 
