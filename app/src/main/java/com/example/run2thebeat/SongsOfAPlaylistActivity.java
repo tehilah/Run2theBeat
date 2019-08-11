@@ -1,17 +1,12 @@
 package com.example.run2thebeat;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-
 import java.util.ArrayList;
 
 public class SongsOfAPlaylistActivity extends AppCompatActivity {
@@ -19,7 +14,10 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
     private SelectedPlaylistAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Song> playlist = new ArrayList<Song>();
+    private PlaylistItem playlistItem;
     private ImageButton backButton;
+    private String docName;
+    private String TAG = "SongsOfPlaylistActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +31,9 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        playlist  = (ArrayList<Song>)getIntent().getSerializableExtra("selectedPlaylist");
-        Log.d("TAG", "the playlist " +playlist);
+        playlistItem = (PlaylistItem)getIntent().getSerializableExtra("selectedPlaylist");
+        playlist  = playlistItem.mPlayList;
+        docName = getIntent().getStringExtra("docName");
         buildRecyclerView();
 
     }
@@ -47,13 +45,22 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
         mAdapter = new SelectedPlaylistAdapter(playlist);
         playlistsRecyclerView.setAdapter(mAdapter);
         playlistsRecyclerView.setLayoutManager(layoutManager);
+
         mAdapter.setOnDeleteClickListener(new SelectedPlaylistAdapter.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(int position) {
                 playlist.remove(position);
                 mAdapter.notifyItemRemoved(position);
+                playlistItem.setSongsList(playlist);
+                deleteSongFromFirebase();
 
             }
         });
+    }
+
+    public void deleteSongFromFirebase(){
+        ShowPlaylistsFragment.collectionPlaylistRef.document(docName).update("mPlayList",playlist);
+        ShowPlaylistsFragment.playlistItemMutableLiveData.postValue(playlistItem);
+
     }
 }

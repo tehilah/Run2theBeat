@@ -7,12 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +25,8 @@ import java.util.concurrent.Executors;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,14 +34,18 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ShowPlaylistsFragment extends Fragment {
     private String TAG  = "ShowPlaylistFragment";
     public ArrayList<PlaylistItem> playlistsList = new ArrayList<PlaylistItem>();
+    public ArrayList<String> namesOfDocs = new ArrayList<String>();
     private RecyclerView playlistsRecyclerView;
     private PlaylistAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private FirebaseAuth mAuth;
-    private CollectionReference collectionUserRef;
-    private CollectionReference collectionPlaylistRef;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static FirebaseAuth mAuth;
+    public static CollectionReference collectionUserRef;
+    public static CollectionReference collectionPlaylistRef;
+    public static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static FirebaseUser currentUser;
     private ExecutorService executor = Executors.newCachedThreadPool();
+    public static MutableLiveData<PlaylistItem> playlistItemMutableLiveData;
+
 
 
     @Override
@@ -48,7 +57,6 @@ public class ShowPlaylistsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
         getPlaylists(view);
-        buildRecyclerView(view);
 
     }
 
@@ -58,19 +66,30 @@ public class ShowPlaylistsFragment extends Fragment {
 //            executor.execute(new Runnable() {
 //                @Override
 //                public void run() {
+                    String docName ="";
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
                             PlaylistItem playlistItem = doc.toObject(PlaylistItem.class);
+                            docName = doc.getId();
+                            namesOfDocs.add(docName);
                             playlistsList.add(playlistItem);
                         }
+
+                        if(playlistsList.size() ==0){
+                            TextView textView = view.findViewById(R.id.no_saved_playlists);
+                            textView.setVisibility(View.VISIBLE);
+                        }
                         buildRecyclerView(view);
+
                     }
                     else{
                         Log.d("TAG", "Error getting Documents: ", task.getException());
                     }
 //                }
 //            });
+
         });
+        Log.d(TAG,"the size " +playlistsList.size());
     }
 
     public void buildRecyclerView(View v){
@@ -80,23 +99,30 @@ public class ShowPlaylistsFragment extends Fragment {
         mAdapter = new PlaylistAdapter(playlistsList);
         playlistsRecyclerView.setAdapter(mAdapter);
         playlistsRecyclerView.setLayoutManager(layoutManager);
+
         mAdapter.setOnItemClickListener(new PlaylistAdapter.OnItemClickListener() {
             final Intent intent = new Intent(getContext(),SongsOfAPlaylistActivity.class);
             @Override
             public void onItemClick(int position) {
-
-                intent.putExtra("selectedPlaylist",playlistsList.get(position).mPlayList);
+                playlistItemMutableLiveData = new MutableLiveData<PlaylistItem>();
+                intent.putExtra("selectedPlaylist",playlistsList.get(position));
+                intent.putExtra("docName", namesOfDocs.get(position));
                 startActivity(intent);
-
+                playlistItemMutableLiveData.observe(getViewLifecycleOwner(), new Observer<PlaylistItem>() {
+                    @Override
+                    public void onChanged(PlaylistItem playlistItem) {
+                        playlistsList.set(position,playlistItem);
+                    }
+                });
             }
         });
 
     }
 
 
-    private void initUser() {
+    public static void initUser() {
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             collectionUserRef = db.collection(currentUser.getUid());
             collectionPlaylistRef = collectionUserRef.document("Document playlist").collection("Playlists");
