@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class CountDownActivity extends AppCompatActivity {
 
-    CountDownTimer StartJapa_Timer;
+    CountDownTimer countDownTimer;
     TextView count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +18,10 @@ public class CountDownActivity extends AppCompatActivity {
         setContentView(R.layout.activity_count_down);
         count= findViewById(R.id.count);
         Intent intent = new Intent(getBaseContext(),MapsActivity.class);
-        StartJapa_Timer = new CountDownTimer(4000, 1000) {
+        countDownTimer = new CountDownTimer(4000, 1000) {
             @Override
             public void onFinish() {
+                countDownTimer.cancel();
                 startActivity(intent);
                 finish();
 
@@ -31,6 +32,6 @@ public class CountDownActivity extends AppCompatActivity {
                 count.setText(String.valueOf(millisUntilFinished/1000));
             }
         };
-        StartJapa_Timer.start();
+        countDownTimer.start();
     }
 }

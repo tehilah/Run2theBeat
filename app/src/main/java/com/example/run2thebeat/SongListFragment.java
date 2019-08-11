@@ -43,11 +43,11 @@ public class SongListFragment extends Fragment {
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
-    private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
-    private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3");
-    private static Song popNum3 = new Song(3, "Bananas", " static and benel", "pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
-    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3");
-    private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
+    private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "Pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
+    private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "Pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3");
+    private static Song popNum3 = new Song(3, "Bananas", " static and benel", "Pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
+    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "Country", "Carrie Underwood - Before He Cheats.mp3");
+    private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "Country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
 
 
     @Override
@@ -86,33 +86,23 @@ public class SongListFragment extends Fragment {
     public void getSongList() {
         //retrieve the audio file information
         songList.clear();
-        songList.add(new Song(000, "", "", "", "")); //currently playing song. set to nothing at first
-        SharedPreferences sp = getActivity().getSharedPreferences("myPref", 0);
-        ArrayList<String> selectedGenres = new ArrayList<>();
-        int numSelected = sp.getInt("num_selected", 0);
-        for (int i = 1; i <= numSelected; i++) {
-            selectedGenres.add(sp.getString("genre" + String.valueOf(i), ""));
-        }
-        SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.apply();
-//        ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("generes");
+        songList.add(new Song(000,"","","","")); //currently playing song. set to nothing at first
+        ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("genres");
 
-        if (selectedGenres.size() == 0) {//no generes selected
-            Log.d(TAG, "getSongList: size 0");
+        if(selectedGenres.size() ==0) {//no generes selected
             for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
                 if (!songList.contains(song)) {
                     songList.add(song);
                 }
             }
-        } else {
-            Log.d(TAG, "getSongList: "+selectedGenres.size());
+        }
+        else {
             for (int i = 0; i < selectedGenres.size(); i++) {
-                String genre = selectedGenres.get(i);
+                String genere = selectedGenres.get(i);
                 for (int j = 0; j < allSongsList.size(); j++) {
                     Song song = allSongsList.get(j);
-                    if (song.getGenre().equals(genre)) {
+                    if (song.getGenre().equals(genere)) {
                         if (!songList.contains(song)) {
                             songList.add(song);
                         }
@@ -122,9 +112,9 @@ public class SongListFragment extends Fragment {
             }
         }
 
-        if (songList.size() > 1) { //we set the first song in the list to be the first song from songList
+        if(songList.size()>1){ //we set the first song in the list to be the first song from songList
             //because we are going to play it right away
-            songList.set(0, songList.get(1));
+            songList.set(0,songList.get(1));
         }
 
         selectedPlaylist = songList;
@@ -199,17 +189,17 @@ public class SongListFragment extends Fragment {
             }
         });
 
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                mp.stop();
-//                mp.reset();
-//                if (position < songList.size() - 1) {
-//                    playSong(position + 1);
-//                }
-//
-//            }
-//        });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.reset();
+                if (position < songList.size() - 1) {
+                    playSong(position + 1);
+                }
+
+            }
+        });
 
     }
 
@@ -235,6 +225,9 @@ public class SongListFragment extends Fragment {
         }
 
     }
+
+
+    //todo: might be able to delete both these methods
 
     @Override
     public void onPause() {

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
@@ -23,6 +24,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -118,15 +120,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int sumBPM = 0;
     private int countBPM = 0; // save counter to calculate average bpm
     private double avgPace = 0;
+    private CountDownTimer countDownTimer;
+    private TextView count;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                new SongListFragment()).commit();
+        startCountDown();
         initVariables();
         getLocationPermission();
+    }
+
+    public void startCountDown(){
+        count= findViewById(R.id.count);
+        LinearLayout linearLayout = findViewById(R.id.countdown);
+        countDownTimer = new CountDownTimer(4000, 1000) {
+            @Override
+            public void onFinish() {
+                countDownTimer.cancel();
+                linearLayout.setVisibility(View.GONE);
+                findViewById(R.id.list_fragment).setBackgroundColor(Color.WHITE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
+                        new SongListFragment()).commit();
+                initChronometer();
+            }
+            @Override
+            public void onTick(long millisUntilFinished) {
+                count.setText(String.valueOf(millisUntilFinished/1000));
+            }
+        };
+        countDownTimer.start();
     }
 
     @Override
@@ -135,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         initUser();
         getDeviceLocation();
-        initChronometer();
+//        initChronometer();
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
@@ -160,11 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
-
-
-
     }
-
 
     private void updatePace() {
         long elapsedTime = SystemClock.elapsedRealtime() - chronometer.getBase();

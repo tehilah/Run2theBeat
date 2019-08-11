@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ public class MusicListActivity extends AppCompatActivity {
             "Jazz", "Rock", "Rap", "R&B & Soul"};
     MyCustomAdapter dataAdapter = null;
     public static final String PREFS_NAME = "MyPref";
+    private String TAG = "com.example.run2thebeat.MusicListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,26 +155,20 @@ public class MusicListActivity extends AppCompatActivity {
     public void checkStartRunClicked() {
 
         Button startRunButton = findViewById(R.id.start_run_button);
-        final Intent intent = new Intent(getBaseContext(), CountDownActivity.class);
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        final Intent intent = new Intent(this,MapsActivity.class);
         startRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int count = 0;
                 ArrayList<Genre> genreList = dataAdapter.genreList;
-//                ArrayList<String> selectedGenres = new ArrayList<String>();
-                for (int i = 0; i < genreList.size(); i++) {
+                ArrayList<String> selectedGenres = new ArrayList<String>();
+                for (int i=0; i<genreList.size(); i++){
                     Genre genre = genreList.get(i);
-                    if (genre.getSelected()) {
-                        count++;
-                        editor.putString("genre" + String.valueOf(count), genre.getName());
-//                        selectedGenres.add(genre.getName());
-                        editor.putInt("num_selected", count);
+                    Log.d(TAG, "onClick: "+genre.getSelected());
+                    if(genre.getSelected()){
+                        selectedGenres.add(genre.getName());
                     }
                 }
-                editor.apply();
-//                intent.putExtra("generes",selectedGenres);
+                intent.putExtra("genres",selectedGenres);
                 startActivity(intent);
             }
         });

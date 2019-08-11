@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,6 +15,29 @@
         android:layout_height="match_parent"
         android:background="@drawable/run_background_pause"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/countdown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="3"
+                android:textColor="#FFFF"
+                android:textSize="75sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/map_layout"
@@ -157,26 +179,26 @@
 
             <ImageButton
                 android:id="@+id/stop"
-                app:layout_constraintHorizontal_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="35dp"
                 android:background="#0000"
                 android:longClickable="true"
                 android:src="@drawable/stop"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintHorizontal_weight="0.5" />
 
 
             <ImageButton
                 android:id="@+id/play"
-                app:layout_constraintHorizontal_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
                 android:background="#0000"
                 android:onClick="startChronometer"
                 android:src="@drawable/play"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintHorizontal_weight="0.5" />
 
 
         </LinearLayout>
@@ -185,6 +207,7 @@
 
     <FrameLayout
         android:id="@+id/list_fragment"
+        android:background="#000"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center|bottom" />
