@@ -43,11 +43,11 @@ public class SongListFragment extends Fragment {
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
-    private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "Pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
-    private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "Pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3");
+    private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3");
+    private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3");
     private static Song popNum3 = new Song(3, "Bananas", " static and benel", "Pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3");
-    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "Country", "Carrie Underwood - Before He Cheats.mp3");
-    private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "Country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
+    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3");
+    private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3");
 
 
     @Override
