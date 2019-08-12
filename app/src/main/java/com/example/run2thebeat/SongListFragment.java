@@ -2,6 +2,7 @@ package com.example.run2thebeat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,6 +29,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 
 import static com.example.run2thebeat.MusicListActivity.PREFS_NAME;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
 
 public class SongListFragment extends Fragment {
 
@@ -40,6 +44,7 @@ public class SongListFragment extends Fragment {
     public static MediaPlayer mediaPlayer = new MediaPlayer();
     private int currentlyPlayingPosition = 1;
     private TextView tv_artist;
+    private int nextToPlay =0;
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -48,6 +53,8 @@ public class SongListFragment extends Fragment {
     private static Song popNum3 = new Song(3, "Bananas", " static and benel", "Pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3",124);
     private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3",148);
     private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3", 116);
+    private static Song popNum4 = new Song(6,"Counting Stars","OneRepublic","pop","OneRepublic - Counting Stars.mp3",122);
+    private static Song popNum5 = new Song(7,"Can't Hold Us","Macklemore","pop","Can't Hold Us - Macklemore .mp3",146);
 
 
     @Override
@@ -81,6 +88,9 @@ public class SongListFragment extends Fragment {
         allSongsList.add(popNum3);
         allSongsList.add(countryNum1);
         allSongsList.add(countryNum2);
+        allSongsList.add(popNum4);
+        allSongsList.add(popNum5);
+        Collections.sort(allSongsList);
     }
 
     public void getSongList() {
@@ -116,8 +126,6 @@ public class SongListFragment extends Fragment {
             //because we are going to play it right away
             songList.set(0,songList.get(1));
         }
-
-        selectedPlaylist = songList;
     }
 
 
@@ -145,6 +153,11 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
             public void onNextClick() {
+                int songLength = mediaPlayer.getDuration();
+                int howLong = mediaPlayer.getCurrentPosition();
+                if(howLong < songLength/2){
+                    selectedPlaylist.remove(selectedPlaylist.size()-1);
+                }
                 playSong(currentlyPlayingPosition + 1);
             }
         });
@@ -184,24 +197,36 @@ public class SongListFragment extends Fragment {
                     mediaPlayer.prepareAsync();
                     swapItem(position);
                     currentlyPlayingPosition = position;
+                    setMediaPlayerOnComplete(position);
+                    selectedPlaylist.add(song);
                 } catch (IOException o) {
                 }
             }
         });
 
+    }
+
+    public void setMediaPlayerOnComplete(int position){
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+
                 mp.stop();
                 mp.reset();
                 if (position < songList.size() - 1) {
-                    playSong(position + 1);
+                    if(nextToPlay != 0){
+                        playSong(nextToPlay);
+                        nextToPlay =0;
+                    }
+                    else {
+                        playSong(position + 1);
+                    }
                 }
 
             }
         });
-
     }
+
 
     public void swapItem(int position) {
         Song nowPlaying = songList.get(position);
@@ -252,4 +277,36 @@ public class SongListFragment extends Fragment {
             }
         });
     }
+    public void onBPMchange(int BPM){
+//        Song curSong = songList.get(currentlyPlayingPosition);
+//        int curSongBPM = curSong.getSongBPM();
+//        mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed((float) BPM / curSongBPM));
+
+
+        Song currentlyPlaying = songList.get(currentlyPlayingPosition);
+        if(currentlyPlaying.getSongBPM() < BPM){
+            for(int i = currentlyPlayingPosition+1;i<songList.size();i++){
+                int bpm = songList.get(i).getSongBPM();
+                if(bpm<= BPM+10 && bpm>=BPM-10){
+                    nextToPlay = i;
+                    Log.d(TAG, "the index to play "+ nextToPlay);
+                    break;
+                }
+            }
+        }
+
+        else{
+            for(int i = currentlyPlayingPosition-1;i>0;i--){
+                int bpm = songList.get(i).getSongBPM();
+                if(bpm<= BPM+10 && bpm>=BPM-10){
+                    nextToPlay = i;
+                    break;
+                }
+
+            }
+        }
+
+    }
+
+
 }
