@@ -6,6 +6,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
 import android.Manifest;
@@ -122,6 +124,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double avgPace = 0;
     private CountDownTimer countDownTimer;
     private TextView count;
+    private int changeMusicBPM = 0;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -422,6 +426,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateBPM() {
         if (stepsCounter > 0) {
             tv_bpm.setText(String.valueOf(stepsCounter));
+            if(Math.abs(changeMusicBPM - curBPM) >10){
+                SongListFragment.curBPMLiveData.postValue(curBPM);      //todo - new!!!!!
+                changeMusicBPM = curBPM;
+            }
             curBPM = stepsCounter;
             stepsCounter = 0;
             Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();

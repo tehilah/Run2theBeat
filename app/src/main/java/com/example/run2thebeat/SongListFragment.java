@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +47,7 @@ public class SongListFragment extends Fragment {
     private int currentlyPlayingPosition = 1;
     private TextView tv_artist;
     private int nextToPlay =0;
+    public static MutableLiveData<Integer> curBPMLiveData = new MutableLiveData<Integer>();
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -76,6 +79,12 @@ public class SongListFragment extends Fragment {
             public void onCompletion(MediaPlayer mp) {
                 mp.stop();
                 mp.reset();
+            }
+        });
+        curBPMLiveData.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                onBPMchange(integer);
             }
         });
 
