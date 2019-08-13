@@ -3,16 +3,13 @@ package com.example.run2thebeat;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,20 +17,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 
-import static com.example.run2thebeat.MusicListActivity.PREFS_NAME;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.FirebaseStorage;
 
 public class SongListFragment extends Fragment {
 
@@ -48,6 +39,8 @@ public class SongListFragment extends Fragment {
     private TextView tv_artist;
     private int nextToPlay =0;
     public static MutableLiveData<Integer> curBPMLiveData = new MutableLiveData<Integer>();
+    private Runnable runnable;
+    private Handler handler;
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -69,6 +62,7 @@ public class SongListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "getSongList: created");
+        handler = new Handler();
         createSongList();
         getSongList();
         buildRecyclerView(view);
@@ -118,10 +112,10 @@ public class SongListFragment extends Fragment {
         }
         else {
             for (int i = 0; i < selectedGenres.size(); i++) {
-                String genere = selectedGenres.get(i);
+                String genre = selectedGenres.get(i);
                 for (int j = 0; j < allSongsList.size(); j++) {
                     Song song = allSongsList.get(j);
-                    if (song.getGenre().equals(genere)) {
+                    if (song.getGenre().equals(genre)) {
                         if (!songList.contains(song)) {
                             songList.add(song);
                         }
@@ -203,6 +197,7 @@ public class SongListFragment extends Fragment {
                             mp.start();
                         }
                     });
+
                     mediaPlayer.prepareAsync();
                     swapItem(position);
                     currentlyPlayingPosition = position;
@@ -214,6 +209,7 @@ public class SongListFragment extends Fragment {
         });
 
     }
+
 
     public void setMediaPlayerOnComplete(int position){
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -266,13 +262,10 @@ public class SongListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.stop();
-                mp.release();
-            }
-        });
+        if(mediaPlayer !=null){
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     @Override

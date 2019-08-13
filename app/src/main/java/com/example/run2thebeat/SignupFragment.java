@@ -1,5 +1,6 @@
 package com.example.run2thebeat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -36,11 +37,11 @@ public class SignupFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
-        Button loginBtn = view.findViewById(R.id.btnLogin);
-        signupBtn = view.findViewById(R.id.button3);
-        email = view.findViewById(R.id.editText);
-        password = view.findViewById(R.id.editText2);
-        confirmPassword = view.findViewById(R.id.editText3);
+        Button loginBtn = view.findViewById(R.id.choice_sign_in);
+        signupBtn = view.findViewById(R.id.btn_sign_up);
+        email = view.findViewById(R.id.email);
+        password = view.findViewById(R.id.password);
+        confirmPassword = view.findViewById(R.id.confirm_password);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,11 +86,15 @@ public class SignupFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-//                            updateUI(user);
+                            Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
+                            intent.putExtra("user", user);
+                            startActivity(intent);
+                            getActivity().finish();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "createUserWithEmail:failure", task.getException());
-//                            updateUI(null);
+
                         }
                     }
                 });

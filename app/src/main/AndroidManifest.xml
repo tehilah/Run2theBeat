@@ -22,8 +22,7 @@
         <activity android:name=".CountDownActivity"></activity>
         <activity android:name=".SongsOfAPlaylistActivity"></activity>
         <activity android:name=".FinishRunScreenActivity" />
-        <activity android:name=".FinishRunActivity" />
-        <activity android:name=".RunningScreen" /> <!-- <activity android:name=".SongListFragment"></activity> -->
+        <!-- <activity android:name=".SongListFragment"></activity> -->
         <activity android:name=".RunDetailsActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

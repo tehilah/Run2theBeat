@@ -48,6 +48,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     public void setOnPreviousClickListener(OnPrviousClickListener listener){mPreviousListener = listener;}
 
 
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -68,7 +69,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             artist.setSelected(true);
 //            artist.setMovementMethod(new ScrollingMovementMethod());
             pausePlayButton = item.findViewById(R.id.play_pause);
-            nextButton = item.findViewById(R.id.next_song);
             nextButton = item.findViewById(R.id.next_song);
             previousButton = item.findViewById(R.id.previous_song);
             item.setOnClickListener(new View.OnClickListener() {

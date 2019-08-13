@@ -39,10 +39,10 @@ public class LoginFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        Button signupBtn = view.findViewById(R.id.btnSignup);
-        loginBtn = view.findViewById(R.id.button3);
-        email = view.findViewById(R.id.editText);
-        password = view.findViewById(R.id.editText2);
+        Button signupBtn = view.findViewById(R.id.choice_sign_up);
+        loginBtn = view.findViewById(R.id.btn_sign_in);
+        email = view.findViewById(R.id.email);
+        password = view.findViewById(R.id.password);
 
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
 
     private void login() {
         mAuth = FirebaseAuth.getInstance();
-        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+        mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString())
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
