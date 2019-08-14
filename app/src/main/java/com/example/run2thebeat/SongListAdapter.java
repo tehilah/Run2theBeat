@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -56,6 +57,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         // each data item is just a string in this case
         public TextView songName;
         public TextView artist;
+        public ImageView songCover;
         public ImageButton pausePlayButton;
         public ImageButton nextButton;
         public ImageButton previousButton;
@@ -67,6 +69,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             songName.setSelected(true);
             artist = item.findViewById(R.id.song_artist);
             artist.setSelected(true);
+            songCover = item.findViewById(R.id.song_cover);
 //            artist.setMovementMethod(new ScrollingMovementMethod());
             pausePlayButton = item.findViewById(R.id.play_pause);
             nextButton = item.findViewById(R.id.next_song);
@@ -154,7 +157,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         Song songItem = songList.get(position);
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
-
+        if(holder.songCover != null){
+            holder.songCover.setImageResource(songItem.getSongCover());
+        }
 }
 
 

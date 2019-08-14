@@ -1,5 +1,7 @@
 package com.example.run2thebeat;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 
 public class Song implements Serializable ,Comparable<Song>{
@@ -10,15 +12,18 @@ public class Song implements Serializable ,Comparable<Song>{
     private String genre;
     private String fullName;
     private int songBPM;
+    private int songCover;
+
     public Song(){}
 
-    public Song(long songID, String songTitle, String songArtist, String songGenre, String songfullName, int BPM) {
+    public Song(long songID, String songTitle, String songArtist, String songGenre, String songfullName, int BPM, int photo) {
         id=songID;
         title=songTitle;
         artist=songArtist;
         genre = songGenre;
         fullName = songfullName;
         songBPM = BPM;
+        songCover = photo;
 
     }
 
@@ -41,5 +46,13 @@ public class Song implements Serializable ,Comparable<Song>{
     @Override
     public int compareTo(Song o) {
         return (songBPM -o.songBPM);
+    }
+
+    public int getSongCover() {
+        return songCover;
+    }
+
+    public void setSongCover(int songCover) {
+        this.songCover = songCover;
     }
 }

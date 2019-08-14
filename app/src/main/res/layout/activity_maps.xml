@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoPanelHeight="68dp"
+    sothree:umanoPanelHeight="75dp"
     sothree:umanoShadowHeight="4dp">
 
     <LinearLayout
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/run_background_pause"
+        android:background="@drawable/run_background2"
         android:orientation="vertical">
 
         <LinearLayout
@@ -22,6 +22,7 @@
             android:layout_height="match_parent"
             android:background="#000"
             android:visibility="visible">
+            <!--fjkdlsnflks-->
 
             <TextView
                 android:id="@+id/count"
@@ -52,6 +53,15 @@
                 android:layout_height="match_parent" />
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/location_btn"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="openMap"
+            android:src="@drawable/ic_location_24dp"
+            android:background="@drawable/location_btn_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -117,6 +127,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -171,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                android:background="#0000"
+                android:background="?android:attr/selectableItemBackground"
                 android:onClick="pauseChronometer"
                 android:src="@drawable/pause"
                 android:visibility="visible" />
@@ -207,9 +218,9 @@
 
     <FrameLayout
         android:id="@+id/list_fragment"
-        android:background="#000"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000"
         android:gravity="center|bottom" />
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

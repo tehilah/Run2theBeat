@@ -76,8 +76,8 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
 
     private void loadSavedRoute(final GoogleMap googleMap) {
         ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
-        convertPointToLatlng(points);
-        drawPolyline(googleMap);
+        latLngs = convertPointToLatlng(points);
+        drawPolyline(googleMap, latLngs);
         moveCamera(latLngs.get(0), 17f, googleMap);
     }
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
@@ -85,7 +85,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
     }
 
 
-    private void drawPolyline(GoogleMap googleMap) {
+    public static void drawPolyline(GoogleMap googleMap, ArrayList<LatLng> latLngs) {
         PolylineOptions rectLine = new PolylineOptions().width(20)
                 .color(Color.parseColor("#035aff"))
                 .addAll(latLngs);
@@ -93,11 +93,12 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
 
     }
 
-    private void convertPointToLatlng(ArrayList<Point> points) {
-        latLngs = new ArrayList<>();
+    public static ArrayList<LatLng> convertPointToLatlng(ArrayList<Point> points) {
+        ArrayList<LatLng> latLngs = new ArrayList<>();
         for (Point point : points) {
             latLngs.add(new LatLng(point.getLatitude(), point.getLongitude()));
         }
+        return latLngs;
     }
 
     public void buildRecyclerView(){

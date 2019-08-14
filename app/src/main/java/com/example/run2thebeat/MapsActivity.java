@@ -4,14 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
-
 import android.Manifest;
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -33,18 +27,15 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.ParseException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -55,17 +46,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.maps.android.SphericalUtil;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,7 +111,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double avgPace = 0;
     private CountDownTimer countDownTimer;
     private TextView count;
+    private ImageButton locationBtn; // todo: im here
     private int changeMusicBPM = 0;
+    private boolean isMapOpen = false;
+    private LinearLayout mapLinearLayout;
+
 
 
     @Override
@@ -139,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void startCountDown(){
         count= findViewById(R.id.count);
         LinearLayout linearLayout = findViewById(R.id.countdown);
-        countDownTimer = new CountDownTimer(4000, 1000) {
+        countDownTimer = new CountDownTimer(3000, 1000) {
             @Override
             public void onFinish() {
                 countDownTimer.cancel();
@@ -198,6 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void initVariables() {
+        locationBtn = findViewById(R.id.location_btn);
         db = FirebaseFirestore.getInstance();
         executor = Executors.newCachedThreadPool();
         df = new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.getDefault());
@@ -305,7 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean updateDistance(LatLng location) {
         double curDist = SphericalUtil.computeDistanceBetween(lastLocation, location);
-        if (Math.abs(curDist - prevDist) >= 0.1) {
+        if (Math.abs(curDist - prevDist) >= 2) {
             distance += curDist;
             Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
             previewDist.setText(FormatDateTimeDist.getDist(distance));
@@ -533,6 +525,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         tv_avg_pace.setTextColor(Color.WHITE);
         chronometer.setTextColor(Color.WHITE);
         previewDist.setTextColor(Color.WHITE);
+        locationBtn.setVisibility(View.INVISIBLE);
         startBlinkingAnimation();
     }
 
@@ -548,7 +541,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stop.setVisibility(View.GONE);
         view.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        layout.setBackgroundResource(R.drawable.run_background_pause);
+        locationBtn.setVisibility(View.VISIBLE);
+        layout.setBackgroundResource(R.drawable.run_background2);
         avg_pace_icon.setImageResource(R.drawable.chronometer);
         elapsed_time_icon.setImageResource(R.drawable.elapsed_time);
     }
@@ -573,6 +567,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return animator;
     }
 
+    public void openMap(View view) {
+        isMapOpen = true;
+        mapLinearLayout = findViewById(R.id.map_layout);
+        mapLinearLayout.setVisibility(View.VISIBLE);
+        ArrayList<LatLng> latLngs = FinishRunScreenActivity.convertPointToLatlng(allPoints);
+        FinishRunScreenActivity.drawPolyline(mMap, latLngs);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isMapOpen){
+            mapLinearLayout.setVisibility(View.GONE);
+            mMap.clear();
+            isMapOpen = false;
+        }
+        else{
+            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+            super.onBackPressed();
+        }
+
+    }
 }
 
 

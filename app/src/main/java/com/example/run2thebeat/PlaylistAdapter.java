@@ -34,7 +34,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
             super(item);
             playlistImage = item.findViewById(R.id.image_of_playlist);
             avg_bpm = item.findViewById(R.id.avg_bpm);
-            km = item.findViewById(R.id.km);
+            km = item.findViewById(R.id.distance);
+
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

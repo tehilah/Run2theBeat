@@ -8,8 +8,6 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
-import com.google.type.Date;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,8 +38,10 @@ public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, Prog
         DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
         holder.mImageView.setImageResource(currentItem.getImageResource());
-        holder.mTextView1.setText(currentItem.getDateDescription());
-        holder.mTextView2.setText(df.format(currentItem.getDate()));
+        holder.title.setText(currentItem.getDateDescription());
+        holder.date.setText(df.format(currentItem.getDate()));
+        holder.km.setText(currentItem.getDistance());
+        holder.avgTime.setText(currentItem.getAvgPace());
     }
 
     @NonNull
@@ -57,14 +57,20 @@ public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, Prog
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
-        public TextView mTextView1;
-        public TextView mTextView2;
+        public TextView title;
+        public TextView date;
+        public TextView km;
+        public TextView avgTime;
+
 
         public MyViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.image);
-            mTextView1 = itemView.findViewById(R.id.top_text);
-            mTextView2 = itemView.findViewById(R.id.bottom_text);
+            title = itemView.findViewById(R.id.title);
+            date = itemView.findViewById(R.id.date);
+            km = itemView.findViewById(R.id.bottom_text_km);
+            avgTime = itemView.findViewById(R.id.bottom_text_time);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

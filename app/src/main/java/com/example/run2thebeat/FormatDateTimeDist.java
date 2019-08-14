@@ -61,6 +61,6 @@ public class FormatDateTimeDist {
     public static String getAvgPace(double minutes){
         int seconds = (int) ((minutes % 1) * 60);
         int min = (int) minutes;
-        return String.format(Locale.getDefault(), "%d.%02d",min, seconds);
+        return String.format(Locale.getDefault(), "%d'%02d''",min, seconds);
     }
 }

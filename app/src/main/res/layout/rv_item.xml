@@ -1,41 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="5dp"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    android:background="@color/clear_white_color"
+    app:cardCornerRadius="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp">
-        
+        android:layout_margin="4dp"
+        android:gravity="center|start"
+        android:backgroundTint="@color/clear_white_color">
+
         <ImageView
             android:id="@+id/image"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:padding="2dp"/>
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/trophy" />
 
         <TextView
-            android:id="@+id/top_text"
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/image"
+            android:text="14.08.2019"
+            android:textColor="#ADA996"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/image"
+            android:layout_below="@id/date"
             android:text="Saturday night run"
+            android:textColor="#6D6027"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/image"/>
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/bottom_text"
+            android:id="@+id/bottom_text_km"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5.00 km"
-            android:textSize="15sp"
-            android:layout_below="@id/top_text"
-            android:layout_toEndOf="@+id/image"/>
+            android:layout_below="@id/title"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/image"
+            android:text="5.00 distance"
+            android:textColor="#ADA996"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bottom_text_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/bottom_text_km"
+            android:text="6'39'' distance"
+            android:textColor="#ADA996"
+            android:textSize="15sp" />
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

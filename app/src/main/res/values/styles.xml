@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+        <!--<item name="colorControlHighlight">@color/colorAccent</item>-->
     </style>
 
     <style name="activated" parent="AppTheme">
