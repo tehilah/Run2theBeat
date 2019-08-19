@@ -4,17 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#2A2E43">
+    android:background="@drawable/gradient_bg3">
 
     <TextView
         android:id="@+id/choose_existing_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
         android:text="Choose Existing Playlist"
-        android:textColor="#AA7A33"
+        android:textColor="@color/purple"
         android:textSize="25sp"
+        android:textStyle="bold"
+        android:shadowColor="#000"
+        android:shadowDx="-2"
+        android:shadowDy="-2"
+        android:shadowRadius="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -23,7 +28,7 @@
         android:id="@+id/saved_playlists_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/choose_existing_playlist"

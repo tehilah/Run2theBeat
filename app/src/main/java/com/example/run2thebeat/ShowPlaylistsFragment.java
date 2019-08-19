@@ -1,5 +1,6 @@
 package com.example.run2thebeat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class ShowPlaylistsFragment extends Fragment {
     public static FirebaseUser currentUser;
     private ExecutorService executor = Executors.newCachedThreadPool();
     public static MutableLiveData<PlaylistItem> playlistItemMutableLiveData;
+    private Context mContext;
 
 
 
@@ -101,7 +103,8 @@ public class ShowPlaylistsFragment extends Fragment {
         playlistsRecyclerView.setLayoutManager(layoutManager);
 
         mAdapter.setOnItemClickListener(new PlaylistAdapter.OnItemClickListener() {
-            final Intent intent = new Intent(getContext(),SongsOfAPlaylistActivity.class);
+            Context c = getContext();
+            final Intent intent = new Intent(mContext,SongsOfAPlaylistActivity.class);
             @Override
             public void onItemClick(int position) {
                 playlistItemMutableLiveData = new MutableLiveData<PlaylistItem>();
@@ -127,6 +130,12 @@ public class ShowPlaylistsFragment extends Fragment {
             collectionUserRef = db.collection(currentUser.getUid());
             collectionPlaylistRef = collectionUserRef.document("Document playlist").collection("Playlists");
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
 }

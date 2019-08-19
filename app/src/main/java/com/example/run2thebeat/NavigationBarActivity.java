@@ -16,7 +16,7 @@ public class NavigationBarActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
-
+        bottomNavigation.setSelectedItemId(R.id.nav_run);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new RunFragment()).commit();
     }

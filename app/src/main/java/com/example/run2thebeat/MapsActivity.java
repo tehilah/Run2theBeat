@@ -560,15 +560,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         play.setVisibility(View.VISIBLE);
         stop.setVisibility(View.VISIBLE);
         view.setVisibility(View.GONE);
-        layout.setBackgroundResource(R.drawable.run_background_play);
-        avg_pace_icon.setImageResource(R.drawable.chronometer_white);
-        elapsed_time_icon.setImageResource(R.drawable.elapsed_time_white);
-        bpm_title.setTextColor(Color.WHITE);
-        distance_title.setTextColor(Color.WHITE);
-        tv_bpm.setTextColor(Color.WHITE);
-        tv_avg_pace.setTextColor(Color.WHITE);
-        chronometer.setTextColor(Color.WHITE);
-        previewDist.setTextColor(Color.WHITE);
         locationBtn.setVisibility(View.INVISIBLE);
         startBlinkingAnimation();
     }
@@ -577,17 +568,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void play(View view) {
         animatorSet.end();
         updateLocation();
-        bpm_title.setTextColor(oldColor);
-        distance_title.setTextColor(oldColor);
-        tv_bpm.setTextColor(oldColor);
-        tv_avg_pace.setTextColor(oldColor);
-        chronometer.setTextColor(oldColor);
-        previewDist.setTextColor(oldColor);
         stop.setVisibility(View.GONE);
         view.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
         locationBtn.setVisibility(View.VISIBLE);
-        layout.setBackgroundResource(R.drawable.run_background2);
+//        layout.setBackgroundResource(R.drawable.run_background2);
         avg_pace_icon.setImageResource(R.drawable.chronometer);
         elapsed_time_icon.setImageResource(R.drawable.elapsed_time);
     }

@@ -17,7 +17,7 @@
 
     <style name="CheckBoxTheme" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">#2DFFFFFF</item>
-        <item name="colorControlActivated">#7B8978</item>
+        <item name="colorControlActivated">#2CCB87DB</item>
     </style>
     
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">

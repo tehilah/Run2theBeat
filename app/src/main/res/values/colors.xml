@@ -12,6 +12,7 @@
     <color name="darkwhite">#ffeeeeee</color>
     <color name="purple">#C840E9</color>
     <color name="transparent">#00ffffff</color>
+    <color name="light_purple">#2CCB87DB</color>
     <color name="semitransparent">#88000000</color>
 </resources>
 

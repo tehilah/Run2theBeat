@@ -5,7 +5,7 @@
     android:background="?android:attr/selectableItemBackground">
 
     <solid
-        android:color="#FFB900">
+        android:color="@color/white">
     </solid>
 
     <corners
@@ -15,4 +15,3 @@
         android:topRightRadius="30dp">
     </corners>
 </shape>
-    <!--C840E9-->

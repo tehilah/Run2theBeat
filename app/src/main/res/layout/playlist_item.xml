@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="150dp"
+    android:layout_height="180dp"
+    android:layout_margin="5dp"
+    android:layout_marginTop="10dp"
+    android:background="#353A50"
+    android:elevation="10dp"
+    app:cardCornerRadius="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#20222C"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/image_of_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="110dp"
+            android:background="@color/white"
+            android:maxWidth="110dp"
+            android:maxHeight="200dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/playlist1" />
+
+        <TextView
+            android:id="@+id/avg_bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:text="My Playlist"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="10 km"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

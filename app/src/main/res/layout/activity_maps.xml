@@ -13,7 +13,7 @@
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/run_background2"
+        android:background="@drawable/gradient_bg_run"
         android:orientation="vertical">
 
         <LinearLayout
@@ -21,8 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#000"
-            android:visibility="visible">
-            <!--fjkdlsnflks-->
+            android:visibility="gone">
+            <!--todo: make visible-->
 
             <TextView
                 android:id="@+id/count"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/impact"
                 android:text="0.00"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="94sp" />
 
             <TextView
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/impact"
                 android:text="KILOMETERS"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.33"
                 android:gravity="center"
-                android:src="@drawable/chronometer" />
+                android:src="@drawable/chronometer_white" />
 
             <TextView
                 android:id="@+id/bpm_title"
@@ -110,7 +110,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:text="BPM"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <ImageView
@@ -119,7 +119,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.33"
                 android:gravity="center"
-                android:src="@drawable/elapsed_time" />
+                android:src="@drawable/elapsed_time_white" />
 
 
         </LinearLayout>
@@ -138,7 +138,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:text="0"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
@@ -152,7 +152,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:text="0"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
@@ -164,7 +164,7 @@
                 android:layout_weight="0.333333"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
-                android:textColor="#2A2E43"
+                android:textColor="@color/white"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 

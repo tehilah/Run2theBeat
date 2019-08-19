@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_bg3"
     tools:context=".ShowPlaylistsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,13 +15,13 @@
         android:id="@+id/no_saved_playlists"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text="No saved Playlists"
-        android:textColor="#AA7A33"
-        android:textSize="25sp"
-        android:visibility="invisible"/>
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:visibility="gone"/>
         <!--app:layout_constraintLeft_toLeftOf="parent"-->
         <!--app:layout_constraintTop_toBottomOf="@+id/choose_existing_playlist"-->
 
