@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -33,14 +34,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.ParseException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -53,6 +60,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,20 +123,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int changeMusicBPM = 0;
     private boolean isMapOpen = false;
     private LinearLayout mapLinearLayout;
-
+    private boolean mRequestingLocationUpdates = false;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        updateValuesFromBundle(savedInstanceState);
         startCountDown();
         initVariables();
         getLocationPermission();
     }
 
-    public void startCountDown(){
-        count= findViewById(R.id.count);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("REQUESTING_LOCATION_UPDATES_KEY",
+                mRequestingLocationUpdates);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        // Update the value of requestingLocationUpdates from the Bundle.
+        if (savedInstanceState.keySet().contains("REQUESTING_LOCATION_UPDATES_KEY")) {
+            mRequestingLocationUpdates = savedInstanceState.getBoolean(
+                    "REQUESTING_LOCATION_UPDATES_KEY");
+        }
+    }
+
+    public void startCountDown() {
+        count = findViewById(R.id.count);
         LinearLayout linearLayout = findViewById(R.id.countdown);
         countDownTimer = new CountDownTimer(3000, 1000) {
             @Override
@@ -140,9 +167,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new SongListFragment()).commit();
                 initChronometer();
             }
+
             @Override
             public void onTick(long millisUntilFinished) {
-                count.setText(String.valueOf(millisUntilFinished/1000));
+                count.setText(String.valueOf(millisUntilFinished / 1000));
             }
         };
         countDownTimer.start();
@@ -154,7 +182,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         initUser();
         getDeviceLocation();
-//        initChronometer();
+        initLocationCallback();
+
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
@@ -179,6 +208,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
+    }
+
+    private void initLocationCallback() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                LatLng newLocation = new LatLng(locationResult.getLastLocation().getLatitude(),
+                        locationResult.getLastLocation().getLongitude());
+                Log.d(TAG, "onLocationResult: \n " +
+                        "lat: " + locationResult.getLastLocation().getLatitude() + "\n" +
+                        "long: " + locationResult.getLastLocation().getLongitude());
+
+                if (mTimerRunning && updateDistance(newLocation)) {
+                    // if location really changed
+                    lastLocation = newLocation;
+                    savePoint(newLocation);
+                    updatePace();
+                }
+            }
+        };
     }
 
     private void updatePace() {
@@ -214,44 +264,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateLocation() {
-        locationRequest = new LocationRequest();
+        locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setFastestInterval(2000) // 2 seconds
                 .setInterval(5000); // 5 seconds
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                LatLng newLocation = new LatLng(locationResult.getLastLocation().getLatitude(),
-                        locationResult.getLastLocation().getLongitude());
-                Log.d(TAG, "onLocationResult: \n " +
-                        "lat: " + locationResult.getLastLocation().getLatitude() + "\n" +
-                        "long: " + locationResult.getLastLocation().getLongitude());
 
-                if (mTimerRunning) {
-                    if (updateDistance(newLocation)) { // if location really changed
-                        lastLocation = newLocation;
-                        savePoint(newLocation);
-                        updatePace();
-                    }
-                }
-            }
-        };
+        if (mFusedLocationProviderClient == null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        }
+        startLocationUpdates();
+        mRequestingLocationUpdates = true;
+    }
+
+    private void startLocationUpdates() {
         if (mFusedLocationProviderClient == null) {
             mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         }
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, getMainLooper());
-
     }
-//
-//    private void drawPolyline(LatLng newLocation) {
-//        PolylineOptions rectLine = new PolylineOptions().width(40).color(Color.BLUE).add(lastLocation, newLocation);
-//        mMap.addPolyline(rectLine);
-//        Log.d(TAG, "drawPolyline: added line");
-//    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+    }
+
 
     private void initUser() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -263,7 +301,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getDeviceLocation() {
-
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
@@ -278,10 +315,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (currentLocation != null) {
                                 LatLng loc = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                                 lastLocation = loc;
+                                Log.d(TAG, "lastLocation: lat:" + loc.latitude + " long:" + loc.longitude);
                                 moveCamera(loc,
                                         DEFAULT_ZOOM);
                                 savePoint(loc);
                             } else {
+                                Toast.makeText(MapsActivity.this, "Your last known location could not be retrieved. Try going into google maps and then coming back", Toast.LENGTH_LONG).show();
                                 Log.d(TAG, "onComplete: location is null");
                             }
                         } else {
@@ -297,8 +336,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean updateDistance(LatLng location) {
         double curDist = SphericalUtil.computeDistanceBetween(lastLocation, location);
-        if (Math.abs(curDist - prevDist) >= 2) {
+        if (curDist >= 10) {
             distance += curDist;
+//            prevDist = curDist;
             Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
             previewDist.setText(FormatDateTimeDist.getDist(distance));
             return true;
@@ -388,9 +428,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             sensorManager.unregisterListener(this, countSensor);
         }
         // todo: figure out why this crashes the app
-//        if (mFusedLocationProviderClient != null) {
-//            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-//        }
+        stopLocationUpdates();
+        mRequestingLocationUpdates = false;
     }
 
     private void savePoint(LatLng point) {
@@ -418,7 +457,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateBPM() {
         if (stepsCounter > 0) {
             tv_bpm.setText(String.valueOf(stepsCounter));
-            if(Math.abs(changeMusicBPM - curBPM) >10){
+            if (Math.abs(changeMusicBPM - curBPM) > 10) {
                 SongListFragment.curBPMLiveData.postValue(curBPM);      //todo - new!!!!!
                 changeMusicBPM = curBPM;
             }
@@ -436,6 +475,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             mTimerRunning = false;
+            stopLocationUpdates();
+            mRequestingLocationUpdates = false;
         }
         pause(v);
     }
@@ -447,7 +488,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final String duration = FormatDateTimeDist.getTime(pauseOffset);
         final String dist = FormatDateTimeDist.getDist(distance);
         final String title = FormatDateTimeDist.getTimeOfDay();
-        final String avg_pace =   tv_avg_pace.getText().toString();
+        final String avg_pace = tv_avg_pace.getText().toString();
         final int avgBpm = countBPM == 0 ? 0 : sumBPM / countBPM; // check in case the user did not move and he tries to save the map. we avoid dividing by zero
         executor.execute(new Runnable() {
             @Override
@@ -466,10 +507,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         intent.putExtra("DURATION", duration);
         intent.putExtra("KM", dist);
         intent.putExtra("AVG_BPM", avgBpm);
-        Log.d(TAG, "avgBPM: "+avgBpm);
+        Log.d(TAG, "avgBPM: " + avgBpm);
         intent.putExtra("TITLE", title);
-        intent.putExtra("SELECTED_PLAYLIST",SongListFragment.selectedPlaylist);
-        intent.putParcelableArrayListExtra("POINTS",allPoints);
+        intent.putExtra("SELECTED_PLAYLIST", SongListFragment.selectedPlaylist);
+        intent.putParcelableArrayListExtra("POINTS", allPoints);
         SongListFragment.mediaPlayer.stop();
         SongListFragment.mediaPlayer.reset();
         startActivity(intent);
@@ -481,6 +522,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         Log.d(TAG, "Method: onResume");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
         countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (countSensor != null) {
             sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -532,6 +576,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void play(View view) {
         animatorSet.end();
+        updateLocation();
         bpm_title.setTextColor(oldColor);
         distance_title.setTextColor(oldColor);
         tv_bpm.setTextColor(oldColor);
@@ -577,17 +622,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (isMapOpen){
+        if (isMapOpen) {
             mapLinearLayout.setVisibility(View.GONE);
             mMap.clear();
             isMapOpen = false;
-        }
-        else{
-            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        } else {
+            stopLocationUpdates();
+            mRequestingLocationUpdates = false;
             super.onBackPressed();
         }
 
     }
+
+
 }
 
 

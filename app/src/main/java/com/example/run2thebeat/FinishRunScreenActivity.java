@@ -78,7 +78,9 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
         latLngs = convertPointToLatlng(points);
         drawPolyline(googleMap, latLngs);
-        moveCamera(latLngs.get(0), 17f, googleMap);
+        if(latLngs.size() > 0){
+            moveCamera(latLngs.get(0), 17f, googleMap);
+        }
     }
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));

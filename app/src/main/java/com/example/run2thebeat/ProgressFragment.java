@@ -18,6 +18,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -84,7 +90,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 new RecyclerViewSwipeDecorator.Builder(getContext(), c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_green_color))
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorRed))
                         .addSwipeRightActionIcon(R.drawable.delete_white)
                         .addSwipeRightLabel(getString(R.string.action_delete))
                         .setSwipeRightLabelColor(Color.WHITE)
@@ -107,6 +113,11 @@ public class ProgressFragment extends Fragment {
                 bundle.putString("DISTANCE", route.getDistance());
                 bundle.putInt("AVG_BPM", route.getAvgBPM());
                 bundle.putString("AVG_PACE", route.getAvgPace());
+                bundle.putString("DOC_REF", ds.getReference().getPath());
+                DateFormat df = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+                bundle.putString("DATE", df.format(route.getDate()));
+
 //                i.putExtra("DURATION", route.getDuration());
                 i.putExtras(bundle);
                 startActivity(i);

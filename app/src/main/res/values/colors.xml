@@ -5,10 +5,12 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorGray">#2A2E43</color>
     <color name="light_green_color">#547B8978</color>
+    <color name="colorRed">#B71C1C</color>
     <color name="dark_green_color">#7B8978</color>
     <color name="clear_white_color">#4BFFFFFF</color>
     <color name="white">#ffffffff</color>
     <color name="darkwhite">#ffeeeeee</color>
+    <color name="purple">#C840E9</color>
     <color name="transparent">#00ffffff</color>
     <color name="semitransparent">#88000000</color>
 </resources>

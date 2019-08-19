@@ -12,7 +12,6 @@ public class SavedRunItem {
 
 
     public SavedRunItem() {
-
     }
 
     public SavedRunItem(int imageResource, String text1, Date text2, String kilometers, String avg_time) {
@@ -26,10 +25,9 @@ public class SavedRunItem {
     }
 
     public int getImageResource() {
-        if (Double.parseDouble(distance) >= 0.17) {
+        if (Double.parseDouble(distance) >= 0.17) { // todo: change this to 5 km
             return R.drawable.trophy;
-        }
-        else{
+        } else {
             return R.drawable.medal;
         }
     }

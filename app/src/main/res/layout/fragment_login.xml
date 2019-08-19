@@ -83,6 +83,8 @@
         android:drawableStart="@drawable/ic_email_black_24dp"
         android:drawablePadding="10dp"
         android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:singleLine="true"
         android:textColor="#FFFF"
         android:textColorHint="#B2FFFFFF" />
 
@@ -95,6 +97,8 @@
         android:drawableStart="@drawable/ic_lock_white_24dp"
         android:drawablePadding="10dp"
         android:hint="Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
         android:textColor="#FFFF"
         android:textColorHint="#B2FFFFFF" />
 
