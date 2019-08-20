@@ -155,7 +155,7 @@ public class MusicListActivity extends AppCompatActivity {
     public void checkStartRunClicked() {
 
         Button startRunButton = findViewById(R.id.start_run_button);
-        final Intent intent = new Intent(this,MapsActivity.class);
+        final Intent intent = new Intent(this,RunActivity.class);
         startRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
