@@ -132,7 +132,7 @@ public class ShowPlaylistsFragment extends Fragment {
     }
 
     public void getDialog(int position) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
         alertDialogBuilder
                 .setMessage(CONFIRM_DELETE)
                 .setCancelable(false)

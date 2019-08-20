@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.animation.AnimatorSet;
@@ -45,7 +47,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -106,9 +107,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private FrameLayout mapLayout;
     private ImageButton locationBtn; // todo: im here
     private int changeMusicBPM = 0;
-    private boolean isMapOpen = false;
-    private LinearLayout mapLinearLayout;
     private boolean mRequestingLocationUpdates = false;
+    private  FragmentTransaction fragmentTransaction;
 
 
     @Override
@@ -116,6 +116,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         updateValuesFromBundle(savedInstanceState);
+        fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
+                new SongListFragment());
         startCountDown();
         initVariables();
         getLocationPermission();
@@ -163,19 +165,21 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     public void startCountDown() {
         count = findViewById(R.id.count);
         LinearLayout linearLayout = findViewById(R.id.countdown);
-        countDownTimer = new CountDownTimer(3000, 1000) {
+        countDownTimer = new CountDownTimer(4000, 1000) {
             @Override
             public void onFinish() {
                 countDownTimer.cancel();
                 linearLayout.setVisibility(View.GONE);
                 findViewById(R.id.list_fragment).setBackgroundColor(Color.WHITE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                        new SongListFragment()).commit();
+                fragmentTransaction.commit();
                 initChronometer();
             }
 
             @Override
             public void onTick(long millisUntilFinished) {
+                if(millisUntilFinished <= 1000) {
+                    onFinish();
+                }
                 count.setText(String.valueOf(millisUntilFinished / 1000));
             }
         };
@@ -358,25 +362,6 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         return false;
     }
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//
-//    }
-//
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderEnabled(String provider) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String provider) {
-//
-//    }
 
     @Override
     public void onPause() {

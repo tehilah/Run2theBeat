@@ -32,16 +32,16 @@ import com.google.firebase.storage.FirebaseStorage;
 public class SongListFragment extends Fragment {
 
     private String TAG = "SongListFragment";
-    public ArrayList<Song> songList = new ArrayList<>();
-    public static ArrayList<Song> selectedPlaylist = new ArrayList<>();
+    public ArrayList<Song> songList;
+    public static ArrayList<Song> selectedPlaylist;
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    public static MediaPlayer mediaPlayer = new MediaPlayer();
+    public static MediaPlayer mediaPlayer;
     private int currentlyPlayingPosition = 1;
     private TextView tv_artist;
     private int nextToPlay = 0;
-    public static MutableLiveData<Integer> curBPMLiveData = new MutableLiveData<Integer>();
+    public static MutableLiveData<Integer> curBPMLiveData;
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -63,6 +63,10 @@ public class SongListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "getSongList: created");
+        selectedPlaylist = new ArrayList<>();
+        curBPMLiveData = new MutableLiveData<Integer>();
+        songList = new ArrayList<>();
+        mediaPlayer = new MediaPlayer();
         createSongList();
         getSongList();
         buildRecyclerView(view);
@@ -157,8 +161,8 @@ public class SongListFragment extends Fragment {
             public void onNextClick() {
                 int songLength = mediaPlayer.getDuration();
                 int howLong = mediaPlayer.getCurrentPosition();
-                if (howLong < songLength / 2) {
-                    selectedPlaylist.remove(selectedPlaylist.size() - 1);
+                if (howLong >= songLength / 2) {
+                    selectedPlaylist.add(songList.get(currentlyPlayingPosition));
                 }
                 playSong(currentlyPlayingPosition + 1);
             }
@@ -172,12 +176,12 @@ public class SongListFragment extends Fragment {
 
     }
 
-    public void playSong(final int position) { if (position <= 0 || position >= songList.size()) {
+    public void playSong(final int position) {
+        if (position <= 0 || position >= songList.size()) {
             return;
         }
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
-            selectedPlaylist.clear();
         }
         mediaPlayer = new MediaPlayer();
         Song song = songList.get(position);
@@ -201,21 +205,11 @@ public class SongListFragment extends Fragment {
                     swapItem(position);
                     currentlyPlayingPosition = position;
                     setMediaPlayerOnComplete(position);
-                    selectedPlaylist.add(song);
+//                    selectedPlaylist.add(song);
                 } catch (IOException o) {
                 }
             }
         });
-
-    }
-
-    public void addSong(Song song) {
-        int songLength = mediaPlayer.getDuration();
-        int howLong = mediaPlayer.getCurrentPosition();
-        if (howLong >= songLength / 2) {
-            selectedPlaylist.add(song);
-        }
-        playSong(currentlyPlayingPosition + 1);
 
     }
 
@@ -227,6 +221,8 @@ public class SongListFragment extends Fragment {
 
                 mp.stop();
                 mp.reset();
+                //addSong()
+                selectedPlaylist.add(songList.get(position));
                 if (position < songList.size() - 1) {
                     if (nextToPlay != 0) {
                         playSong(nextToPlay);
@@ -244,10 +240,6 @@ public class SongListFragment extends Fragment {
     public void swapItem(int position) {
         Song nowPlaying = songList.get(position);
         songList.set(0, nowPlaying);
-        ArrayList<Song> newList = new ArrayList<Song>();
-        newList.addAll(songList);
-        songList.clear();
-        songList.addAll(newList);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -263,8 +255,6 @@ public class SongListFragment extends Fragment {
         }
 
     }
-
-
 
 
     public void onBPMchange(int BPM) {

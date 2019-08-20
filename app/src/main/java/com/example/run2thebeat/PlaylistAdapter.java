@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private ArrayList<PlaylistItem> playlistsList;
     private OnItemClickListener mListener;
-    private OnItemClickListener mDelete;
+
 
 
     public interface OnItemClickListener{
@@ -22,10 +22,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         void onDeleteClick(int position);
     }
 
-
-    public void setOnDeleteClickListener(PlaylistAdapter.OnItemClickListener listener) {
-        mDelete = listener;
-    }
+//
+//    public void setOnDeleteClickListener(PlaylistAdapter.OnItemClickListener listener) {
+//        mListener = listener;
+//    }
 
     public void setOnItemClickListener(PlaylistAdapter.OnItemClickListener listener){
         mListener = listener;
@@ -83,8 +83,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
         PlaylistItem playlistItem = playlistsList.get(position);
         holder.avg_bpm.setText(playlistItem.getName());
-//        holder.km.setText("mmmmm");
-
+        holder.km.setText(playlistItem.getKm());
     }
 
 

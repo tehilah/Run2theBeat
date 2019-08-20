@@ -24,11 +24,9 @@ public class RunFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView chooseExistingPlaylist = view.findViewById(R.id.choose_existing_playlist);
-        Button button2 = view.findViewById(R.id.button2);
+        Button new_playlist_btn = view.findViewById(R.id.choose_new_playlist);
 
-
-        button2.setOnClickListener(new View.OnClickListener() {
+        new_playlist_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), MusicListActivity.class);
@@ -39,6 +37,4 @@ public class RunFragment extends Fragment {
         getChildFragmentManager().beginTransaction().replace(R.id.saved_playlists_fragment,
                 new ShowPlaylistsFragment()).commit();
     }
-
-
 }

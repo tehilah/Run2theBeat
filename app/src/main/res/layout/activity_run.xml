@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#000"
-            android:visibility="gone">
+            android:visibility="visible">
             <!--todo: make visible-->
 
             <TextView
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/elapsed_time_white" />
+                        android:src="@drawable/chronometer_white" />
 
                     <TextView
                         android:id="@+id/avg_pace"

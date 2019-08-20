@@ -57,7 +57,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
     private CollectionReference collectionPlaylistRef;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private SupportMapFragment mMap;
-    public static MediaPlayer mediaPlayer  = new MediaPlayer();
+    public static MediaPlayer mediaPlayer = new MediaPlayer();
 
 
     @Override
@@ -68,11 +68,11 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         mMap.getMapAsync(this);//remember getMap() is deprecated!
         initVariables();
         setTextViews();
-        selectedPlaylist = (ArrayList<Song>)getIntent().getSerializableExtra("SELECTED_PLAYLIST");
-        selectedPlaylist.remove(0); //remove currently playing song
+        selectedPlaylist = (ArrayList<Song>) getIntent().getSerializableExtra("SELECTED_PLAYLIST");
         buildRecyclerView();
 
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         loadSavedRoute(googleMap);
@@ -82,10 +82,11 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
         latLngs = convertPointToLatlng(points);
         drawPolyline(googleMap, latLngs);
-        if(latLngs.size() > 0){
+        if (latLngs.size() > 0) {
             moveCamera(latLngs.get(0), 17f, googleMap);
         }
     }
+
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
@@ -107,7 +108,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         return latLngs;
     }
 
-    public void buildRecyclerView(){
+    public void buildRecyclerView() {
         playlistRecyclerView = findViewById(R.id.play_list_recycler);
         playlistRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -130,22 +131,28 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         savePlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDialog(i);
+                if (selectedPlaylist.size() > 0) {
+                    getDialog(i);
+                }else{
+                    getWarningDialog();
+                }
             }
         });
 
     }
 
-    public void savePlaylist(Intent i, String name){
+    public void savePlaylist(Intent i, String name) {
+
         initUser();
         final Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        final String theDate =  formatter.format(date);
+        final String theDate = formatter.format(date);
 
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                PlaylistItem playlistItem = new PlaylistItem(selectedPlaylist,theDate, name);
+                String kmText = tv_km.getText().toString() + " km";
+                PlaylistItem playlistItem = new PlaylistItem(selectedPlaylist, theDate, name, kmText);
                 collectionPlaylistRef.add(playlistItem);
 
             }
@@ -155,20 +162,36 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         responseText.append("Playlist saved");
         Toast.makeText(FinishRunScreenActivity.this, responseText, Toast.LENGTH_SHORT).show();
         startActivity(i);
+
     }
 
-    private void getDialog(Intent i){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    private void getWarningDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
 
+        alert.setMessage("The playlist is empty");
+        alert.setTitle("Failed to save");
+        alert.setIcon(R.drawable.ic_warning_black_24dp);
+
+        alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+    }
+
+    private void getDialog(Intent i) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+//        View v = findViewById(R.layout.edit_text_alert_dialog);
+//        alert.setView(v);
         final EditText edittext = new EditText(this);
         alert.setMessage("Enter playlist name:");
-
         alert.setView(edittext);
 
-        alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String playlistName = edittext.getText().toString();
-                i.putExtra("PLAYLIST_NAME", playlistName);
                 savePlaylist(i, playlistName);
             }
         });
