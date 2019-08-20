@@ -1,6 +1,8 @@
 package com.example.run2thebeat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -31,6 +33,8 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
 public class ShowPlaylistsFragment extends Fragment {
     private String TAG  = "ShowPlaylistFragment";
@@ -118,10 +122,36 @@ public class ShowPlaylistsFragment extends Fragment {
                     }
                 });
             }
-        });
 
+            @Override
+            public void onDeleteClick(int position) {
+                getDialog(position);
+
+            }
+        });
     }
 
+    public void getDialog(int position) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder
+                .setMessage(CONFIRM_DELETE)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, delete message
+                        playlistsList.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                        collectionPlaylistRef.document(namesOfDocs.get(position)).delete();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 
     public static void initUser() {
         mAuth = FirebaseAuth.getInstance();

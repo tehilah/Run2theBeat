@@ -2,18 +2,15 @@ package com.example.run2thebeat;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
 
 
@@ -47,10 +44,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
-//        ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
-//        ArrayList<LatLng> latLngs = FinishRunScreenActivity.convertPointToLatlng(points);
-//        FinishRunScreenActivity.drawPolyline(mMap, latLngs);
-//        moveCamera(latLngs.get(0), DEFAULT_ZOOM);
+        ArrayList<Point> points = this.getIntent().getExtras().getParcelableArrayList("POINTS");
+        ArrayList<LatLng> latLngs = FinishRunScreenActivity.convertPointToLatlng(points);
+        FinishRunScreenActivity.drawPolyline(mMap, latLngs);
+        moveCamera(latLngs.get(0), DEFAULT_ZOOM);
 
     }
 

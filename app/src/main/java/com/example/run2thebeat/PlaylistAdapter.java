@@ -14,12 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private ArrayList<PlaylistItem> playlistsList;
     private OnItemClickListener mListener;
+    private OnItemClickListener mDelete;
 
 
     public interface OnItemClickListener{
         void onItemClick(int position);
+        void onDeleteClick(int position);
     }
 
+
+    public void setOnDeleteClickListener(PlaylistAdapter.OnItemClickListener listener) {
+        mDelete = listener;
+    }
 
     public void setOnItemClickListener(PlaylistAdapter.OnItemClickListener listener){
         mListener = listener;
@@ -45,6 +51,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                             listener.onItemClick(position);
                         }
                     }
+                }
+            });
+
+            item.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onDeleteClick(position);
+                        }
+                    }
+                    return true;
                 }
             });
         }

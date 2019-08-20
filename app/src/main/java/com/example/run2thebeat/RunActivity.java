@@ -554,7 +554,9 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
     public void openMap(View view) {
         mapLayout.setVisibility(View.VISIBLE);
-        startActivity(new Intent(this, MapsActivity.class));
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putParcelableArrayListExtra("POINTS", allPoints);
+        startActivity(intent);
     }
 
 }

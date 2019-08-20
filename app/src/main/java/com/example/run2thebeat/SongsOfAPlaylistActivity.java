@@ -27,7 +27,6 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 finish();
             }
         });
@@ -61,6 +60,5 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
     public void deleteSongFromFirebase(){
         ShowPlaylistsFragment.collectionPlaylistRef.document(docName).update("mPlayList",playlist);
         ShowPlaylistsFragment.playlistItemMutableLiveData.postValue(playlistItem);
-
     }
 }
