@@ -82,7 +82,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     @Override
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
         PlaylistItem playlistItem = playlistsList.get(position);
-//        holder.avg_bpm.setText("jjjj");
+        holder.avg_bpm.setText(playlistItem.getName());
 //        holder.km.setText("mmmmm");
 
     }

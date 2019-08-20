@@ -24,17 +24,9 @@ public class RunFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //Button button1 = view.findViewById(R.id.button1);
         TextView chooseExistingPlaylist = view.findViewById(R.id.choose_existing_playlist);
         Button button2 = view.findViewById(R.id.button2);
 
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getActivity(), MapsActivity.class);
-//                startActivity(i);
-//            }
-//        });
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override

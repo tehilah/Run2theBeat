@@ -1,16 +1,20 @@
 package com.example.run2thebeat;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -126,26 +130,56 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         savePlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initUser();
-                final Date date = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                final String theDate =  formatter.format(date);
-
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        PlaylistItem playlistItem = new PlaylistItem(selectedPlaylist,theDate);
-                        collectionPlaylistRef.add(playlistItem);
-
-                    }
-                });
-                StringBuffer responseText = new StringBuffer();
-                responseText.append("Playlist saved");
-                Toast.makeText(FinishRunScreenActivity.this, responseText, Toast.LENGTH_SHORT).show();
-                startActivity(i);
+                getDialog(i);
             }
         });
 
+    }
+
+    public void savePlaylist(Intent i, String name){
+        initUser();
+        final Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        final String theDate =  formatter.format(date);
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                PlaylistItem playlistItem = new PlaylistItem(selectedPlaylist,theDate, name);
+                collectionPlaylistRef.add(playlistItem);
+
+            }
+        });
+
+        StringBuffer responseText = new StringBuffer();
+        responseText.append("Playlist saved");
+        Toast.makeText(FinishRunScreenActivity.this, responseText, Toast.LENGTH_SHORT).show();
+        startActivity(i);
+    }
+
+    private void getDialog(Intent i){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        final EditText edittext = new EditText(this);
+        alert.setMessage("Enter playlist name:");
+
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String playlistName = edittext.getText().toString();
+                i.putExtra("PLAYLIST_NAME", playlistName);
+                savePlaylist(i, playlistName);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
     }
 
     private void initUser() {
