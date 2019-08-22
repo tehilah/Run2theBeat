@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import java.util.ArrayList;
 
@@ -16,6 +19,7 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
     private ArrayList<Song> playlist = new ArrayList<Song>();
     private PlaylistItem playlistItem;
     private ImageButton backButton;
+    private Button startRunButton;
     private String docName;
     private String TAG = "SongsOfPlaylistActivity";
 
@@ -34,6 +38,18 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
         playlist  = playlistItem.mPlayList;
         docName = getIntent().getStringExtra("docName");
         buildRecyclerView();
+
+        startRunButton = findViewById(R.id.choose_new_playlist);
+        Intent intent = new Intent(this,RunActivity.class);
+        startRunButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent.putExtra("playlist",playlist);
+                startActivity(intent);
+
+            }
+        });
+
 
     }
 
