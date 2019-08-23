@@ -5,7 +5,7 @@
     android:background="?android:attr/selectableItemBackground">
 
     <solid
-        android:color="#1DFFFFFF">
+        android:color="@color/button_pressed">
     </solid>
 
     <corners

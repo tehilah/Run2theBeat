@@ -210,7 +210,6 @@ public class SongListFragment extends Fragment {
                     swapItem(position);
                     currentlyPlayingPosition = position;
                     setMediaPlayerOnComplete(position);
-//                    selectedPlaylist.add(song);
                 } catch (IOException o) {
                 }
             }
@@ -226,7 +225,7 @@ public class SongListFragment extends Fragment {
 
                 mp.stop();
                 mp.reset();
-                //addSong()
+                //addSong
                 selectedPlaylist.add(songList.get(position));
                 if (position < songList.size() - 1) {
                     if (nextToPlay != 0) {

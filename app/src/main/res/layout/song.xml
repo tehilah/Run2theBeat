@@ -52,6 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_clear_black_24dp"
+        android:src="@drawable/selector_delete_song"
         android:visibility="gone" />
 </LinearLayout>

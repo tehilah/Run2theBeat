@@ -6,7 +6,10 @@
     android:layout_margin="5dp"
     android:layout_marginTop="10dp"
     android:background="#353A50"
-    android:elevation="10dp"
+    android:elevation="0dp"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="10dp">
 
     <LinearLayout

@@ -16,7 +16,7 @@
         android:layout_marginLeft="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@android:color/transparent"
+        android:background="@drawable/location_btn_selector"
         />
 
 

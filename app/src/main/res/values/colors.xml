@@ -14,6 +14,7 @@
     <color name="transparent">#00ffffff</color>
     <color name="light_purple">#C6CB87DB</color>
     <color name="semitransparent">#88000000</color>
+    <color name="button_pressed">#1DFFFFFF</color>
 </resources>
 
 
