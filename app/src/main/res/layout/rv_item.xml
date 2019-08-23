@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/image"
             android:text="14.08.2019"
-            android:textColor="#ADA996"
+            android:textColor="#8085A4"
             android:textSize="15sp" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_toEndOf="@+id/image"
             android:layout_below="@id/date"
             android:text="Saturday night run"
-            android:textColor="#6D6027"
+            android:textColor="#08090D"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/image"
             android:text="5.00 distance"
-            android:textColor="#ADA996"
+            android:textColor="#8085A4"
             android:textSize="15sp" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/bottom_text_km"
             android:text="6'39'' distance"
-            android:textColor="#ADA996"
+            android:textColor="#8085A4"
             android:textSize="15sp" />
 
     </RelativeLayout>

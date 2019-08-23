@@ -10,23 +10,39 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,6 +56,9 @@ public class ProgressFragment extends Fragment {
     private ProgressAdapter mAdapter;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference routeRef;
+    private ExecutorService executor;
+    private double sumDistance;
+    private TextView tvTotalKm;
 
 
     @Nullable
@@ -51,9 +70,14 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        executor = Executors.newCachedThreadPool();
+        tvTotalKm = view.findViewById(R.id.total_km);
         initializeCollectionRefs();
+        updateSumKilometersFromFirestore();
         buildRecyclerView(view);
     }
+
+
 
     private void initializeCollectionRefs() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -90,7 +114,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 new RecyclerViewSwipeDecorator.Builder(getContext(), c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorRed))
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.purple))
                         .addSwipeRightActionIcon(R.drawable.delete_white)
                         .addSwipeRightLabel(getString(R.string.action_delete))
                         .setSwipeRightLabelColor(Color.WHITE)
@@ -105,7 +129,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onItemClick(DocumentSnapshot ds, int position) {
                 Route route = ds.toObject(Route.class);
-                Toast.makeText(getContext(), "clicked item: "+(""+position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "clicked item: " + ("" + position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getContext(), RunDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("POINTS", route.getPoints());
@@ -117,13 +141,23 @@ public class ProgressFragment extends Fragment {
                 DateFormat df = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
                 df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
                 bundle.putString("DATE", df.format(route.getDate()));
-
-//                i.putExtra("DURATION", route.getDuration());
                 i.putExtras(bundle);
                 startActivity(i);
             }
         });
+
+
+//        mRecyclerView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (!mRecyclerView.hasNestedScrollingParent(ViewCompat.TYPE_NON_TOUCH)) {
+//                    mRecyclerView.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH);
+//                }
+//                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+//            }
+//        });
     }
+
 
     public void getDialog(final RecyclerView.ViewHolder viewHolder) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -134,6 +168,18 @@ public class ProgressFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, delete message
                         mAdapter.deleteItem(viewHolder.getAdapterPosition());
+//                        DocumentReference routeRef = mAdapter.getRoute(viewHolder.getAdapterPosition());
+//                        routeRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                            @Override
+//                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                Route route = documentSnapshot.toObject(Route.class);
+//                                if(route != null){
+//                                    sumDistance -= Double.parseDouble(route.getDistance());
+//                                    Toast.makeText(getContext(), "total distance: "+sumDistance, Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+                        updateSumKilometersFromFirestore();
 
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -158,4 +204,25 @@ public class ProgressFragment extends Fragment {
         super.onStop();
         mAdapter.stopListening();
     }
+
+    public void updateSumKilometersFromFirestore() {
+        sumDistance = 0;
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                routeRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            Route route = documentSnapshot.toObject(Route.class);
+                            sumDistance += Double.parseDouble(route.getDistance());
+                        }
+                        tvTotalKm.setText(String.format(Locale.getDefault(), "%.2f",sumDistance));
+                        Toast.makeText(getContext(), "total distance: " + sumDistance, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+
 }

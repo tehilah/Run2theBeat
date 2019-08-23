@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.DateFormat;
@@ -53,6 +54,10 @@ public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, Prog
 
     public void deleteItem(int position) {
         getSnapshots().getSnapshot(position).getReference().delete();
+    }
+
+    public DocumentReference getRoute(int position){
+        return getSnapshots().getSnapshot(position).getReference();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
