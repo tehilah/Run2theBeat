@@ -34,7 +34,7 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="@color/purple"
+            app:contentScrim="@color/light_purple"
             app:layout_scrollFlags="scroll|snap|enterAlwaysCollapsed">
 
             <LinearLayout

@@ -12,37 +12,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,7 +40,6 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class ProgressFragment extends Fragment {
     public static final String CONFIRM_DELETE = "Are you sure you want to delete?";
-
     private ProgressAdapter mAdapter;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference routeRef;
@@ -114,7 +101,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 new RecyclerViewSwipeDecorator.Builder(getContext(), c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.purple))
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_purple))
                         .addSwipeRightActionIcon(R.drawable.delete_white)
                         .addSwipeRightLabel(getString(R.string.action_delete))
                         .setSwipeRightLabelColor(Color.WHITE)
@@ -218,7 +205,6 @@ public class ProgressFragment extends Fragment {
                             sumDistance += Double.parseDouble(route.getDistance());
                         }
                         tvTotalKm.setText(String.format(Locale.getDefault(), "%.2f",sumDistance));
-                        Toast.makeText(getContext(), "total distance: " + sumDistance, Toast.LENGTH_LONG).show();
                     }
                 });
             }

@@ -20,7 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RunActivity"></activity>
-        <activity android:name=".CountDownActivity" />
         <activity android:name=".SongsOfAPlaylistActivity" />
         <activity android:name=".FinishRunScreenActivity" /> <!-- <activity android:name=".SongListFragment"></activity> -->
         <activity android:name=".RunDetailsActivity" />

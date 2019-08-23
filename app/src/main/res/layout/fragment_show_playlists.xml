@@ -19,11 +19,9 @@
         android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text="No saved Playlists"
+        android:background="@drawable/gradient_bg3"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="gone"/>
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/choose_existing_playlist"-->
-
 
 </RelativeLayout>

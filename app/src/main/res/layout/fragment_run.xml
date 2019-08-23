@@ -48,7 +48,7 @@
         android:layout_gravity="center"
         android:text="Choose new playlist"
         android:textColor="#ffff"
-        android:background="@drawable/button_round_corners_purple"
+        android:background="@drawable/choose_new_playlist_selector"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
