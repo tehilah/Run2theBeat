@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -34,6 +35,23 @@ public class SettingsFragment extends Fragment {
                     getActivity().finish();
                 }
                 startActivity(new Intent(getActivity(), MainActivity.class));
+            }
+        });
+
+        TextView changeEmail = view.findViewById(R.id.edit_email);
+        changeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo
+            }
+        });
+
+        TextView changePassword = view.findViewById(R.id.edit_password);
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo
             }
         });
     }
