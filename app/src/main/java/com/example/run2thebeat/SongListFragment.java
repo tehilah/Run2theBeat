@@ -52,6 +52,8 @@ public class SongListFragment extends Fragment {
     private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3", 116, R.drawable.heartache_on_the_dancefloor);
     private static Song popNum4 = new Song(6, "Counting Stars", "OneRepublic", "pop", "OneRepublic - Counting Stars.mp3", 122, R.drawable.bob_marley);
     private static Song popNum5 = new Song(7, "Can't Hold Us", "Macklemore", "pop", "Can't Hold Us - Macklemore .mp3", 146, R.drawable.bob_marley);
+    private static Song latin1 = new Song(8, "Mia", "Bad Bunny ft. Drake", "latin", "Mia.mp3", 97, R.drawable.bob_marley);
+    private static Song latin2 = new Song(9, "Calma", "Pedro Capo, Farruko", "latin", "Con Calma.mp3", 127, R.drawable.bob_marley);
 
 
     @Override
@@ -97,6 +99,8 @@ public class SongListFragment extends Fragment {
         allSongsList.add(countryNum2);
         allSongsList.add(popNum4);
         allSongsList.add(popNum5);
+        allSongsList.add(latin1);
+        allSongsList.add(latin2);
         Collections.sort(allSongsList);
     }
 
@@ -286,5 +290,16 @@ public class SongListFragment extends Fragment {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void onPause() {
+        int songLength = mediaPlayer.getDuration();
+        int howLong = mediaPlayer.getCurrentPosition();
+        if (howLong >= songLength / 2) {
+            selectedPlaylist.add(songList.get(currentlyPlayingPosition));
+        }
+        super.onPause();
     }
 }

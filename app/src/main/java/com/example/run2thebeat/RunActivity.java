@@ -455,7 +455,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         intent.putExtra("SELECTED_PLAYLIST", SongListFragment.selectedPlaylist);
         intent.putParcelableArrayListExtra("POINTS", allPoints);
         SongListFragment.mediaPlayer.stop();
-        SongListFragment.mediaPlayer.reset();
+//        SongListFragment.mediaPlayer.reset();
         startActivity(intent);
         finish();
     }

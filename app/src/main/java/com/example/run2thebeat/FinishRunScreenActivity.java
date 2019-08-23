@@ -57,7 +57,6 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
     private CollectionReference collectionPlaylistRef;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private SupportMapFragment mMap;
-    public static MediaPlayer mediaPlayer = new MediaPlayer();
 
 
     @Override
@@ -69,6 +68,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         initVariables();
         setTextViews();
         selectedPlaylist = (ArrayList<Song>) getIntent().getSerializableExtra("SELECTED_PLAYLIST");
+        selectedPlaylist = SongListFragment.selectedPlaylist;
         buildRecyclerView();
 
     }

@@ -236,7 +236,7 @@
                 android:layout_below="@id/play_list_recycler"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
-                android:background="@drawable/round_corners"
+                android:background="@drawable/btn_start_run_selector"
                 android:fontFamily="@font/roboto_regular"
                 android:paddingStart="40dp"
                 android:paddingEnd="40dp"
