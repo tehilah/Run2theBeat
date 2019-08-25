@@ -3,6 +3,8 @@ package com.example.run2thebeat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,15 +12,24 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.MediaPlayer;
+import android.media.session.MediaController;
+import android.media.session.MediaSession;
+import android.media.session.MediaSessionManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -33,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -110,10 +122,11 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private ImageButton locationBtn; // todo: im here
     private int changeMusicBPM = 0;
     private boolean mRequestingLocationUpdates = false;
-    private  FragmentTransaction fragmentTransaction;
+    private FragmentTransaction fragmentTransaction;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private boolean isPanelOpen;
     private boolean isCountingDown;
+    private NotificationManagerCompat mNotificationManagerCompat;
 
 
     @Override
@@ -158,10 +171,10 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                if(slideOffset == 1){
+                if (slideOffset == 1) {
                     isPanelOpen = true;
                 }
-                if(slideOffset == 0){
+                if (slideOffset == 0) {
                     isPanelOpen = false;
                 }
             }
@@ -200,7 +213,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
             @Override
             public void onTick(long millisUntilFinished) {
-                if(millisUntilFinished <= 1000) {
+                if (millisUntilFinished <= 1000) {
                     onFinish();
                 }
                 count.setText(String.valueOf(millisUntilFinished / 1000));
@@ -282,6 +295,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     }
 
     private void initVariables() {
+        mNotificationManagerCompat = NotificationManagerCompat.from(this);
         isCountingDown = true;
         isPanelOpen = false;
         mapLayout = findViewById(R.id.map_layout);
@@ -399,6 +413,9 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         // todo: figure out why this crashes the app
         stopLocationUpdates();
         mRequestingLocationUpdates = false;
+        Toast.makeText(this, "in on pause", Toast.LENGTH_SHORT).show();
+//        startMediaPlayerService();
+
     }
 
     private void savePoint(LatLng point) {
@@ -571,12 +588,18 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
     @Override
     public void onBackPressed() {
-        if(isPanelOpen){
+        if (isPanelOpen) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             isPanelOpen = false;
-        }
-        else if(!isCountingDown){
+        } else if (!isCountingDown) {
             super.onBackPressed();
         }
+    }
+
+
+    private void startMediaPlayerService(){
+        Intent intent = new Intent( getApplicationContext(), MediaPlayerService.class );
+        intent.setAction( MediaPlayerService.ACTION_PLAY );
+        startService( intent );
     }
 }

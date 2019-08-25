@@ -110,7 +110,7 @@ public class ProgressFragment extends Fragment {
 
     private void getSavedPreferences(){
         myPrefs = getActivity().getSharedPreferences("MY_PREF", Context.MODE_PRIVATE);
-        float dist = myPrefs.getFloat("TOTAL_DIST",0);
+        String dist = myPrefs.getString("TOTAL_DISTANCE","0.0");
         tvTotalKm.setText(String.valueOf(dist));
 
     }
@@ -253,9 +253,10 @@ public class ProgressFragment extends Fragment {
                             Route route = documentSnapshot.toObject(Route.class);
                             sumDistance += Double.parseDouble(route.getDistance());
                         }
-                        tvTotalKm.setText(String.format(Locale.getDefault(), "%.2f", sumDistance));
+                        String total = String.format(Locale.getDefault(), "%.2f", sumDistance);
+                        tvTotalKm.setText(total);
                         SharedPreferences.Editor editor = myPrefs.edit();
-                        editor.putFloat("TOTAL_DIST", sumDistance);
+                        editor.putString("TOTAL_DISTANCE", total);
                         editor.apply();
                     }
                 });

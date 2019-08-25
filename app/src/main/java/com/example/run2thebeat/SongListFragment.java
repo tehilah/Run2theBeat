@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.media.MediaPlayer;
+import android.media.TimedMetaData;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -32,16 +33,17 @@ import com.google.firebase.storage.FirebaseStorage;
 public class SongListFragment extends Fragment {
 
     private String TAG = "SongListFragment";
-    public ArrayList<Song> songList;
-    public static ArrayList<Song> selectedPlaylist;
+    public  ArrayList<Song> songList;
+    public  static ArrayList<Song> selectedPlaylist;
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public static MediaPlayer mediaPlayer;
-    private int currentlyPlayingPosition = 1;
+    public  int currentlyPlayingPosition = 1;
     private TextView tv_artist;
-    private int nextToPlay = 0;
+    public  int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
+    public  ImageButton imageButton;
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -65,6 +67,7 @@ public class SongListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "getSongList: created");
+        imageButton = view.findViewById(R.id.play_pause);
         selectedPlaylist = new ArrayList<>();
         curBPMLiveData = new MutableLiveData<Integer>();
         songList = new ArrayList<>();
@@ -109,10 +112,10 @@ public class SongListFragment extends Fragment {
         songList.clear();
         songList.add(new Song(000, "", "", "", "", 0, 0)); //currently playing song. set to nothing at first
         ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("genres");
-        ArrayList<Song> selectedPlaylist = (ArrayList<Song>) getActivity().getIntent().getSerializableExtra("playlist"); //todo
-        if (selectedPlaylist != null) {
-            for (int i = 0; i < selectedPlaylist.size(); i++) {
-                songList.add(selectedPlaylist.get(i));
+        ArrayList<Song> savedPlaylist = (ArrayList<Song>) getActivity().getIntent().getSerializableExtra("playlist"); //todo
+        if (savedPlaylist != null) {
+            for (int i = 0; i < savedPlaylist.size(); i++) {
+                songList.add(savedPlaylist.get(i));
             }
         } else if (selectedGenres.size() == 0) {//no generes selected
             for (int j = 0; j < allSongsList.size(); j++) {
@@ -252,7 +255,7 @@ public class SongListFragment extends Fragment {
 
 
     public void playOrPause(View view) {
-        ImageButton imageButton = (ImageButton) view.findViewById(R.id.play_pause);
+        imageButton = view.findViewById(R.id.play_pause);
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             imageButton.setImageResource(R.drawable.ic_play);
