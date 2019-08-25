@@ -47,6 +47,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,6 +111,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private int changeMusicBPM = 0;
     private boolean mRequestingLocationUpdates = false;
     private  FragmentTransaction fragmentTransaction;
+    private SlidingUpPanelLayout slidingUpPanelLayout;
+    private boolean isPanelOpen;
 
 
     @Override
@@ -147,6 +151,23 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
                     e.printStackTrace();
                 }
                 return true;
+            }
+        });
+
+        slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if(slideOffset == 1){
+                    isPanelOpen = true;
+                }
+                if(slideOffset == 0){
+                    isPanelOpen = false;
+                }
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
             }
         });
     }
@@ -259,6 +280,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     }
 
     private void initVariables() {
+        isPanelOpen = false;
         mapLayout = findViewById(R.id.map_layout);
         locationBtn = findViewById(R.id.location_btn);
         db = FirebaseFirestore.getInstance();
@@ -280,6 +302,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         elapsed_time_icon = findViewById(R.id.elapsed_time_img);
         bpm_title = findViewById(R.id.bpm_title);
         distance_title = findViewById(R.id.distance_title);
+        slidingUpPanelLayout = findViewById(R.id.sliding_layout);
     }
 
     private void updateLocation() {
@@ -543,4 +566,15 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isPanelOpen){
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            isPanelOpen = false;
+        }
+        else{
+            super.onBackPressed();
+        }
+
+    }
 }
