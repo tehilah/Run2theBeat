@@ -32,6 +32,8 @@
         <item name="colorAccent">@color/purple</item>
     </style>
 
-
+    <style name="ThemeOverlay.AppCompat.Dark" parent="Base.ThemeOverlay.AppCompat.Dark">
+        <item name="android:textSize">12sp</item>
+    </style>
 
 </resources>

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -30,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -46,6 +49,8 @@ public class ProgressFragment extends Fragment {
     private ExecutorService executor;
     private double sumDistance;
     private TextView tvTotalKm;
+    private AppBarLayout appBar;
+    private Toolbar toolbar;
 
 
     @Nullable
@@ -59,9 +64,34 @@ public class ProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         executor = Executors.newCachedThreadPool();
         tvTotalKm = view.findViewById(R.id.total_km);
+        appBar = view.findViewById(R.id.appBar);
+        toolbar = view.findViewById(R.id.toolbar);
+        CollapsingToolbarLayout c = view.findViewById(R.id.collapsing_toolbar);
         initializeCollectionRefs();
         updateSumKilometersFromFirestore();
         buildRecyclerView(view);
+        toolbar.setTitle("");
+        c.setTitleEnabled(false);
+
+        appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isVisible = true;
+            int scrollRange = -1;
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    c.setTitleEnabled(true);
+                    toolbar.setTitle("Running History");
+                    isVisible = true;
+                } else if(isVisible) {
+                    c.setTitleEnabled(false);
+                    toolbar.setTitle("");
+                    isVisible = false;
+                }
+            }
+        });
     }
 
 
