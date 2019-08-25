@@ -67,7 +67,6 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         mMap.getMapAsync(this);//remember getMap() is deprecated!
         initVariables();
         setTextViews();
-        selectedPlaylist = (ArrayList<Song>) getIntent().getSerializableExtra("SELECTED_PLAYLIST");
         selectedPlaylist = SongListFragment.selectedPlaylist;
         buildRecyclerView();
 

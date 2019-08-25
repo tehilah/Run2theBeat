@@ -452,7 +452,6 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         intent.putExtra("AVG_BPM", avgBpm);
         Log.d(TAG, "avgBPM: " + avgBpm);
         intent.putExtra("TITLE", title);
-        intent.putExtra("SELECTED_PLAYLIST", SongListFragment.selectedPlaylist);
         intent.putParcelableArrayListExtra("POINTS", allPoints);
         SongListFragment.mediaPlayer.stop();
 //        SongListFragment.mediaPlayer.reset();

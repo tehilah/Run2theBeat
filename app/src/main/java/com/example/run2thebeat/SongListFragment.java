@@ -109,13 +109,12 @@ public class SongListFragment extends Fragment {
         songList.clear();
         songList.add(new Song(000, "", "", "", "", 0, 0)); //currently playing song. set to nothing at first
         ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("genres");
-        ArrayList<Song> selectedPlaylist = (ArrayList<Song>)getActivity().getIntent().getSerializableExtra("playlist"); //todo
-        if(selectedPlaylist!=null){
-            for (int i=0;i<selectedPlaylist.size();i++){
+        ArrayList<Song> selectedPlaylist = (ArrayList<Song>) getActivity().getIntent().getSerializableExtra("playlist"); //todo
+        if (selectedPlaylist != null) {
+            for (int i = 0; i < selectedPlaylist.size(); i++) {
                 songList.add(selectedPlaylist.get(i));
             }
-        }
-        else if (selectedGenres.size() == 0) {//no generes selected
+        } else if (selectedGenres.size() == 0) {//no generes selected
             for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
                 if (!songList.contains(song)) {
