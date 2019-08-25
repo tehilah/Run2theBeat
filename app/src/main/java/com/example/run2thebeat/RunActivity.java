@@ -113,6 +113,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private  FragmentTransaction fragmentTransaction;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private boolean isPanelOpen;
+    private boolean isCountingDown;
 
 
     @Override
@@ -194,6 +195,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
                 findViewById(R.id.list_fragment).setBackgroundColor(Color.WHITE);
                 fragmentTransaction.commit();
                 initChronometer();
+                isCountingDown = false;
             }
 
             @Override
@@ -280,6 +282,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     }
 
     private void initVariables() {
+        isCountingDown = true;
         isPanelOpen = false;
         mapLayout = findViewById(R.id.map_layout);
         locationBtn = findViewById(R.id.location_btn);
@@ -572,9 +575,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             isPanelOpen = false;
         }
-        else{
+        else if(!isCountingDown){
             super.onBackPressed();
         }
-
     }
 }
