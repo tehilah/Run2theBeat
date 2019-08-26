@@ -7,7 +7,6 @@ import java.util.Collections;
 import android.media.MediaPlayer;
 import android.media.TimedMetaData;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
+import android.os.Handler;
 
 
 public class SongListFragment extends Fragment {
@@ -44,8 +45,6 @@ public class SongListFragment extends Fragment {
     public int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
     public ImageButton imageButton;
-
-
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
     private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3", 102, R.drawable.i_dont_care);
     private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3", 158, R.drawable.faith);
@@ -78,6 +77,7 @@ public class SongListFragment extends Fragment {
         getSongList();
         buildRecyclerView(view);
         playSong(1);
+        setSeekBar();
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -221,6 +221,7 @@ public class SongListFragment extends Fragment {
                     swapItem(pos);
                     currentlyPlayingPosition = pos;
                     setMediaPlayerOnComplete(pos);
+
                 } catch (IOException o) {
                 }
             }
@@ -311,4 +312,26 @@ public class SongListFragment extends Fragment {
         }
         super.onPause();
     }
+
+    public void setSeekBar(){
+        int mFileDuration = mediaPlayer.getDuration();
+        SongListAdapter.SongViewHolder.seekBar.setMax(mFileDuration/1000);
+
+        Handler handler = new Handler();
+//Make sure you update Seekbar on UI thread
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if(SongListFragment.mediaPlayer != null){
+                    int mCurrentPosition = SongListFragment.mediaPlayer.getCurrentPosition() / 1000;
+
+                    SongListAdapter.SongViewHolder.seekBar.setProgress(mCurrentPosition);
+
+                }
+                handler.postDelayed(this, 1000);
+            }
+        });
+    }
+
 }

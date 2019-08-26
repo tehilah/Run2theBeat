@@ -1,13 +1,18 @@
 package com.example.run2thebeat;
+import android.content.Context;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.ViewGroup;
 import java.util.ArrayList;
+import java.util.logging.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 
@@ -49,7 +54,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     public void setOnPreviousClickListener(OnPrviousClickListener listener){mPreviousListener = listener;}
 
 
-
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -61,6 +65,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public ImageButton pausePlayButton;
         public ImageButton nextButton;
         public ImageButton previousButton;
+        public static SeekBar seekBar;
 
         public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
                               final OnPrviousClickListener previousListener) {
@@ -74,6 +79,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             pausePlayButton = item.findViewById(R.id.play_pause);
             nextButton = item.findViewById(R.id.next_song);
             previousButton = item.findViewById(R.id.previous_song);
+            seekBar = item.findViewById(R.id.seek_bar);
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -129,6 +135,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 });
             }
         }
+
     }
 
 
