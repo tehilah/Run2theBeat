@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg3"
+    android:background="#08090D"
     tools:context=".ShowPlaylistsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -19,7 +19,7 @@
         android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text="No saved Playlists"
-        android:background="@drawable/gradient_bg3"
+        android:background="#08090D"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="gone"/>

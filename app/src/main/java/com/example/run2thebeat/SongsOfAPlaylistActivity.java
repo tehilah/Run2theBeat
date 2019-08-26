@@ -56,7 +56,7 @@ public class SongsOfAPlaylistActivity extends AppCompatActivity {
     public void buildRecyclerView(){
         playlistsRecyclerView = findViewById(R.id.songs_of_playlists_recycler);
         playlistsRecyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
+        layoutManager = new LinearLayoutManager(this);
         mAdapter = new SelectedPlaylistAdapter(playlist);
         playlistsRecyclerView.setAdapter(mAdapter);
         playlistsRecyclerView.setLayoutManager(layoutManager);

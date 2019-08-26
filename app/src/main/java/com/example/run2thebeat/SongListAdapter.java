@@ -1,13 +1,17 @@
 package com.example.run2thebeat;
+
 import android.content.Context;
+
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.ViewGroup;
-import java.util.ArrayList;
-import java.util.logging.Handler;
 
+import java.util.ArrayList;
+
+import java.util.logging.Handler;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,7 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongViewHolder>  {
+public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongViewHolder> {
     private ArrayList<Song> songList;
     private OnItemClickListener mListener;
     private OnPlayClickListener mPlayListener;
@@ -24,35 +28,38 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private OnPrviousClickListener mPreviousListener;
 
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(int position);
     }
 
 
-    public void setOnItemClickListener(OnItemClickListener listener){
+    public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
 
-    public interface OnPlayClickListener{
+    public interface OnPlayClickListener {
         void onPlayClick();
     }
 
-    public void setOnPlayClickListener(OnPlayClickListener listener){
+    public void setOnPlayClickListener(OnPlayClickListener listener) {
         mPlayListener = listener;
     }
 
-    public interface OnNextClickListener{
+    public interface OnNextClickListener {
         void onNextClick();
     }
 
-    public void setOnNextClickListener(OnNextClickListener listener){mNextListener = listener;}
+    public void setOnNextClickListener(OnNextClickListener listener) {
+        mNextListener = listener;
+    }
 
-    public interface OnPrviousClickListener{
+    public interface OnPrviousClickListener {
         void onPreviousClick();
     }
 
-    public void setOnPreviousClickListener(OnPrviousClickListener listener){mPreviousListener = listener;}
-
+    public void setOnPreviousClickListener(OnPrviousClickListener listener) {
+        mPreviousListener = listener;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -120,7 +127,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 });
             }
 
-            if (previousButton!= null) {
+            if (previousButton != null) {
                 previousButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -139,23 +146,21 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     }
 
 
-        public SongListAdapter(ArrayList<Song> mySongList){
-            songList = mySongList;
-        }
+    public SongListAdapter(ArrayList<Song> mySongList) {
+        songList = mySongList;
+    }
 
 
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
-        if(viewType == R.layout.song){
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent,false);
+        if (viewType == R.layout.song) {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
+        } else {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song, parent, false);
         }
-
-        else {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song,parent,false);
-        }
-        return new SongViewHolder(v,mListener,mPlayListener,mNextListener,mPreviousListener);
+        return new SongViewHolder(v, mListener, mPlayListener, mNextListener, mPreviousListener);
     }
 
 
@@ -164,10 +169,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         Song songItem = songList.get(position);
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
-        if(holder.songCover != null){
-            holder.songCover.setImageResource(songItem.getSongCover());
-        }
-}
+        holder.songCover.setImageResource(songItem.getSongCover());
+    }
 
 
     @Override
@@ -177,7 +180,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? R.layout.currently_playing_song: R.layout.song;
+        return (position == 0) ? R.layout.currently_playing_song : R.layout.song;
     }
 
 
