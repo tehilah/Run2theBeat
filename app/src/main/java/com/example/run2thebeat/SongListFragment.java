@@ -77,7 +77,7 @@ public class SongListFragment extends Fragment {
         getSongList();
         buildRecyclerView(view);
         playSong(1);
-        setSeekBar();
+ //      setSeekBar();
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
