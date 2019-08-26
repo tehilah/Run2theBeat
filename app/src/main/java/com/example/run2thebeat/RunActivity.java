@@ -12,9 +12,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -70,6 +72,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
 public class RunActivity extends AppCompatActivity implements SensorEventListener {
     // constants
@@ -127,6 +131,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private boolean isPanelOpen;
     private boolean isCountingDown;
     private NotificationManagerCompat mNotificationManagerCompat;
+    private boolean exitRun;
 
 
     @Override
@@ -591,15 +596,37 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         if (isPanelOpen) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             isPanelOpen = false;
-        } else if (!isCountingDown) {
+        } else if (!isCountingDown && !exitRun) {
+            getDialog();
+        } else if (exitRun) {
             super.onBackPressed();
         }
     }
+    
+    private void startMediaPlayerService() {
+        Intent intent = new Intent(getApplicationContext(), MediaPlayerService.class);
+        intent.setAction(MediaPlayerService.ACTION_PLAY);
+        startService(intent);
+    }
 
-
-    private void startMediaPlayerService(){
-        Intent intent = new Intent( getApplicationContext(), MediaPlayerService.class );
-        intent.setAction( MediaPlayerService.ACTION_PLAY );
-        startService( intent );
+    public void getDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        alertDialogBuilder
+                .setMessage("Are you sure you want to exit this run?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, delete message
+                        exitRun = true;
+                        onBackPressed();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }
