@@ -5,17 +5,15 @@
     android:layout_height="180dp"
     android:layout_margin="5dp"
     android:layout_marginTop="10dp"
-    android:background="#353A50"
-    android:elevation="0dp"
-    android:clickable="true"
-    android:focusableInTouchMode="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="10dp">
+    android:elevation="8dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardBackgroundColor="@color/color_playlist_item"
+    app:cardCornerRadius="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#20222C"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:orientation="vertical">
 
         <ImageView
@@ -52,6 +50,5 @@
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
     </LinearLayout>
-
 
 </androidx.cardview.widget.CardView>

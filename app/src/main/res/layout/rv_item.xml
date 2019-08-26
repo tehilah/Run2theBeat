@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
     android:background="@color/clear_white_color"
     app:cardCornerRadius="5dp">
 
@@ -12,6 +13,7 @@
         android:layout_height="match_parent"
         android:layout_margin="4dp"
         android:gravity="center|start"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:backgroundTint="@color/clear_white_color">
 
         <ImageView

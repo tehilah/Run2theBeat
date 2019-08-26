@@ -2,8 +2,10 @@ package com.example.run2thebeat;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
@@ -24,12 +27,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -47,10 +52,12 @@ public class ProgressFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference routeRef;
     private ExecutorService executor;
-    private double sumDistance;
+    private float sumDistance;
     private TextView tvTotalKm;
     private AppBarLayout appBar;
     private Toolbar toolbar;
+    private SharedPreferences myPrefs;
+    private CollapsingToolbarLayout c;
 
 
     @Nullable
@@ -62,20 +69,17 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        executor = Executors.newCachedThreadPool();
-        tvTotalKm = view.findViewById(R.id.total_km);
-        appBar = view.findViewById(R.id.appBar);
-        toolbar = view.findViewById(R.id.toolbar);
-        CollapsingToolbarLayout c = view.findViewById(R.id.collapsing_toolbar);
+
+        initVariables(view);
+        getSavedPreferences(); // upload saved value from shared pref.
         initializeCollectionRefs();
         updateSumKilometersFromFirestore();
         buildRecyclerView(view);
-        toolbar.setTitle("");
-        c.setTitleEnabled(false);
 
         appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isVisible = true;
             int scrollRange = -1;
+
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (scrollRange == -1) {
@@ -85,7 +89,7 @@ public class ProgressFragment extends Fragment {
                     c.setTitleEnabled(true);
                     toolbar.setTitle("Running History");
                     isVisible = true;
-                } else if(isVisible) {
+                } else if (isVisible) {
                     c.setTitleEnabled(false);
                     toolbar.setTitle("");
                     isVisible = false;
@@ -94,7 +98,22 @@ public class ProgressFragment extends Fragment {
         });
     }
 
+    private void initVariables(View view){
+        executor = Executors.newCachedThreadPool();
+        tvTotalKm = view.findViewById(R.id.total_km);
+        appBar = view.findViewById(R.id.appBar);
+        toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        c = view.findViewById(R.id.collapsing_toolbar);
+        c.setTitleEnabled(false);
+    }
 
+    private void getSavedPreferences(){
+        myPrefs = getActivity().getSharedPreferences("MY_PREF", Context.MODE_PRIVATE);
+        String dist = myPrefs.getString("TOTAL_DISTANCE","0.0");
+        tvTotalKm.setText(String.valueOf(dist));
+
+    }
 
     private void initializeCollectionRefs() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -234,7 +253,11 @@ public class ProgressFragment extends Fragment {
                             Route route = documentSnapshot.toObject(Route.class);
                             sumDistance += Double.parseDouble(route.getDistance());
                         }
-                        tvTotalKm.setText(String.format(Locale.getDefault(), "%.2f",sumDistance));
+                        String total = String.format(Locale.getDefault(), "%.2f", sumDistance);
+                        tvTotalKm.setText(total);
+                        SharedPreferences.Editor editor = myPrefs.edit();
+                        editor.putString("TOTAL_DISTANCE", total);
+                        editor.apply();
                     }
                 });
             }
