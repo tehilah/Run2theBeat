@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.graphics.drawable.Icon;
 import android.media.MediaPlayer;
 import android.media.TimedMetaData;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,13 +51,13 @@ public class SongListFragment extends Fragment {
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
     private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3", 102, R.drawable.i_dont_care);
     private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3", 158, R.drawable.faith);
-    private static Song popNum3 = new Song(3, "Bananas", " static and benel", "Pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3", 124, R.drawable.bob_marley);
-    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3", 148, R.drawable.bob_marley);
+    private static Song popNum3 = new Song(3, "Bananas", " static and benel", "pop", "סטטיק ובן אל תבורי - בננות (Prod. By Jordi).mp3", 124, R.drawable.bananas);
+    private static Song countryNum1 = new Song(4, "Before He Cheats", "Carrie Underwood", "country", "Carrie Underwood - Before He Cheats.mp3", 148, R.drawable.before_he_cheats);
     private static Song countryNum2 = new Song(5, "Heartache On The Dance Floor", "Jon Pardi", "country", "Jon Pardi - Heartache On The Dance Floor (Audio).mp3", 116, R.drawable.heartache_on_the_dancefloor);
-    private static Song popNum4 = new Song(6, "Counting Stars", "OneRepublic", "pop", "OneRepublic - Counting Stars.mp3", 122, R.drawable.bob_marley);
-    private static Song popNum5 = new Song(7, "Can't Hold Us", "Macklemore", "pop", "Can't Hold Us - Macklemore .mp3", 146, R.drawable.bob_marley);
-    private static Song latin1 = new Song(8, "Mia", "Bad Bunny ft. Drake", "latin", "Mia.mp3", 97, R.drawable.bob_marley);
-    private static Song latin2 = new Song(9, "Calma", "Pedro Capo, Farruko", "latin", "Con Calma.mp3", 127, R.drawable.bob_marley);
+    private static Song popNum4 = new Song(6, "Counting Stars", "OneRepublic", "pop", "OneRepublic - Counting Stars.mp3", 122, R.drawable.counting_stars);
+    private static Song popNum5 = new Song(7, "Can't Hold Us", "Macklemore", "pop", "Can't Hold Us - Macklemore .mp3", 146, R.drawable.cant_hold_us);
+    private static Song latin1 = new Song(8, "Mia", "Bad Bunny ft. Drake", "latin", "Mia.mp3", 97, R.drawable.mia);
+    private static Song latin2 = new Song(9, "Calma", "Pedro Capo, Farruko", "latin", "Con Calma.mp3", 127, R.drawable.con_calma);
 
 
     @Override
@@ -310,5 +312,8 @@ public class SongListFragment extends Fragment {
             selectedPlaylist.add(songList.get(currentlyPlayingPosition));
         }
         super.onPause();
+//        Icon i = Icon.createWithResource(getActivity(), R.drawable.i_dont_care);
+//        ImageView m = getActivity().findViewById(R.id.song_cover);
+//        m.setImageResource();
     }
 }
