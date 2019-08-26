@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,11 +59,6 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sureWantLogout();
-//                FirebaseAuth.getInstance().signOut();
-//                if(getActivity() != null){
-//                    getActivity().finish();
-//                }
-//                startActivity(new Intent(getActivity(), MainActivity.class));
             }
         });
 
@@ -77,6 +73,7 @@ public class SettingsFragment extends Fragment {
                     public void onChanged(String s) {
                         if(!(m_Email.equals(""))&& !(m_Password.equals("")) && !(m_NewEmail.equals(""))) {
                             changeMail();
+                            m_Email ="";
                         }
                     }
                 });
@@ -94,6 +91,7 @@ public class SettingsFragment extends Fragment {
                     public void onChanged(String s) {
                         if(!(m_Email.equals(""))&& !(m_Password.equals("")) && !(m_NewPassword.equals(""))){
                             changePass();
+                            m_Email="";
                         }
                     }
                 });
@@ -215,59 +213,111 @@ public class SettingsFragment extends Fragment {
 
     public void changeMail(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
-        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    user.updateEmail(m_NewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "Email updated");
-                                Toast.makeText(getContext(),"Email updated successfully",Toast.LENGTH_LONG).show();
-                            } else {
-                                Log.d(TAG, "Error email not updated");
-                                Toast.makeText(getContext(),"Could not update email, try again",Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                } else {
-                    Log.d(TAG, "Error auth failed");
-                    Toast.makeText(getContext(),"Could not update email, try again",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        if(user == null){
+            Toast toast = Toast.makeText(getContext(), "Couldn't perform action. Please reassign and try again", Toast.LENGTH_LONG);
+            ViewGroup toastLayout = (ViewGroup) toast.getView();
+            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+            toastTV.setTextSize(20);
+            toast.show();
 
+            FirebaseAuth.getInstance().signOut();
+            if(getActivity() != null){
+                getActivity().finish();
+            }
+            startActivity(new Intent(getActivity(), MainActivity.class));
+        }
+        else {
+            AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updateEmail(m_NewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email updated");
+                                    Toast toast = Toast.makeText(getContext(), "Email updated successfully", Toast.LENGTH_LONG);
+                                    ViewGroup toastLayout = (ViewGroup) toast.getView();
+                                    TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                                    toastTV.setTextSize(20);
+                                    toast.show();
+                                } else {
+                                    Log.d(TAG, "Error email not updated");
+                                    Toast toast = Toast.makeText(getContext(), "Could not update email, try again", Toast.LENGTH_LONG);
+                                    ViewGroup toastLayout = (ViewGroup) toast.getView();
+                                    TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                                    toastTV.setTextSize(20);
+                                    toast.show();
+                                }
+                            }
+                        });
+                    } else {
+                        Log.d(TAG, "Error auth failed");
+                        Toast toast = Toast.makeText(getContext(), "Could not update email, try again", Toast.LENGTH_LONG);
+                        ViewGroup toastLayout = (ViewGroup) toast.getView();
+                        TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                        toastTV.setTextSize(20);
+                        toast.show();
+                    }
+                }
+            });
+        }
     }
 
 
     public void changePass(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
-        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    user.updatePassword(m_NewPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "Password updated");
-                                Toast.makeText(getContext(),"Password updated successfully",Toast.LENGTH_LONG).show();
-                            } else {
-                                Log.d(TAG, "Error password not updated");
-                                Toast.makeText(getContext(),"Could not update password, try again",Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                } else {
-                    Log.d(TAG, "Error auth failed");
-                    Toast.makeText(getContext(),"Could not update password, try again",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        if(user == null){
+            Toast toast = Toast.makeText(getContext(), "Couldn't perform action. Please reassign and try again", Toast.LENGTH_LONG);
+            ViewGroup toastLayout = (ViewGroup) toast.getView();
+            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+            toastTV.setTextSize(20);
+            toast.show();
 
+            FirebaseAuth.getInstance().signOut();
+            if(getActivity() != null){
+                getActivity().finish();
+            }
+            startActivity(new Intent(getActivity(), MainActivity.class));
+        }
+        else {
+            AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(m_NewPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Password updated");
+                                    Toast toast = Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_LONG);
+                                    ViewGroup toastLayout = (ViewGroup) toast.getView();
+                                    TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                                    toastTV.setTextSize(20);
+                                    toast.show();
+                                } else {
+                                    Log.d(TAG, "Error password not updated");
+                                    Toast toast = Toast.makeText(getContext(), "Could not update password, try again", Toast.LENGTH_LONG);
+                                    ViewGroup toastLayout = (ViewGroup) toast.getView();
+                                    TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                                    toastTV.setTextSize(20);
+                                    toast.show();
+                                }
+                            }
+                        });
+                    } else {
+                        Log.d(TAG, "Error auth failed");
+                        Toast toast = Toast.makeText(getContext(), "Could not update password, try again", Toast.LENGTH_LONG);
+                        ViewGroup toastLayout = (ViewGroup) toast.getView();
+                        TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                        toastTV.setTextSize(20);
+                        toast.show();
+                    }
+                }
+            });
+        }
     }
 
 }
