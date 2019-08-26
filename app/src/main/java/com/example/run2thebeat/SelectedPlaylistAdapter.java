@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,12 +34,14 @@ public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlayli
         public TextView songName;
         public TextView artist;
         public ImageButton deleteSongButton;
+//        public ImageView songCover;
 
         public SongViewHolder(@NonNull final View item, final SelectedPlaylistAdapter.OnDeleteClickListener deleteListener) {
             super(item);
             songName = item.findViewById(R.id.song_title);
             artist = item.findViewById(R.id.song_artist);
             deleteSongButton = item.findViewById(R.id.icon_delete_song);
+//            songCover = item.findViewById(R.id.image_of_song);
 
             deleteSongButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -75,6 +78,7 @@ public class SelectedPlaylistAdapter extends RecyclerView.Adapter<SelectedPlayli
         holder.artist.setTextColor(Color.WHITE);
         holder.songName.setText(songItem.getTitle());
         holder.songName.setTextColor(Color.WHITE);
+//        holder.songCover.setImageResource(songItem.getSongCover());
         holder.deleteSongButton.setVisibility(View.VISIBLE);
 
     }

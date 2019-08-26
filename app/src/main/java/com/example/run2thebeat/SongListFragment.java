@@ -33,17 +33,17 @@ import com.google.firebase.storage.FirebaseStorage;
 public class SongListFragment extends Fragment {
 
     private String TAG = "SongListFragment";
-    public  ArrayList<Song> songList;
-    public  static ArrayList<Song> selectedPlaylist;
+    public ArrayList<Song> songList;
+    public static ArrayList<Song> selectedPlaylist;
     private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public static MediaPlayer mediaPlayer;
-    public  int currentlyPlayingPosition = 1;
+    public int currentlyPlayingPosition = 1;
     private TextView tv_artist;
-    public  int nextToPlay = 0;
+    public int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
-    public  ImageButton imageButton;
+    public ImageButton imageButton;
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -66,7 +66,7 @@ public class SongListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(mediaPlayer != null){ // takes care of case when user keeps listening to music after run and then starts new run. prevents music overlapping
+        if (mediaPlayer != null) { // takes care of case when user keeps listening to music after run and then starts new run. prevents music overlapping
             mediaPlayer.stop();
         }
         imageButton = view.findViewById(R.id.play_pause);
@@ -189,16 +189,19 @@ public class SongListFragment extends Fragment {
 
     }
 
-    public void playSong(final int position) {
-        if (position <= 0 || position >= songList.size()) {
+    public void playSong(int position) {
+        if (position <= 0) {
             return;
+        }
+        if (position >= songList.size()) {
+            position = 1;
         }
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
         }
         mediaPlayer = new MediaPlayer();
         Song song = songList.get(position);
-
+        final int pos = position;
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -215,9 +218,9 @@ public class SongListFragment extends Fragment {
                     });
 
                     mediaPlayer.prepareAsync();
-                    swapItem(position);
-                    currentlyPlayingPosition = position;
-                    setMediaPlayerOnComplete(position);
+                    swapItem(pos);
+                    currentlyPlayingPosition = pos;
+                    setMediaPlayerOnComplete(pos);
                 } catch (IOException o) {
                 }
             }
@@ -243,7 +246,9 @@ public class SongListFragment extends Fragment {
                         playSong(position + 1);
                     }
                 }
-
+                else if(position >= songList.size()-1){
+                    playSong(1);
+                }
             }
         });
     }
