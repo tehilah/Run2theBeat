@@ -55,7 +55,14 @@ public class SongListFragment extends Fragment {
     private static Song popNum5 = new Song(7, "Can't Hold Us", "Macklemore", "pop", "Can't Hold Us - Macklemore .mp3", 146, R.drawable.bob_marley);
     private static Song latin1 = new Song(8, "Mia", "Bad Bunny ft. Drake", "latin", "Mia.mp3", 97, R.drawable.bob_marley);
     private static Song latin2 = new Song(9, "Calma", "Pedro Capo, Farruko", "latin", "Con Calma.mp3", 127, R.drawable.bob_marley);
-
+    private static Song rock1 = new Song(10,"Paint It Black","The Rolling Stones","rock","The Rolling Stones - Paint It, Black.mp3",160,R.drawable.bob_marley);
+    private static Song rock2 = new Song(11,"For Reasons Unknown","The Killers","rock","For Reasons Unknown - The Killers.mp3",140,R.drawable.bob_marley);
+    private static Song rock3 = new Song(12,"The Pretender","Foo Fighters","rock","Foo Fighters - The Pretender.mp3",170,R.drawable.bob_marley);
+    private static Song rock4 = new Song(13,"Wanted Dead Or Alive","Bon Jovi","rock","Bon Jovi - Wanted Dead Or Alive.mp3",150,R.drawable.bob_marley);
+    private static Song rock5 = new Song(14,"Eye Of The Tiger","Survivor","rock","Survivor - Eye Of The Tiger.mp3",109,R.drawable.bob_marley);
+    private static Song popNum6 = new Song(15, "We Found Love","Rihanna","pop","Rihanna - We Found Love.mp3",130,R.drawable.bob_marley);
+    private static Song popNum7 = new Song(16,"Girls Just Want To Have Fun","Cyndi Lauper","pop","Cyndi Lauper - Girls Just Want To Have Fun.mp3",120,R.drawable.bob_marley);
+    private static Song popNum8 = new Song(17,"Take Back The Night","Justin Timberlake","pop","Justin Timberlake - Take Back The Night.mp3",109,R.drawable.bob_marley);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceState) {
@@ -106,7 +113,15 @@ public class SongListFragment extends Fragment {
         allSongsList.add(popNum5);
         allSongsList.add(latin1);
         allSongsList.add(latin2);
-        Collections.sort(allSongsList);
+        allSongsList.add(rock1);
+        allSongsList.add(rock2);
+        allSongsList.add(rock3);
+        allSongsList.add(rock4);
+        allSongsList.add(rock5);
+        allSongsList.add(popNum6);
+        allSongsList.add(popNum7);
+        allSongsList.add(popNum8);
+        //Collections.sort(allSongsList);
     }
 
     public void getSongList() {
@@ -143,6 +158,7 @@ public class SongListFragment extends Fragment {
 
         if (songList.size() > 1) { //we set the first song in the list to be the first song from songList
             //because we are going to play it right away
+            Collections.sort(songList);
             songList.set(0, songList.get(1));
         }
     }
