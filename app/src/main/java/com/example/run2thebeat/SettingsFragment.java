@@ -28,6 +28,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
+
 public class SettingsFragment extends Fragment {
     private String m_Email = "";
     private String m_Password ="";
@@ -55,11 +57,12 @@ public class SettingsFragment extends Fragment {
         signoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                if(getActivity() != null){
-                    getActivity().finish();
-                }
-                startActivity(new Intent(getActivity(), MainActivity.class));
+                sureWantLogout();
+//                FirebaseAuth.getInstance().signOut();
+//                if(getActivity() != null){
+//                    getActivity().finish();
+//                }
+//                startActivity(new Intent(getActivity(), MainActivity.class));
             }
         });
 
@@ -97,6 +100,32 @@ public class SettingsFragment extends Fragment {
             }
         });
     }
+
+
+    public void sureWantLogout() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
+        alertDialogBuilder
+                .setMessage("Are you sure you want to logaout?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, delete message
+                        FirebaseAuth.getInstance().signOut();
+                        if(getActivity() != null){
+                            getActivity().finish();
+                        }
+                        startActivity(new Intent(getActivity(), MainActivity.class));
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
 
     public void changeEmailDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
