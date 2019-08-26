@@ -602,7 +602,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
             super.onBackPressed();
         }
     }
-    
+
     private void startMediaPlayerService() {
         Intent intent = new Intent(getApplicationContext(), MediaPlayerService.class);
         intent.setAction(MediaPlayerService.ACTION_PLAY);

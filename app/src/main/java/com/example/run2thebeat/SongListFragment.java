@@ -66,7 +66,9 @@ public class SongListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "getSongList: created");
+        if(mediaPlayer != null){ // takes care of case when user keeps listening to music after run and then starts new run. prevents music overlapping
+            mediaPlayer.stop();
+        }
         imageButton = view.findViewById(R.id.play_pause);
         selectedPlaylist = new ArrayList<>();
         curBPMLiveData = new MutableLiveData<Integer>();
