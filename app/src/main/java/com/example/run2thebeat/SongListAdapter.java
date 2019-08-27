@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import java.util.logging.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private OnPlayClickListener mPlayListener;
     private OnNextClickListener mNextListener;
     private OnPrviousClickListener mPreviousListener;
+    private SeekBar mSeekBar;
 
 
     public interface OnItemClickListener {
@@ -72,7 +74,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public ImageButton pausePlayButton;
         public ImageButton nextButton;
         public ImageButton previousButton;
-        public static SeekBar seekBar;
+        public SeekBar seekBar;
 
         public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
                               final OnPrviousClickListener previousListener) {
@@ -170,6 +172,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
         holder.songCover.setImageResource(songItem.getSongCover());
+        if(holder.seekBar != null){
+            mSeekBar = holder.seekBar;
+        }
     }
 
 
@@ -183,5 +188,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         return (position == 0) ? R.layout.currently_playing_song : R.layout.song;
     }
 
+    public SeekBar getSeekBar() {
+        return mSeekBar;
+    }
 
 }

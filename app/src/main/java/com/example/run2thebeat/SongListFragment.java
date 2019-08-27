@@ -1,33 +1,41 @@
 package com.example.run2thebeat;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import android.graphics.drawable.Icon;
-import android.media.MediaPlayer;
-import android.media.TimedMetaData;
+
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
-import android.os.Handler;
+
+import android.widget.SeekBar;
+import android.widget.Toast;
 
 
 public class SongListFragment extends Fragment {
@@ -35,15 +43,23 @@ public class SongListFragment extends Fragment {
     private String TAG = "SongListFragment";
     public ArrayList<Song> songList;
     public static ArrayList<Song> selectedPlaylist;
-    private RecyclerView songRecyclerView;
     private SongListAdapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    public static MediaPlayer mediaPlayer;
     public int currentlyPlayingPosition = 1;
-    private TextView tv_artist;
     public int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
     public ImageButton imageButton;
+    private boolean isPlaying;
+    Intent intent;
+    private PlayerService mBoundService;
+    private boolean mIsBound;
+
+    // --- seek bar variables ---
+    private SeekBar seekBar;
+    private int seekMax;
+    private static int songEnded = 0;
+    boolean mBroadcastIsRegistered;
+
+
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
     private static Song popNum1 = new Song(1, "I Dont Care", "Ed Sheeran & Justin Bieber ", "pop", "Ed Sheeran & Justin Bieber I Dont Care (Official Audio).mp3", 102, R.drawable.i_dont_care);
     private static Song popNum2 = new Song(2, "Faith", "Stevie Wonder ft. Ariana Grande", "pop", "Stevie Wonder - Faith ft. Ariana Grande.mp3", 158, R.drawable.faith);
@@ -64,36 +80,28 @@ public class SongListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mediaPlayer != null) { // takes care of case when user keeps listening to music after run and then starts new run. prevents music overlapping
-            mediaPlayer.stop();
-        }
+        intent = new Intent(getActivity(), PlayerService.class);
+        getActivity().startService(intent);
+        doBindService();
+
         imageButton = view.findViewById(R.id.play_pause);
         selectedPlaylist = new ArrayList<>();
         curBPMLiveData = new MutableLiveData<Integer>();
         songList = new ArrayList<>();
-        mediaPlayer = new MediaPlayer();
+
         createSongList();
         getSongList();
         buildRecyclerView(view);
-        playSong(1);
- //      setSeekBar();
+        startListeners(view);
 
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.stop();
-                mp.reset();
-            }
-        });
         curBPMLiveData.observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                onBPMchange(integer);
+                onBPMChange(integer);
             }
         });
 
     }
-
 
     public void createSongList() {
         allSongsList.add(popNum1);
@@ -113,11 +121,9 @@ public class SongListFragment extends Fragment {
         songList.clear();
         songList.add(new Song(000, "", "", "", "", 0, 0)); //currently playing song. set to nothing at first
         ArrayList<String> selectedGenres = (ArrayList<String>) getActivity().getIntent().getSerializableExtra("genres");
-        ArrayList<Song> savedPlaylist = (ArrayList<Song>) getActivity().getIntent().getSerializableExtra("playlist"); //todo
+        ArrayList<Song> savedPlaylist = (ArrayList<Song>) getActivity().getIntent().getSerializableExtra("playlist");
         if (savedPlaylist != null) {
-            for (int i = 0; i < savedPlaylist.size(); i++) {
-                songList.add(savedPlaylist.get(i));
-            }
+            songList.addAll(savedPlaylist);
         } else if (selectedGenres.size() == 0) {//no generes selected
             for (int j = 0; j < allSongsList.size(); j++) {
                 Song song = allSongsList.get(j);
@@ -134,7 +140,6 @@ public class SongListFragment extends Fragment {
                         if (!songList.contains(song)) {
                             songList.add(song);
                         }
-
                     }
                 }
             }
@@ -146,18 +151,21 @@ public class SongListFragment extends Fragment {
         }
     }
 
-
     public void buildRecyclerView(final View view) {
-        songRecyclerView = view.findViewById(R.id.list);
+        RecyclerView songRecyclerView = view.findViewById(R.id.list);
         songRecyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new SongListAdapter(songList);
         songRecyclerView.setAdapter(mAdapter);
         songRecyclerView.setLayoutManager(layoutManager);
-        mAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
+        seekBar = mAdapter.getSeekBar();
+    }
+
+    private void startListeners(View view) {
+        mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
-            public void onItemClick(int position) {
-                playSong(position);
+            public void onNextClick() {
+                playSong(currentlyPlayingPosition + 1);
             }
         });
 
@@ -168,15 +176,10 @@ public class SongListFragment extends Fragment {
             }
         });
 
-        mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
+        mAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
             @Override
-            public void onNextClick() {
-                int songLength = mediaPlayer.getDuration();
-                int howLong = mediaPlayer.getCurrentPosition();
-                if (howLong >= songLength / 2) {
-                    selectedPlaylist.add(songList.get(currentlyPlayingPosition));
-                }
-                playSong(currentlyPlayingPosition + 1);
+            public void onItemClick(int position) {
+                playSong(position);
             }
         });
         mAdapter.setOnPreviousClickListener(new SongListAdapter.OnPrviousClickListener() {
@@ -185,7 +188,6 @@ public class SongListFragment extends Fragment {
                 playSong(currentlyPlayingPosition - 1);
             }
         });
-
     }
 
     public void playSong(int position) {
@@ -195,10 +197,7 @@ public class SongListFragment extends Fragment {
         if (position >= songList.size()) {
             position = 1;
         }
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
-        }
-        mediaPlayer = new MediaPlayer();
+
         Song song = songList.get(position);
         final int pos = position;
         // Create a storage reference from our app
@@ -207,52 +206,24 @@ public class SongListFragment extends Fragment {
         storageRef.child(song.getGenre()).child(song.getFullName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                try {
-                    mediaPlayer.setDataSource(uri.toString());
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-
-                    mediaPlayer.prepareAsync();
-                    swapItem(pos);
-                    currentlyPlayingPosition = pos;
-                    setMediaPlayerOnComplete(pos);
-
-                } catch (IOException o) {
+                if (mBoundService != null) {
+                    mBoundService.startPlayer(uri.toString());
+                } else {
+                    Toast.makeText(getContext(), "service is null", Toast.LENGTH_SHORT).show();
                 }
+
+                isPlaying = true;
+                swapItem(pos);
+                currentlyPlayingPosition = pos;
             }
-        });
-
-    }
-
-
-    public void setMediaPlayerOnComplete(int position) {
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCompletion(MediaPlayer mp) {
-
-                mp.stop();
-                mp.reset();
-                //addSong
-                selectedPlaylist.add(songList.get(position));
-                if (position < songList.size() - 1) {
-                    if (nextToPlay != 0) {
-                        playSong(nextToPlay);
-                        nextToPlay = 0;
-                    } else {
-                        playSong(position + 1);
-                    }
-                }
-                else if(position >= songList.size()-1){
-                    playSong(1);
-                }
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "onFailure: Failed to load from storage");
             }
         });
-    }
 
+    }
 
     public void swapItem(int position) {
         Song nowPlaying = songList.get(position);
@@ -263,21 +234,24 @@ public class SongListFragment extends Fragment {
 
     public void playOrPause(View view) {
         imageButton = view.findViewById(R.id.play_pause);
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
+        SeekBar s = view.findViewById(R.id.seek_bar);
+        if (isPlaying) {
+            mBoundService.pausePlayer();
             imageButton.setImageResource(R.drawable.ic_play);
+            isPlaying = false;
         } else {
-            mediaPlayer.start();
+            mBoundService.playPlayer();
             imageButton.setImageResource(R.drawable.ic_pause);
+            isPlaying = true;
         }
 
     }
 
 
-    public void onBPMchange(int BPM) {
+    public void onBPMChange(int BPM) {
 //        Song curSong = songList.get(currentlyPlayingPosition);
 //        int curSongBPM = curSong.getSongBPM();
-//        mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed((float) BPM / curSongBPM));
+//
 
 
         Song currentlyPlaying = songList.get(currentlyPlayingPosition);
@@ -301,39 +275,114 @@ public class SongListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        // register receiver
+        if (!mBroadcastIsRegistered) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(PlayerService.SONG_ENDED);
+            intentFilter.addAction(PlayerService.SAVE_SONG);
+            intentFilter.addAction(PlayerService.BROADCAST_ACTION);
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(myReceiver, intentFilter);
+            mBroadcastIsRegistered = true;
+        }
+        super.onResume();
+    }
 
     @Override
     public void onPause() {
-        int songLength = mediaPlayer.getDuration();
-        int howLong = mediaPlayer.getCurrentPosition();
-        if (howLong >= songLength / 2) {
-            selectedPlaylist.add(songList.get(currentlyPlayingPosition));
+        if (mBroadcastIsRegistered) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(myReceiver);
+            mBroadcastIsRegistered = false;
         }
         super.onPause();
-//        Icon i = Icon.createWithResource(getActivity(), R.drawable.i_dont_care);
-//        ImageView m = getActivity().findViewById(R.id.song_cover);
-//        m.setImageResource();
     }
 
-    public void setSeekBar(){
-        int mFileDuration = mediaPlayer.getDuration();
-        SongListAdapter.SongViewHolder.seekBar.setMax(mFileDuration/1000);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        doUnbindService();
+    }
 
-        Handler handler = new Handler();
-//Make sure you update Seekbar on UI thread
-        getActivity().runOnUiThread(new Runnable() {
+    /*
+    Binding functions
+     */
 
-            @Override
-            public void run() {
-                if(SongListFragment.mediaPlayer != null){
-                    int mCurrentPosition = SongListFragment.mediaPlayer.getCurrentPosition() / 1000;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBoundService = ((PlayerService.LocalBinder) service).getService();
+            Toast.makeText(getContext(), "local service connected", Toast.LENGTH_SHORT).show();
+            playSong(1);
 
-                    SongListAdapter.SongViewHolder.seekBar.setProgress(mCurrentPosition);
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBoundService = null;
+            Toast.makeText(getContext(), "local service disconnected", Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+
+    private void doBindService() {
+        getActivity().bindService(new Intent(getActivity(), PlayerService.class),
+                mConnection,
+                Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+    }
+
+    private void doUnbindService() {
+        if (mIsBound) {
+            // Detach our existing connection.
+            getContext().unbindService(mConnection);
+            mIsBound = false;
+        }
+    }
+
+    /*
+    Local broadcast receiver
+     */
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI(intent);
+            String action = intent.getAction();
+            if (action != null && action.equals(PlayerService.SONG_ENDED)) {
+                selectedPlaylist.add(songList.get(currentlyPlayingPosition));
+                if (currentlyPlayingPosition >= songList.size()) {
+                    currentlyPlayingPosition = 0;
                 }
-                handler.postDelayed(this, 1000);
+                playSong(currentlyPlayingPosition + 1);
             }
-        });
+            //todo: see if this can be fixed with seek (the current position is unclear what it will be)
+            if (action != null && action.equals(PlayerService.SAVE_SONG)) {
+                selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
+            }
+
+        }
+    };
+
+    private void updateUI(Intent serviceIntent) {
+        seekBar = mAdapter.getSeekBar();
+        if (seekBar != null) {
+            String counter = serviceIntent.getStringExtra("Counter");
+            String mediaMax = serviceIntent.getStringExtra("mediaMax");
+            String strSongEnded = serviceIntent.getStringExtra("songEnded");
+            int seekBarProgress = Integer.parseInt(counter);
+            seekMax = Integer.parseInt(mediaMax);
+            songEnded = Integer.parseInt(strSongEnded);
+            seekBar.setMax(seekMax);
+            seekBar.setProgress(seekBarProgress);
+            if (songEnded == 1) {
+                imageButton.setImageResource(R.drawable.ic_play);
+            }
+        }
+
     }
+
 
 }
+
+
