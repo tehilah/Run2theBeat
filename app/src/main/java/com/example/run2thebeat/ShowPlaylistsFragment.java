@@ -84,15 +84,18 @@ public class ShowPlaylistsFragment extends Fragment {
                             playlistsList.add(playlistItem);
                         }
 
-                        if(playlistsList.size() ==0){
-                            TextView textView = view.findViewById(R.id.no_saved_playlists);
-                            textView.setVisibility(View.VISIBLE);
-                        }
+
 
                         mHandler.post(new Runnable(){
                             @Override
                             public void run(){
-                                buildRecyclerView(view);
+                                if(playlistsList.size() ==0){
+                                    TextView textView = view.findViewById(R.id.no_saved_playlists);
+                                    textView.setVisibility(View.VISIBLE);
+                                }
+                                else {
+                                    buildRecyclerView(view);
+                                }
                             }
                         });
                     }
