@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,12 +33,13 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     private boolean isFabOpen;
     private ImageView playPause;
     private Button newPlaylistBtn;
-    public static PlayerService mBoundService;
+    private static PlayerService mBoundService;
     private boolean mIsBound;
     private TextView songTitle;
     private TextView songArtist;
     private boolean mBroadcastIsRegistered;
     private SeekBar seekBar;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
 
     @Nullable
@@ -69,9 +72,12 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         songTitle = view.findViewById(R.id.song_title);
         songArtist = view.findViewById(R.id.song_artist);
         seekBar = view.findViewById(R.id.seekbar);
+        fab_open = AnimationUtils.loadAnimation(getContext().getApplicationContext(), R.anim.media_player_open);
+        fab_close = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.media_player_close);
+        rotate_forward = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.rotate_backward);
     }
 
-//    }
 
     /**
      * Check if media player is paused or if its null. if the player is null then don't show floating
@@ -79,7 +85,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
      */
     private void checkForUpdates() {
         if (!mBoundService.isMediaStarted()) { // check if player is in pause mode or not set at all
-            fab.setVisibility(View.GONE);
+//            fab.setVisibility(View.GONE);
         } else {
             fab.setVisibility(View.VISIBLE);
             if (SongListFragment.songList.size() > 0) { // update the song title and artist
@@ -96,12 +102,17 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.fab:
-                if (!isFabOpen) {
-                    mediaPlayerLayout.setVisibility(View.VISIBLE);
-                    isFabOpen = true;
-                } else {
+                if (isFabOpen) {
+                    fab.startAnimation(rotate_backward);
+                    mediaPlayerLayout.startAnimation(fab_close);
                     mediaPlayerLayout.setVisibility(View.GONE);
                     isFabOpen = false;
+
+                } else {
+                    fab.startAnimation(rotate_forward);
+                    mediaPlayerLayout.setVisibility(View.VISIBLE);
+                    mediaPlayerLayout.startAnimation(fab_open);
+                    isFabOpen = true;
                 }
                 break;
             case R.id.choose_new_playlist:
@@ -221,6 +232,21 @@ public class RunFragment extends Fragment implements View.OnClickListener {
                 seekBar.setMax(seekMax);
                 seekBar.setProgress(seekBarProgress);
             }
+        }
+    }
+
+    public void animateFAB(){
+
+        if(isFabOpen){
+
+            fab.startAnimation(rotate_backward);
+            mediaPlayerLayout.startAnimation(fab_close);
+            isFabOpen = false;
+        } else {
+
+            fab.startAnimation(rotate_forward);
+            mediaPlayerLayout.startAnimation(fab_open);
+            isFabOpen = true;
         }
     }
 }

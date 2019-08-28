@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
     public static final String SONG_ENDED = "com.example.run2thebeat.PlayerService.SONG_ENDED";
-    public static final String SAVE_SONG = "com.example.run2thebeat.PlayerService.SAVE_SONG";
     public static final String SEEK_POS = "com.example.run2thebeat.PlayerService.SEEK_POS";
 
     private final IBinder mBinder = new LocalBinder();
@@ -25,9 +24,6 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     private boolean mIsBroadcastRegistered;
     private boolean hasMusicStarted; // variable to notify whether media player is in pause or has not been set a data source at all
 
-    //---- variables for seekbar processing ----
-    private int mediaPosition;
-    private int mediaMax;
     private final Handler handler = new Handler();
     private static int songEnded;
     public static final String BROADCAST_ACTION = "seek progress";
@@ -87,8 +83,9 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     private void logMediaPosition() {
         if (mediaPlayer.isPlaying()) {
-            mediaPosition = mediaPlayer.getCurrentPosition();
-            mediaMax = mediaPlayer.getDuration();
+            //---- variables for seekbar processing ----
+            int mediaPosition = mediaPlayer.getCurrentPosition();
+            int mediaMax = mediaPlayer.getDuration();
             seekIntent.putExtra("Counter", String.valueOf(mediaPosition));
             seekIntent.putExtra("mediaMax", String.valueOf(mediaMax));
             seekIntent.putExtra("songEnded", String.valueOf(songEnded));
