@@ -1,14 +1,8 @@
 package com.example.run2thebeat;
 
-import android.content.Context;
-
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-
-import java.util.logging.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +20,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private OnItemClickListener mListener;
     private OnPlayClickListener mPlayListener;
     private OnNextClickListener mNextListener;
-    private OnPrviousClickListener mPreviousListener;
+    private OnSeekChangeListener mSeekListener;
+    private OnPreviousClickListener mPreviousListener;
     private SeekBar mSeekBar;
 
 
@@ -34,6 +29,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         void onItemClick(int position);
     }
 
+    public interface OnSeekChangeListener {
+        void onSeekChange(SeekBar seekBar, int progress, boolean fromUser);
+    }
+
+    public void setOnSeekBarChangeListener(OnSeekChangeListener listener) {
+        mSeekListener = listener;
+    }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
@@ -55,11 +57,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         mNextListener = listener;
     }
 
-    public interface OnPrviousClickListener {
+    public interface OnPreviousClickListener {
         void onPreviousClick();
     }
 
-    public void setOnPreviousClickListener(OnPrviousClickListener listener) {
+    public void setOnPreviousClickListener(OnPreviousClickListener listener) {
         mPreviousListener = listener;
     }
 
@@ -77,7 +79,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public SeekBar seekBar;
 
         public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
-                              final OnPrviousClickListener previousListener) {
+                              final OnPreviousClickListener previousListener, final OnSeekChangeListener seekListener) {
             super(item);
             songName = item.findViewById(R.id.song_title);
             songName.setSelected(true);
@@ -143,6 +145,27 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     }
                 });
             }
+
+            if(seekBar != null) {
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if(seekListener != null){
+                            seekListener.onSeekChange(seekBar, progress, fromUser);
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+            }
         }
 
     }
@@ -162,7 +185,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         } else {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song, parent, false);
         }
-        return new SongViewHolder(v, mListener, mPlayListener, mNextListener, mPreviousListener);
+        return new SongViewHolder(v, mListener, mPlayListener, mNextListener, mPreviousListener, mSeekListener);
     }
 
 
@@ -172,7 +195,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
         holder.songCover.setImageResource(songItem.getSongCover());
-        if(holder.seekBar != null){
+        if (holder.seekBar != null) {
             mSeekBar = holder.seekBar;
         }
     }

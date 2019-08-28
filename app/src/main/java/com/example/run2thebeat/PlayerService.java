@@ -2,8 +2,10 @@ package com.example.run2thebeat;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
@@ -23,19 +25,20 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     public static final String SONG_ENDED = "song ended";
     public static final String SAVE_SONG = "save song";
-    private MediaPlayer mediaPlayer = new MediaPlayer();
-    public static final String START_MEDIA_PLAYER = "start media player";
+    public static final String SEEK_POS = "SeekPos";
+
     private final IBinder mBinder = new LocalBinder();
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private boolean mIsBroadcastRegistered;
 
     //---- variables for seekbar processing ----
-    private String sentSeekPos;
-    private int seekPosition;
     private int mediaPosition;
     private int mediaMax;
     private final Handler handler = new Handler();
     private static int songEnded;
     public static final String BROADCAST_ACTION = "seek progress";
     private Intent seekIntent;
+
 
     public class LocalBinder extends Binder {
         PlayerService getService() {
@@ -47,7 +50,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     public void onCreate() {
         Toast.makeText(this, "--Service Created--", Toast.LENGTH_SHORT).show();
 
-        seekIntent = new Intent(BROADCAST_ACTION);
+        seekIntent = new Intent(BROADCAST_ACTION); // intent for moving seekbar (not user changing it)
 
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
@@ -62,6 +65,15 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "--Service Started--", Toast.LENGTH_SHORT).show();
+
+        // register broadcast receiver
+        if (!mIsBroadcastRegistered) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(SongListFragment.BROADCAST_SEEKBAR);
+            LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+            mIsBroadcastRegistered = true;
+        }
+
         setUpHandler();
         return START_STICKY;
     }
@@ -82,7 +94,6 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     private void logMediaPosition() {
         if (mediaPlayer.isPlaying()) {
             mediaPosition = mediaPlayer.getCurrentPosition();
-
             mediaMax = mediaPlayer.getDuration();
             seekIntent.putExtra("Counter", String.valueOf(mediaPosition));
             seekIntent.putExtra("mediaMax", String.valueOf(mediaMax));
@@ -133,6 +144,10 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             mediaPlayer.release();
         }
         handler.removeCallbacks(sendUpdatesToUI);
+        if (mIsBroadcastRegistered) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+            mIsBroadcastRegistered = false;
+        }
     }
 
     @Nullable
@@ -187,6 +202,24 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     @Override
     public void onSeekComplete(MediaPlayer mp) {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+    }
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateSeekPos(intent);
+        }
+    };
+
+    private void updateSeekPos(Intent intent) {
+        int seekPos = intent.getIntExtra(SEEK_POS, 0);
+        if (mediaPlayer.isPlaying()) {
+            handler.removeCallbacks(sendUpdatesToUI);
+            mediaPlayer.seekTo(seekPos);
+            setUpHandler();
+        }
     }
 }
