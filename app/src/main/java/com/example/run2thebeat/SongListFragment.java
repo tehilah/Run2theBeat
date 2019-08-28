@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +57,8 @@ public class SongListFragment extends Fragment {
     private int seekMax;
     private static int songEnded = 0;
     boolean mBroadcastIsRegistered;
+    private Intent seekbarIntent;
+    public static final String BROADCAST_SEEKBAR = "changed seeking position";
 
 
     private static ArrayList<Song> allSongsList = new ArrayList<Song>();
@@ -70,14 +71,14 @@ public class SongListFragment extends Fragment {
     private static Song popNum5 = new Song(7, "Can't Hold Us", "Macklemore", "pop", "Can't Hold Us - Macklemore .mp3", 146, R.drawable.cant_hold_us);
     private static Song latin1 = new Song(8, "Mia", "Bad Bunny ft. Drake", "latin", "Mia.mp3", 97, R.drawable.mia);
     private static Song latin2 = new Song(9, "Calma", "Pedro Capo, Farruko", "latin", "Con Calma.mp3", 127, R.drawable.con_calma);
-    private static Song rock1 = new Song(10,"Paint It Black","The Rolling Stones","rock","The Rolling Stones - Paint It, Black.mp3",160,R.drawable.bob_marley);
-    private static Song rock2 = new Song(11,"For Reasons Unknown","The Killers","rock","For Reasons Unknown - The Killers.mp3",140,R.drawable.bob_marley);
-    private static Song rock3 = new Song(12,"The Pretender","Foo Fighters","rock","Foo Fighters - The Pretender.mp3",170,R.drawable.bob_marley);
-    private static Song rock4 = new Song(13,"Wanted Dead Or Alive","Bon Jovi","rock","Bon Jovi - Wanted Dead Or Alive.mp3",150,R.drawable.bob_marley);
-    private static Song rock5 = new Song(14,"Eye Of The Tiger","Survivor","rock","Survivor - Eye Of The Tiger.mp3",109,R.drawable.bob_marley);
-    private static Song popNum6 = new Song(15, "We Found Love","Rihanna","pop","Rihanna - We Found Love.mp3",130,R.drawable.bob_marley);
-    private static Song popNum7 = new Song(16,"Girls Just Want To Have Fun","Cyndi Lauper","pop","Cyndi Lauper - Girls Just Want To Have Fun.mp3",120,R.drawable.bob_marley);
-    private static Song popNum8 = new Song(17,"Take Back The Night","Justin Timberlake","pop","Justin Timberlake - Take Back The Night.mp3",109,R.drawable.bob_marley);
+    private static Song rock1 = new Song(10, "Paint It Black", "The Rolling Stones", "rock", "The Rolling Stones - Paint It, Black.mp3", 160, R.drawable.bob_marley);
+    private static Song rock2 = new Song(11, "For Reasons Unknown", "The Killers", "rock", "For Reasons Unknown - The Killers.mp3", 140, R.drawable.bob_marley);
+    private static Song rock3 = new Song(12, "The Pretender", "Foo Fighters", "rock", "Foo Fighters - The Pretender.mp3", 170, R.drawable.bob_marley);
+    private static Song rock4 = new Song(13, "Wanted Dead Or Alive", "Bon Jovi", "rock", "Bon Jovi - Wanted Dead Or Alive.mp3", 150, R.drawable.bob_marley);
+    private static Song rock5 = new Song(14, "Eye Of The Tiger", "Survivor", "rock", "Survivor - Eye Of The Tiger.mp3", 109, R.drawable.bob_marley);
+    private static Song popNum6 = new Song(15, "We Found Love", "Rihanna", "pop", "Rihanna - We Found Love.mp3", 130, R.drawable.bob_marley);
+    private static Song popNum7 = new Song(16, "Girls Just Want To Have Fun", "Cyndi Lauper", "pop", "Cyndi Lauper - Girls Just Want To Have Fun.mp3", 120, R.drawable.bob_marley);
+    private static Song popNum8 = new Song(17, "Take Back The Night", "Justin Timberlake", "pop", "Justin Timberlake - Take Back The Night.mp3", 109, R.drawable.bob_marley);
 
 
     @Override
@@ -91,6 +92,9 @@ public class SongListFragment extends Fragment {
         intent = new Intent(getActivity(), PlayerService.class);
         getActivity().startService(intent);
         doBindService();
+
+        seekbarIntent = new Intent();
+        seekbarIntent.setAction(BROADCAST_SEEKBAR);
 
         imageButton = view.findViewById(R.id.play_pause);
         selectedPlaylist = new ArrayList<>();
@@ -180,6 +184,17 @@ public class SongListFragment extends Fragment {
     }
 
     private void startListeners(View view) {
+        mAdapter.setOnSeekBarChangeListener(new SongListAdapter.OnSeekChangeListener() {
+            @Override
+            public void onSeekChange(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    int seekPos = seekBar.getProgress();
+                    seekbarIntent.putExtra(PlayerService.SEEK_POS, seekPos);
+                    getActivity().sendBroadcast(seekbarIntent);
+                }
+            }
+        });
+
         mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
             public void onNextClick() {
@@ -197,10 +212,13 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                imageButton = view.findViewById(R.id.play_pause);
+                imageButton.setImageResource(R.drawable.ic_pause);
                 playSong(position);
             }
         });
-        mAdapter.setOnPreviousClickListener(new SongListAdapter.OnPrviousClickListener() {
+
+        mAdapter.setOnPreviousClickListener(new SongListAdapter.OnPreviousClickListener() {
             @Override
             public void onPreviousClick() {
                 playSong(currentlyPlayingPosition - 1);
@@ -301,7 +319,7 @@ public class SongListFragment extends Fragment {
             intentFilter.addAction(PlayerService.SONG_ENDED);
             intentFilter.addAction(PlayerService.SAVE_SONG);
             intentFilter.addAction(PlayerService.BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(myReceiver, intentFilter);
+            getActivity().registerReceiver(myReceiver, intentFilter);
             mBroadcastIsRegistered = true;
         }
         super.onResume();
@@ -310,7 +328,7 @@ public class SongListFragment extends Fragment {
     @Override
     public void onPause() {
         if (mBroadcastIsRegistered) {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(myReceiver);
+            getActivity().unregisterReceiver(myReceiver);
             mBroadcastIsRegistered = false;
         }
         super.onPause();
@@ -365,20 +383,18 @@ public class SongListFragment extends Fragment {
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI(intent);
             String action = intent.getAction();
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
                 selectedPlaylist.add(songList.get(currentlyPlayingPosition));
-                if (currentlyPlayingPosition >= songList.size()) {
-                    currentlyPlayingPosition = 0;
-                }
+                currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
                 playSong(currentlyPlayingPosition + 1);
+            } else {
+                updateUI(intent); // only if song didn't end yet
+                if (action != null && action.equals(PlayerService.SAVE_SONG)) {
+                    selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
+                }
             }
             //todo: see if this can be fixed with seek (the current position is unclear what it will be)
-            if (action != null && action.equals(PlayerService.SAVE_SONG)) {
-                selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
-            }
-
         }
     };
 
@@ -388,19 +404,20 @@ public class SongListFragment extends Fragment {
             String counter = serviceIntent.getStringExtra("Counter");
             String mediaMax = serviceIntent.getStringExtra("mediaMax");
             String strSongEnded = serviceIntent.getStringExtra("songEnded");
-            int seekBarProgress = Integer.parseInt(counter);
-            seekMax = Integer.parseInt(mediaMax);
-            songEnded = Integer.parseInt(strSongEnded);
-            seekBar.setMax(seekMax);
-            seekBar.setProgress(seekBarProgress);
-            if (songEnded == 1) {
-                imageButton.setImageResource(R.drawable.ic_play);
+            if (counter != null && mediaMax != null && strSongEnded != null) {
+                int seekBarProgress = Integer.parseInt(counter);
+                seekMax = Integer.parseInt(mediaMax);
+                songEnded = Integer.parseInt(strSongEnded);
+                seekBar.setMax(seekMax);
+                seekBar.setProgress(seekBarProgress);
             }
+
+//            if (songEnded == 1) {
+//                imageButton.setImageResource(R.drawable.ic_play);
+//            }
         }
 
     }
-
-
 }
 
 
