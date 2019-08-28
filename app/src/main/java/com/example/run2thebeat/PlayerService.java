@@ -23,6 +23,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private boolean mIsBroadcastRegistered;
+    private boolean hasMusicStarted; // variable to notify whether media player is in pause or has not been set a data source at all
 
     //---- variables for seekbar processing ----
     private int mediaPosition;
@@ -96,21 +97,13 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     }
 
     public void startPlayer(String url) {
-//        if (mediaPlayer.isPlaying()) {
-//            int songLength = mediaPlayer.getDuration();
-//            int howLong = mediaPlayer.getCurrentPosition();
-//            if (howLong >= songLength / 2) {
-//                Intent intent = new Intent();
-//                intent.setAction(SAVE_SONG);
-//                sendBroadcast(intent);
-//            }
-//        }
         mediaPlayer.stop();
         mediaPlayer.reset();
 
         try {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
+            hasMusicStarted = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,5 +207,14 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             mediaPlayer.seekTo(seekPos);
             setUpHandler();
         }
+    }
+
+    public boolean isPlaying(){
+        return mediaPlayer.isPlaying();
+    }
+
+    public boolean isMediaStarted(){
+
+        return hasMusicStarted;
     }
 }

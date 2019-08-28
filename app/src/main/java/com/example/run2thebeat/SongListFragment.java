@@ -33,23 +33,21 @@ import android.widget.Toast;
 public class SongListFragment extends Fragment {
 
     private static String TAG = "SongListFragment";
-    private static ArrayList<Song> songList;
+    public static ArrayList<Song> songList;
     public static ArrayList<Song> selectedPlaylist;
     private static SongListAdapter mAdapter;
-    private static int currentlyPlayingPosition = 1;
+    public static int currentlyPlayingPosition = 1;
     private static boolean isAdded;
     public int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
     public ImageButton imageButton;
     private static boolean isPlaying;
-    //    Intent intent;
+    //    Binding variables
     private static PlayerService mBoundService;
     private boolean mIsBound;
 
     // --- seek bar variables ---
     private static SeekBar seekBar;
-    private static int seekMax;
-    private static int songEnded = 0;
     private Intent seekbarIntent;
     public static final String BROADCAST_SEEKBAR = "com.example.run2thebeat.SongListFragment.BROADCAST_SEEKBAR";
 
@@ -218,7 +216,7 @@ public class SongListFragment extends Fragment {
         });
     }
 
-    private static void playSong(int position) {
+    public static void playSong(int position) {
         if (position <= 0) {
             return;
         }
@@ -263,7 +261,6 @@ public class SongListFragment extends Fragment {
 
     public void playOrPause(View view) {
         imageButton = view.findViewById(R.id.play_pause);
-        SeekBar s = view.findViewById(R.id.seek_bar);
         if (isPlaying) {
             mBoundService.pausePlayer();
             imageButton.setImageResource(R.drawable.ic_play);
@@ -351,22 +348,16 @@ public class SongListFragment extends Fragment {
         if (seekBar != null) {
             String counter = serviceIntent.getStringExtra("Counter");
             String mediaMax = serviceIntent.getStringExtra("mediaMax");
-            String strSongEnded = serviceIntent.getStringExtra("songEnded");
-            if (counter != null && mediaMax != null && strSongEnded != null) {
+            if (counter != null && mediaMax != null) {
                 int seekBarProgress = Integer.parseInt(counter);
-                seekMax = Integer.parseInt(mediaMax);
-                songEnded = Integer.parseInt(strSongEnded);
+                int seekMax = Integer.parseInt(mediaMax);
                 seekBar.setMax(seekMax);
                 seekBar.setProgress(seekBarProgress);
-                if(!isAdded && seekBarProgress >= seekMax/2){
+                if(!isAdded && seekBarProgress >= seekMax /2){
                     selectedPlaylist.add(songList.get(currentlyPlayingPosition));
                     isAdded = true;
                 }
             }
-
-//            if (songEnded == 1) {
-//                imageButton.setImageResource(R.drawable.ic_play);
-//            }
         }
 
     }
@@ -381,10 +372,7 @@ public class SongListFragment extends Fragment {
                 currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
                 playSong(currentlyPlayingPosition + 1);
             } else {
-                updateUI(intent); // only if song didn't end yet
-//                if (action != null && action.equals(PlayerService.SAVE_SONG)) {
-//                    selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
-//                }
+                updateUI(intent);
             }
 
             // if(action.equals(BROADCAST_ACTION){updateUI();} todo: maybe add this instead of else

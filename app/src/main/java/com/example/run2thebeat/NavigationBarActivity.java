@@ -25,7 +25,6 @@ public class NavigationBarActivity extends AppCompatActivity {
             myReceiver = new SongListFragment.MyBroadcastReceiver();
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(PlayerService.SONG_ENDED);
-            intentFilter.addAction(PlayerService.SAVE_SONG);
             intentFilter.addAction(PlayerService.BROADCAST_ACTION);
             registerReceiver(myReceiver, intentFilter);
             mBroadcastIsRegistered = true;
