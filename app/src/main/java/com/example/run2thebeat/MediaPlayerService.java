@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MediaPlayerService extends Service {
 
@@ -52,8 +53,6 @@ public class MediaPlayerService extends Service {
             mController.getTransportControls().skipToPrevious();
         } else if (action.equalsIgnoreCase(ACTION_NEXT)) {
             mController.getTransportControls().skipToNext();
-        } else if (action.equalsIgnoreCase(ACTION_STOP)) {
-            mController.getTransportControls().stop();
         }
     }
 
@@ -90,6 +89,8 @@ public class MediaPlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent broadcastIntent = new Intent();
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
         if( mManager == null ) {
             initMediaSessions();
@@ -99,8 +100,7 @@ public class MediaPlayerService extends Service {
     }
 
     private void initMediaSessions() {
-        mMediaPlayer = SongListFragment.mediaPlayer;
-
+        mMediaPlayer = new MediaPlayer();
         mSession = new MediaSession(this, "MusicService");
         mController =new MediaController(getApplicationContext(), mSession.getSessionToken());
         mSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
@@ -118,7 +118,7 @@ public class MediaPlayerService extends Service {
                                      super.onPause();
                                      mMediaPlayer.pause();
 //                                     SongListFragment.imageButton.setImageResource(R.drawable.ic_play);
-                                     buildNotification(generateAction(android.R.drawable.ic_media_play, "Play", ACTION_PLAY));
+//                                     buildNotification(generateAction(android.R.drawable.ic_media_play, "Play", ACTION_PLAY));
                                  }
 
                                  @Override
@@ -126,13 +126,13 @@ public class MediaPlayerService extends Service {
                                      super.onSkipToNext();
 //                                     SongListFragment.playSong(SongListFragment.currentlyPlayingPosition + 1);
                                      //Change media here
-                                     buildNotification( generateAction( android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE ) );
+//                                     buildNotification( generateAction( android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE ) );
                                  }
 
                                  @Override
                                  public void onSkipToPrevious() {
                                      super.onSkipToPrevious();
-                                     buildNotification( generateAction( android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE ) );
+//                                     buildNotification( generateAction( android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE ) );
                                  }
 
 
@@ -160,21 +160,5 @@ public class MediaPlayerService extends Service {
         return super.onUnbind(intent);
     }
 
-//    private final MediaController.Callback mcb = new MediaController.Callback() {
-//        @Override
-//        public void onPlaybackStateChanged(@Nullable PlaybackState state) {
-//            PlaybackState mPlaybackState = state;
-//            if (state.getState() == PlaybackState.STATE_STOPPED ||
-//                    state.getState() == PlaybackState.STATE_NONE) {
-//                stopNotification();
-//            }else {
-//                Notification notification = createNotification();
-//                if (notification != null) {
-//                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-//                }
-//            }
-//
-//
-//        }
-//    };
+
 }

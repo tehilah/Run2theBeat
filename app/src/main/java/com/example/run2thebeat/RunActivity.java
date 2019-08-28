@@ -501,7 +501,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         Log.d(TAG, "avgBPM: " + avgBpm);
         intent.putExtra("TITLE", title);
         intent.putParcelableArrayListExtra("POINTS", allPoints);
-        SongListFragment.mediaPlayer.stop();
+//        SongListFragment.mediaPlayer.stop();
 //        SongListFragment.mediaPlayer.reset();
         startActivity(intent);
         finish();
@@ -603,11 +603,6 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         }
     }
 
-    private void startMediaPlayerService() {
-        Intent intent = new Intent(getApplicationContext(), MediaPlayerService.class);
-        intent.setAction(MediaPlayerService.ACTION_PLAY);
-        startService(intent);
-    }
 
     public void getDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
