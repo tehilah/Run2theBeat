@@ -74,7 +74,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public ImageButton pausePlayButton;
         public ImageButton nextButton;
         public ImageButton previousButton;
-        public SeekBar seekBar;
+
 
         public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
                               final OnPrviousClickListener previousListener) {
@@ -88,7 +88,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             pausePlayButton = item.findViewById(R.id.play_pause);
             nextButton = item.findViewById(R.id.next_song);
             previousButton = item.findViewById(R.id.previous_song);
-            seekBar = item.findViewById(R.id.seek_bar);
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -157,7 +156,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
-        if (viewType == R.layout.song) {
+        if  (viewType == R.layout.song) {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song, parent, false);
         } else {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song, parent, false);
@@ -172,9 +171,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
         holder.songCover.setImageResource(songItem.getSongCover());
-        if(holder.seekBar != null){
-            mSeekBar = holder.seekBar;
-        }
     }
 
 
