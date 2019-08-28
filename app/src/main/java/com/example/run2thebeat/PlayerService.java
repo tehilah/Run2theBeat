@@ -70,7 +70,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         if (!mIsBroadcastRegistered) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(SongListFragment.BROADCAST_SEEKBAR);
-            LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+            registerReceiver(broadcastReceiver, intentFilter);
             mIsBroadcastRegistered = true;
         }
 
@@ -98,7 +98,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             seekIntent.putExtra("Counter", String.valueOf(mediaPosition));
             seekIntent.putExtra("mediaMax", String.valueOf(mediaMax));
             seekIntent.putExtra("songEnded", String.valueOf(songEnded));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(seekIntent);
+            sendBroadcast(seekIntent);
         }
     }
 
@@ -109,7 +109,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             if (howLong >= songLength / 2) {
                 Intent intent = new Intent();
                 intent.setAction(SAVE_SONG);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                sendBroadcast(intent);
             }
         }
         mediaPlayer.stop();
@@ -145,7 +145,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         }
         handler.removeCallbacks(sendUpdatesToUI);
         if (mIsBroadcastRegistered) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+            unregisterReceiver(broadcastReceiver);
             mIsBroadcastRegistered = false;
         }
     }
@@ -176,7 +176,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         }
         Intent intent = new Intent();
         intent.setAction(SONG_ENDED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     @Override

@@ -187,10 +187,10 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnSeekBarChangeListener(new SongListAdapter.OnSeekChangeListener() {
             @Override
             public void onSeekChange(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser){
+                if (fromUser) {
                     int seekPos = seekBar.getProgress();
                     seekbarIntent.putExtra(PlayerService.SEEK_POS, seekPos);
-                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(seekbarIntent);
+                    getActivity().sendBroadcast(seekbarIntent);
                 }
             }
         });
@@ -212,6 +212,8 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                imageButton = view.findViewById(R.id.play_pause);
+                imageButton.setImageResource(R.drawable.ic_pause);
                 playSong(position);
             }
         });
@@ -317,7 +319,7 @@ public class SongListFragment extends Fragment {
             intentFilter.addAction(PlayerService.SONG_ENDED);
             intentFilter.addAction(PlayerService.SAVE_SONG);
             intentFilter.addAction(PlayerService.BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(myReceiver, intentFilter);
+            getActivity().registerReceiver(myReceiver, intentFilter);
             mBroadcastIsRegistered = true;
         }
         super.onResume();
@@ -326,7 +328,7 @@ public class SongListFragment extends Fragment {
     @Override
     public void onPause() {
         if (mBroadcastIsRegistered) {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(myReceiver);
+            getActivity().unregisterReceiver(myReceiver);
             mBroadcastIsRegistered = false;
         }
         super.onPause();
@@ -387,7 +389,7 @@ public class SongListFragment extends Fragment {
                 currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
                 playSong(currentlyPlayingPosition + 1);
             } else {
-                updateUI(intent); // only
+                updateUI(intent); // only if song didn't end yet
                 if (action != null && action.equals(PlayerService.SAVE_SONG)) {
                     selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
                 }
@@ -402,11 +404,14 @@ public class SongListFragment extends Fragment {
             String counter = serviceIntent.getStringExtra("Counter");
             String mediaMax = serviceIntent.getStringExtra("mediaMax");
             String strSongEnded = serviceIntent.getStringExtra("songEnded");
-            int seekBarProgress = Integer.parseInt(counter);
-            seekMax = Integer.parseInt(mediaMax);
-            songEnded = Integer.parseInt(strSongEnded);
-            seekBar.setMax(seekMax);
-            seekBar.setProgress(seekBarProgress);
+            if (counter != null && mediaMax != null && strSongEnded != null) {
+                int seekBarProgress = Integer.parseInt(counter);
+                seekMax = Integer.parseInt(mediaMax);
+                songEnded = Integer.parseInt(strSongEnded);
+                seekBar.setMax(seekMax);
+                seekBar.setProgress(seekBarProgress);
+            }
+
 //            if (songEnded == 1) {
 //                imageButton.setImageResource(R.drawable.ic_play);
 //            }
