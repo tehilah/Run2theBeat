@@ -1,6 +1,6 @@
 package com.example.run2thebeat;
 
-import android.app.IntentService;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,16 +10,9 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.util.Log;
 import android.widget.Toast;
-
 import java.io.IOException;
-
 import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 

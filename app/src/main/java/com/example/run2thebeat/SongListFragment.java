@@ -48,7 +48,7 @@ public class SongListFragment extends Fragment {
     public static MutableLiveData<Integer> curBPMLiveData;
     public ImageButton imageButton;
     private static boolean isPlaying;
-    Intent intent;
+    //    Intent intent;
     private static PlayerService mBoundService;
     private boolean mIsBound;
     private MyBroadcastReceiver myReceiver;
@@ -90,8 +90,7 @@ public class SongListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        intent = new Intent(getActivity(), PlayerService.class);
-        getActivity().startService(intent);
+        // bind to service
         doBindService();
 
         seekbarIntent = new Intent();
@@ -312,29 +311,6 @@ public class SongListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        // register receiver
-//        if (!mBroadcastIsRegistered) {
-//            myReceiver = new MyBroadcastReceiver();
-//            IntentFilter intentFilter = new IntentFilter();
-//            intentFilter.addAction(PlayerService.SONG_ENDED);
-//            intentFilter.addAction(PlayerService.SAVE_SONG);
-//            intentFilter.addAction(PlayerService.BROADCAST_ACTION);
-//            getActivity().registerReceiver(myReceiver, intentFilter);
-//            mBroadcastIsRegistered = true;
-//        }
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-//        if (mBroadcastIsRegistered) {
-//            getActivity().unregisterReceiver(myReceiver);
-//            mBroadcastIsRegistered = false;
-//        }
-        super.onPause();
-    }
 
     @Override
     public void onDestroy() {
@@ -379,26 +355,6 @@ public class SongListFragment extends Fragment {
         }
     }
 
-    /*
-    Local broadcast receiver
-     */
-//    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (action != null && action.equals(PlayerService.SONG_ENDED)) {
-//                selectedPlaylist.add(songList.get(currentlyPlayingPosition));
-//                currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
-//                playSong(currentlyPlayingPosition + 1);
-//            } else {
-//                updateUI(intent); // only if song didn't end yet
-//                if (action != null && action.equals(PlayerService.SAVE_SONG)) {
-//                    selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
-//                }
-//            }
-//            //todo: see if this can be fixed with seek (the current position is unclear what it will be)
-//        }
-//    };
 
     private static void updateUI(Intent serviceIntent) {
         seekBar = mAdapter.getSeekBar();
