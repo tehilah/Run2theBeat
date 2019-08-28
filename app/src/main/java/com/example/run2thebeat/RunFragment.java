@@ -1,6 +1,7 @@
 package com.example.run2thebeat;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,4 +38,5 @@ public class RunFragment extends Fragment {
         getChildFragmentManager().beginTransaction().replace(R.id.saved_playlists_fragment,
                 new ShowPlaylistsFragment()).commit();
     }
+
 }

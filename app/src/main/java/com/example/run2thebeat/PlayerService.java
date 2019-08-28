@@ -23,9 +23,9 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
-    public static final String SONG_ENDED = "song ended";
-    public static final String SAVE_SONG = "save song";
-    public static final String SEEK_POS = "SeekPos";
+    public static final String SONG_ENDED = "com.example.run2thebeat.PlayerService.SONG_ENDED";
+    public static final String SAVE_SONG = "com.example.run2thebeat.PlayerService.SAVE_SONG";
+    public static final String SEEK_POS = "com.example.run2thebeat.PlayerService.SEEK_POS";
 
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer mediaPlayer = new MediaPlayer();
