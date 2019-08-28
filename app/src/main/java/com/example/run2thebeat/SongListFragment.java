@@ -45,10 +45,11 @@ public class SongListFragment extends Fragment {
     //    Binding variables
     private static PlayerService mBoundService;
     private boolean mIsBound;
-
+    private MyListener mListener;
     // --- seek bar variables ---
     private static SeekBar seekBar;
     private Intent seekbarIntent;
+    private RecyclerView songRecyclerView;
     public static final String BROADCAST_SEEKBAR = "com.example.run2thebeat.SongListFragment.BROADCAST_SEEKBAR";
 
 
@@ -70,6 +71,22 @@ public class SongListFragment extends Fragment {
     private static Song popNum6 = new Song(15, "We Found Love", "Rihanna", "pop", "Rihanna - We Found Love.mp3", 130, R.drawable.bob_marley);
     private static Song popNum7 = new Song(16, "Girls Just Want To Have Fun", "Cyndi Lauper", "pop", "Cyndi Lauper - Girls Just Want To Have Fun.mp3", 120, R.drawable.bob_marley);
     private static Song popNum8 = new Song(17, "Take Back The Night", "Justin Timberlake", "pop", "Justin Timberlake - Take Back The Night.mp3", 109, R.drawable.bob_marley);
+
+
+    public interface MyListener {
+
+        /**
+         * Called when the RecyclerView has been created
+         *
+         * @param recyclerView the recyclerView that was just created
+         */
+        void onListViewCreated(RecyclerView recyclerView);
+    }
+
+    public void setFragmentListener(MyListener listener){
+        mListener = listener;
+    }
+
 
 
     @Override
@@ -164,13 +181,16 @@ public class SongListFragment extends Fragment {
     }
 
     public void buildRecyclerView(final View view) {
-        RecyclerView songRecyclerView = view.findViewById(R.id.list);
+        songRecyclerView = view.findViewById(R.id.list);
         songRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new SongListAdapter(songList);
         songRecyclerView.setAdapter(mAdapter);
         songRecyclerView.setLayoutManager(layoutManager);
         seekBar = mAdapter.getSeekBar();
+//        if (mListener != null) {
+//            mListener.onListViewCreated(songRecyclerView);
+//        }
     }
 
     private void startListeners(View view) {
@@ -378,6 +398,17 @@ public class SongListFragment extends Fragment {
             // if(action.equals(BROADCAST_ACTION){updateUI();} todo: maybe add this instead of else
             //todo: see if this can be fixed with seek (the current position is unclear what it will be)
         }
+    }
+
+    @Override
+    public void onResume() {
+        // Notify listener that RecyclerView is now created
+        if (mListener != null) {
+            mListener.onListViewCreated(songRecyclerView);
+        }
+        super.onResume();
+
+
     }
 }
 

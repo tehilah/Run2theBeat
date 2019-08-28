@@ -8,6 +8,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.animation.AnimatorSet;
@@ -75,7 +76,7 @@ import java.util.concurrent.Executors;
 
 import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
-public class RunActivity extends AppCompatActivity implements SensorEventListener {
+public class RunActivity extends AppCompatActivity implements SensorEventListener, SongListFragment.MyListener {
     // constants
     private static final String TAG = "RunActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -139,14 +140,17 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         updateValuesFromBundle(savedInstanceState);
+        SongListFragment songListFragment = new SongListFragment();
+        songListFragment.setFragmentListener(this);
         fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                new SongListFragment());
+                songListFragment);
         startCountDown();
         initVariables();
         getLocationPermission();
         initUser();
         getDeviceLocation();
         initLocationCallback();
+
 
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -623,5 +627,10 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onListViewCreated(RecyclerView recyclerView) {
+        slidingUpPanelLayout.setScrollableView(recyclerView);
     }
 }

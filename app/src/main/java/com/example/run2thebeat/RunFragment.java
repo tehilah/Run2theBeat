@@ -85,7 +85,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
      */
     private void checkForUpdates() {
         if (!mBoundService.isMediaStarted()) { // check if player is in pause mode or not set at all
-//            fab.setVisibility(View.GONE);
+            fab.setVisibility(View.GONE);
         } else {
             fab.setVisibility(View.VISIBLE);
             if (SongListFragment.songList.size() > 0) { // update the song title and artist
