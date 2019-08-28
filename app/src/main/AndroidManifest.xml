@@ -55,7 +55,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.run2thebeat.PlayerService.SONG_ENDED" />
-                <action android:name="com.example.run2thebeat.PlayerService.SAVE_SONG" />
                 <action android:name="com.example.run2thebeat.PlayerService.SEEK_POS" />
             </intent-filter>
         </receiver>

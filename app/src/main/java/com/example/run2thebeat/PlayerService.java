@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
     public static final String SONG_ENDED = "com.example.run2thebeat.PlayerService.SONG_ENDED";
-    public static final String SAVE_SONG = "com.example.run2thebeat.PlayerService.SAVE_SONG";
+//    public static final String SAVE_SONG = "com.example.run2thebeat.PlayerService.SAVE_SONG";
     public static final String SEEK_POS = "com.example.run2thebeat.PlayerService.SEEK_POS";
 
     private final IBinder mBinder = new LocalBinder();
@@ -96,15 +96,15 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     }
 
     public void startPlayer(String url) {
-        if (mediaPlayer.isPlaying()) {
-            int songLength = mediaPlayer.getDuration();
-            int howLong = mediaPlayer.getCurrentPosition();
-            if (howLong >= songLength / 2) {
-                Intent intent = new Intent();
-                intent.setAction(SAVE_SONG);
-                sendBroadcast(intent);
-            }
-        }
+//        if (mediaPlayer.isPlaying()) {
+//            int songLength = mediaPlayer.getDuration();
+//            int howLong = mediaPlayer.getCurrentPosition();
+//            if (howLong >= songLength / 2) {
+//                Intent intent = new Intent();
+//                intent.setAction(SAVE_SONG);
+//                sendBroadcast(intent);
+//            }
+//        }
         mediaPlayer.stop();
         mediaPlayer.reset();
 

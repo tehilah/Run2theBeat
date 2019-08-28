@@ -2,12 +2,10 @@ package com.example.run2thebeat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
@@ -15,24 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.widget.ImageButton;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
-
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -44,6 +37,7 @@ public class SongListFragment extends Fragment {
     public static ArrayList<Song> selectedPlaylist;
     private static SongListAdapter mAdapter;
     private static int currentlyPlayingPosition = 1;
+    private static boolean isAdded;
     public int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData;
     public ImageButton imageButton;
@@ -51,13 +45,11 @@ public class SongListFragment extends Fragment {
     //    Intent intent;
     private static PlayerService mBoundService;
     private boolean mIsBound;
-    private MyBroadcastReceiver myReceiver;
 
     // --- seek bar variables ---
     private static SeekBar seekBar;
     private static int seekMax;
     private static int songEnded = 0;
-    boolean mBroadcastIsRegistered;
     private Intent seekbarIntent;
     public static final String BROADCAST_SEEKBAR = "com.example.run2thebeat.SongListFragment.BROADCAST_SEEKBAR";
 
@@ -244,6 +236,7 @@ public class SongListFragment extends Fragment {
             public void onSuccess(Uri uri) {
                 if (mBoundService != null) {
                     mBoundService.startPlayer(uri.toString());
+                    isAdded = false;
                 } else {
                     Log.d(TAG, "onSuccess: service is null");
                 }
@@ -288,8 +281,6 @@ public class SongListFragment extends Fragment {
 //        Song curSong = songList.get(currentlyPlayingPosition);
 //        int curSongBPM = curSong.getSongBPM();
 //
-
-
         Song currentlyPlaying = songList.get(currentlyPlayingPosition);
         if (currentlyPlaying.getSongBPM() < BPM) {
             for (int i = currentlyPlayingPosition + 1; i < songList.size(); i++) {
@@ -321,7 +312,6 @@ public class SongListFragment extends Fragment {
     /*
     Binding functions
      */
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -368,6 +358,10 @@ public class SongListFragment extends Fragment {
                 songEnded = Integer.parseInt(strSongEnded);
                 seekBar.setMax(seekMax);
                 seekBar.setProgress(seekBarProgress);
+                if(!isAdded && seekBarProgress >= seekMax/2){
+                    selectedPlaylist.add(songList.get(currentlyPlayingPosition));
+                    isAdded = true;
+                }
             }
 
 //            if (songEnded == 1) {
@@ -388,9 +382,9 @@ public class SongListFragment extends Fragment {
                 playSong(currentlyPlayingPosition + 1);
             } else {
                 updateUI(intent); // only if song didn't end yet
-                if (action != null && action.equals(PlayerService.SAVE_SONG)) {
-                    selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
-                }
+//                if (action != null && action.equals(PlayerService.SAVE_SONG)) {
+//                    selectedPlaylist.add(songList.get(currentlyPlayingPosition - 1));
+//                }
             }
 
             // if(action.equals(BROADCAST_ACTION){updateUI();} todo: maybe add this instead of else
