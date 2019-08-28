@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ public class ShowPlaylistsFragment extends Fragment {
     private ExecutorService executor = Executors.newCachedThreadPool();
     public static MutableLiveData<PlaylistItem> playlistItemMutableLiveData;
     private Context mContext;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
 
 
@@ -69,9 +72,9 @@ public class ShowPlaylistsFragment extends Fragment {
     public void getPlaylists( View view){
         initUser();
         collectionPlaylistRef.get().addOnCompleteListener((task) ->{
-//            executor.execute(new Runnable() {
-//                @Override
-//                public void run() {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
                     String docName ="";
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
@@ -85,14 +88,19 @@ public class ShowPlaylistsFragment extends Fragment {
                             TextView textView = view.findViewById(R.id.no_saved_playlists);
                             textView.setVisibility(View.VISIBLE);
                         }
-                        buildRecyclerView(view);
 
+                        mHandler.post(new Runnable(){
+                            @Override
+                            public void run(){
+                                buildRecyclerView(view);
+                            }
+                        });
                     }
                     else{
                         Log.d("TAG", "Error getting Documents: ", task.getException());
                     }
-//                }
-//            });
+                }
+            });
 
         });
         Log.d(TAG,"the size " +playlistsList.size());
