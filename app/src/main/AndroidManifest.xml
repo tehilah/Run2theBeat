@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
@@ -44,10 +45,21 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".SongListFragment$MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.run2thebeat.PlayerService.SONG_ENDED" />
+                <action android:name="com.example.run2thebeat.PlayerService.SAVE_SONG" />
+                <action android:name="com.example.run2thebeat.PlayerService.SEEK_POS" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".MediaPlayerService" />
         <service android:name=".PlayerService" />
     </application>

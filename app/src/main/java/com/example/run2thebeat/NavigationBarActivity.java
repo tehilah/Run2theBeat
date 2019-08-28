@@ -3,16 +3,37 @@ package com.example.run2thebeat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class NavigationBarActivity extends AppCompatActivity {
 
+    private boolean mBroadcastIsRegistered;
+    private SongListFragment.MyBroadcastReceiver myReceiver;
+    private Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_bar);
+
+        // register receiver
+        if (!mBroadcastIsRegistered) {
+            myReceiver = new SongListFragment.MyBroadcastReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(PlayerService.SONG_ENDED);
+            intentFilter.addAction(PlayerService.SAVE_SONG);
+            intentFilter.addAction(PlayerService.BROADCAST_ACTION);
+            registerReceiver(myReceiver, intentFilter);
+            mBroadcastIsRegistered = true;
+        }
+
+        //startService
+        intent = new Intent(this, PlayerService.class);
+        startService(intent);
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
@@ -26,7 +47,7 @@ public class NavigationBarActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment selectedFragment = null;
 
-            switch(item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.nav_run:
                     selectedFragment = new RunFragment();
                     break;
@@ -42,4 +63,15 @@ public class NavigationBarActivity extends AppCompatActivity {
             return true;
         }
     };
+
+
+    @Override
+    protected void onDestroy() {
+        if (mBroadcastIsRegistered) {
+            unregisterReceiver(myReceiver);
+            mBroadcastIsRegistered = false;
+        }
+        stopService(intent);
+        super.onDestroy();
+    }
 }
