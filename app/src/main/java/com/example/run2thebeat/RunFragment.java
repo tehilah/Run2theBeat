@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -39,7 +40,8 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     private TextView songArtist;
     private boolean mBroadcastIsRegistered;
     private SeekBar seekBar;
-    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
+    private ImageButton nextButton;
 
 
     @Nullable
@@ -58,6 +60,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         fab.setOnClickListener(this);
         newPlaylistBtn.setOnClickListener(this);
         playPause.setOnClickListener(this);
+        nextButton.setOnClickListener(this);
 
         getChildFragmentManager().beginTransaction().replace(R.id.saved_playlists_fragment,
                 new ShowPlaylistsFragment()).commit();
@@ -72,10 +75,11 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         songTitle = view.findViewById(R.id.song_title);
         songArtist = view.findViewById(R.id.song_artist);
         seekBar = view.findViewById(R.id.seekbar);
+        nextButton = view.findViewById(R.id.next_song);
         fab_open = AnimationUtils.loadAnimation(getContext().getApplicationContext(), R.anim.media_player_open);
-        fab_close = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.media_player_close);
-        rotate_forward = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getContext().getApplicationContext(),R.anim.rotate_backward);
+        fab_close = AnimationUtils.loadAnimation(getContext().getApplicationContext(), R.anim.media_player_close);
+        rotate_forward = AnimationUtils.loadAnimation(getContext().getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getContext().getApplicationContext(), R.anim.rotate_backward);
     }
 
 
@@ -102,18 +106,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.fab:
-                if (isFabOpen) {
-                    fab.startAnimation(rotate_backward);
-                    mediaPlayerLayout.startAnimation(fab_close);
-                    mediaPlayerLayout.setVisibility(View.GONE);
-                    isFabOpen = false;
-
-                } else {
-                    fab.startAnimation(rotate_forward);
-                    mediaPlayerLayout.setVisibility(View.VISIBLE);
-                    mediaPlayerLayout.startAnimation(fab_open);
-                    isFabOpen = true;
-                }
+                startAnimation();
                 break;
             case R.id.choose_new_playlist:
                 Intent i = new Intent(getActivity(), MusicListActivity.class);
@@ -122,6 +115,24 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             case R.id.play_pause:
                 playOrPause();
                 break;
+            case R.id.next_song:
+                playNext();
+                break;
+        }
+    }
+
+    private void startAnimation() {
+        if (isFabOpen) {
+            fab.startAnimation(rotate_backward);
+            mediaPlayerLayout.startAnimation(fab_close);
+            mediaPlayerLayout.setVisibility(View.GONE);
+            isFabOpen = false;
+
+        } else {
+            fab.startAnimation(rotate_forward);
+            mediaPlayerLayout.setVisibility(View.VISIBLE);
+            mediaPlayerLayout.startAnimation(fab_open);
+            isFabOpen = true;
         }
     }
 
@@ -134,6 +145,13 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             playPause.setImageResource(R.drawable.ic_pause);
         }
 
+    }
+
+    private void playNext() {
+        if (mBoundService != null) {
+            SongListFragment.playSong(SongListFragment.currentlyPlayingPosition + 1);
+            updateTextViews(SongListFragment.currentlyPlayingPosition + 1);
+        }
     }
 
     /*
@@ -235,18 +253,4 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void animateFAB(){
-
-        if(isFabOpen){
-
-            fab.startAnimation(rotate_backward);
-            mediaPlayerLayout.startAnimation(fab_close);
-            isFabOpen = false;
-        } else {
-
-            fab.startAnimation(rotate_forward);
-            mediaPlayerLayout.startAnimation(fab_open);
-            isFabOpen = true;
-        }
-    }
 }

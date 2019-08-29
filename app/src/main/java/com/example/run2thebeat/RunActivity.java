@@ -191,7 +191,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-
+                int x = 5;
             }
         });
 
