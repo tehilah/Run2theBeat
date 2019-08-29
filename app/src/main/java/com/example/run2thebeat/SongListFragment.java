@@ -47,7 +47,7 @@ public class SongListFragment extends Fragment {
     private boolean mIsBound;
     private MyListener mListener;
     // --- seek bar variables ---
-    private static SeekBar seekBar;
+    private static SeekBar mseekBar;
     private Intent seekbarIntent;
     private RecyclerView songRecyclerView;
     public static final String BROADCAST_SEEKBAR = "com.example.run2thebeat.SongListFragment.BROADCAST_SEEKBAR";
@@ -187,10 +187,19 @@ public class SongListFragment extends Fragment {
         mAdapter = new SongListAdapter(songList);
         songRecyclerView.setAdapter(mAdapter);
         songRecyclerView.setLayoutManager(layoutManager);
-        seekBar = mAdapter.getSeekBar();
-//        if (mListener != null) {
-//            mListener.onListViewCreated(songRecyclerView);
-//        }
+        mAdapter.setImageButtonListener(new SongListAdapter.ImageButtonListener() {
+            @Override
+            public void onImageButtonCreated(ImageButton imgButton) {
+                imageButton = imgButton;
+            }
+        });
+
+        mAdapter.setSeekBarCreatedListener(new SongListAdapter.SeekBarCreatedListener() {
+            @Override
+            public void onSeekBarCreated(SeekBar seekBar) {
+                mseekBar = seekBar;
+            }
+        });
     }
 
     private void startListeners(View view) {
@@ -222,7 +231,6 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                imageButton = view.findViewById(R.id.play_pause);
                 imageButton.setImageResource(R.drawable.ic_pause);
                 playSong(position);
             }
@@ -280,7 +288,6 @@ public class SongListFragment extends Fragment {
 
 
     public void playOrPause(View view) {
-        imageButton = view.findViewById(R.id.play_pause);
         if (isPlaying) {
             mBoundService.pausePlayer();
             imageButton.setImageResource(R.drawable.ic_play);
@@ -364,15 +371,15 @@ public class SongListFragment extends Fragment {
 
 
     private static void updateUI(Intent serviceIntent) {
-        seekBar = mAdapter.getSeekBar();
-        if (seekBar != null) {
+//        seekBar = mAdapter.getSeekBar();
+        if (mseekBar != null) {
             String counter = serviceIntent.getStringExtra("Counter");
             String mediaMax = serviceIntent.getStringExtra("mediaMax");
             if (counter != null && mediaMax != null) {
                 int seekBarProgress = Integer.parseInt(counter);
                 int seekMax = Integer.parseInt(mediaMax);
-                seekBar.setMax(seekMax);
-                seekBar.setProgress(seekBarProgress);
+                mseekBar.setMax(seekMax);
+                mseekBar.setProgress(seekBarProgress);
                 if(!isAdded && seekBarProgress >= seekMax /2){
                     selectedPlaylist.add(songList.get(currentlyPlayingPosition));
                     isAdded = true;

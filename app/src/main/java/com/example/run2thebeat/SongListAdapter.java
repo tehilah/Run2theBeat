@@ -1,12 +1,9 @@
 package com.example.run2thebeat;
 
 import android.view.ViewGroup;
-
 import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -22,8 +19,30 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private OnNextClickListener mNextListener;
     private OnSeekChangeListener mSeekListener;
     private OnPreviousClickListener mPreviousListener;
-    private SeekBar mSeekBar;
+    private ImageButtonListener imageButtonListener;
+    private SeekBarCreatedListener mSeekBarCreatedListener;
 
+    /*
+      listener that notifies SongListFragment when the image button is initialized
+     */
+    public interface ImageButtonListener {
+        void onImageButtonCreated(ImageButton imageButton);
+    }
+
+    public void setImageButtonListener(ImageButtonListener listener) {
+        imageButtonListener = listener;
+    }
+
+    /*
+      listener that notifies SongListFragment when the seek bar is initialized
+   */
+    public interface SeekBarCreatedListener {
+        void onSeekBarCreated(SeekBar seekBar);
+    }
+
+    public void setSeekBarCreatedListener(SeekBarCreatedListener listener) {
+        mSeekBarCreatedListener = listener;
+    }
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -79,7 +98,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public SeekBar seekBar;
 
         public SongViewHolder(@NonNull View item, final OnItemClickListener listener, final OnPlayClickListener playListener, final OnNextClickListener nextListener,
-                              final OnPreviousClickListener previousListener, final OnSeekChangeListener seekListener) {
+                              final OnPreviousClickListener previousListener, final OnSeekChangeListener seekListener, final ImageButtonListener imageButtonListener, final SeekBarCreatedListener seekBarCreatedListener) {
             super(item);
             songName = item.findViewById(R.id.song_title);
             songName.setSelected(true);
@@ -91,6 +110,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             nextButton = item.findViewById(R.id.next_song);
             previousButton = item.findViewById(R.id.previous_song);
             seekBar = item.findViewById(R.id.seek_bar);
+
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -114,6 +134,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                         }
                     }
                 });
+                if (imageButtonListener != null) {
+                    imageButtonListener.onImageButtonCreated(pausePlayButton);
+                }
+
             }
 
             if (nextButton != null) {
@@ -146,11 +170,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 });
             }
 
-            if(seekBar != null) {
+            if (seekBar != null) {
                 seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if(seekListener != null){
+                        if (seekListener != null) {
                             seekListener.onSeekChange(seekBar, progress, fromUser);
                         }
                     }
@@ -165,6 +189,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
 
                     }
                 });
+                if (seekBarCreatedListener != null) {
+                    seekBarCreatedListener.onSeekBarCreated(seekBar);
+                }
             }
         }
 
@@ -185,7 +212,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         } else {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.currently_playing_song, parent, false);
         }
-        return new SongViewHolder(v, mListener, mPlayListener, mNextListener, mPreviousListener, mSeekListener);
+        return new SongViewHolder(v, mListener, mPlayListener, mNextListener, mPreviousListener, mSeekListener, imageButtonListener, mSeekBarCreatedListener);
     }
 
 
@@ -195,9 +222,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.artist.setText(songItem.getArtist());
         holder.songName.setText(songItem.getTitle());
         holder.songCover.setImageResource(songItem.getSongCover());
-        if (holder.seekBar != null) {
-            mSeekBar = holder.seekBar;
-        }
     }
 
 
@@ -210,9 +234,4 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     public int getItemViewType(int position) {
         return (position == 0) ? R.layout.currently_playing_song : R.layout.song;
     }
-
-    public SeekBar getSeekBar() {
-        return mSeekBar;
-    }
-
 }
