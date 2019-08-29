@@ -195,7 +195,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         doUnbindService();
     }
 
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -207,6 +207,9 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     };
 
     private void updateTextViews(int position) {
+        if(position >= SongListFragment.songList.size()){
+            position = 1;
+        }
         String songName = SongListFragment.songList.get(position).getTitle();
         String artist = SongListFragment.songList.get(position).getArtist();
         songTitle.setText(songName);
