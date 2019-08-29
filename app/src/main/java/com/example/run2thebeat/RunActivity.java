@@ -14,12 +14,14 @@ import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -136,21 +138,20 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         updateValuesFromBundle(savedInstanceState);
-        SongListFragment songListFragment = new SongListFragment();
-        songListFragment.setFragmentListener(this);
-        fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                songListFragment);
+            SongListFragment songListFragment = new SongListFragment();
+            songListFragment.setFragmentListener(this);
+            fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
+                    songListFragment);
         startCountDown();
         initVariables();
         getLocationPermission();
         initUser();
         getDeviceLocation();
         initLocationCallback();
-
 
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -193,7 +194,9 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
             }
         });
+
     }
+
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
@@ -632,5 +635,21 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     @Override
     public void onListViewCreated(RecyclerView recyclerView) {
         slidingUpPanelLayout.setScrollableView(recyclerView);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        Long thetime = chronometer.getBase();
+        outState.putLong("CHRONOMETER_TIME",thetime);
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        chronometer.setBase(savedInstanceState.getLong("CHRONOMETER_TIME"));
+
     }
 }
