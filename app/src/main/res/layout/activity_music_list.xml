@@ -18,6 +18,15 @@
         android:textSize="25sp"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/select_all_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select all"
+        android:textColor="#FFF"
+        android:textSize="15sp"
+        android:background="@drawable/button_round_whiteline_nobackground"/>
+
     <ListView
         android:id="@+id/list_view1"
         android:layout_width="wrap_content"
