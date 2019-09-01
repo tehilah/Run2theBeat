@@ -30,6 +30,7 @@ public class MusicListActivity extends AppCompatActivity {
     MyCustomAdapter dataAdapter = null;
     public static final String PREFS_NAME = "MyPref";
     private String TAG = "com.example.run2thebeat.MusicListActivity";
+    private boolean allSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,27 @@ public class MusicListActivity extends AppCompatActivity {
                 dataAdapter.updateRecords(genresList);
 //                view.setSelected(true);
                 Toast.makeText(getApplicationContext(), "clicked on row: " + genre.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Button selectAllButton = (Button)findViewById(R.id.select_all_button);
+        selectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!allSelected) {
+                    for (int i = 0; i < genresList.size(); i++) {
+                        genresList.get(i).setSelected(true);
+                    }
+                    allSelected =true;
+                }
+                else {
+                    for (int i = 0; i < genresList.size(); i++) {
+                        genresList.get(i).setSelected(false);
+                    }
+                    allSelected = false;
+                }
+                dataAdapter.updateRecords(genresList);
+
             }
         });
     }
