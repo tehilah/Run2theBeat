@@ -10,28 +10,54 @@
     android:paddingEnd="10dp"
     tools:context=".MusicListActivity">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Music Genres"
-        android:textColor="@color/purple"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/select_all_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select all"
-        android:textColor="#FFF"
-        android:textSize="15sp"
-        android:background="@drawable/button_round_whiteline_nobackground"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Music Genres"
+            android:textColor="@color/purple"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:layout_marginEnd="5dp"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/select_all_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:theme="@style/CheckBoxTheme" />
+
+            <TextView
+                android:id="@+id/select_all_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:text="Select \n All"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <ListView
         android:id="@+id/list_view1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"></ListView>
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/start_run_button"

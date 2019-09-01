@@ -73,8 +73,8 @@ public class MusicListActivity extends AppCompatActivity {
             }
         });
 
-        Button selectAllButton = (Button)findViewById(R.id.select_all_button);
-        selectAllButton.setOnClickListener(new View.OnClickListener() {
+        CheckBox selectAllCheckbox = findViewById(R.id.select_all_button);
+        selectAllCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!allSelected) {
