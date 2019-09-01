@@ -21,10 +21,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RunActivity" />
-        <activity android:name=".SongsOfAPlaylistActivity" />
-        <activity android:name=".FinishRunScreenActivity" /> <!-- <activity android:name=".SongListFragment"></activity> -->
-        <activity android:name=".RunDetailsActivity" />
+        <activity android:name=".RunActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SongsOfAPlaylistActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".FinishRunScreenActivity"
+            android:screenOrientation="portrait"/> <!-- <activity android:name=".SongListFragment"></activity> -->
+        <activity android:name=".RunDetailsActivity"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -39,10 +43,14 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity android:name=".MusicListActivity" />
-        <activity android:name=".NavigationBarActivity" />
-        <activity android:name=".MainActivity">
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MusicListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".NavigationBarActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
