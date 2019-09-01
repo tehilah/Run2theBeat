@@ -2,6 +2,7 @@ package com.example.run2thebeat;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -57,6 +60,9 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
     private CollectionReference collectionPlaylistRef;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private SupportMapFragment mMap;
+    private AppBarLayout appBar;
+    private CollapsingToolbarLayout c;
+    private Toolbar toolbar;
 
 
     @Override
@@ -69,6 +75,27 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         setTextViews();
         selectedPlaylist = SongListFragment.selectedPlaylist;
         buildRecyclerView();
+
+        appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isVisible = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    c.setTitleEnabled(true);
+                    toolbar.setTitle(tv_title.getText().toString());
+                    isVisible = true;
+                } else if (isVisible) {
+                    c.setTitleEnabled(false);
+                    toolbar.setTitle("");
+                    isVisible = false;
+                }
+            }
+        });
 
     }
 
@@ -230,6 +257,11 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         tv_duration = findViewById(R.id.duration);
         tv_km = findViewById(R.id.kilometers);
         tv_avgBpm = findViewById(R.id.avg_bpm);
+        appBar = findViewById(R.id.appBar);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        c = findViewById(R.id.collapsing_toolbar);
+        c.setTitleEnabled(false);
     }
 
 
