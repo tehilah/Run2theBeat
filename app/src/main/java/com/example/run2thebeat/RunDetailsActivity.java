@@ -1,6 +1,9 @@
 package com.example.run2thebeat;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,16 +12,20 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+
+import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
 
 public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -31,7 +38,6 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
     private TextView avgPace;
     private String documentRef;
     private FirebaseFirestore db;
-
 
 
     @Override
@@ -53,6 +59,7 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.silver_map));
         loadSavedRoute(googleMap);
     }
 
@@ -86,21 +93,18 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
         title.setText(date);
         convertPointToLatlng(points);
         drawPolyline(googleMap);
-        if(latLngs.size() != 0){
+        if (latLngs.size() != 0) {
             moveCamera(latLngs.get(0), 17f, googleMap);
         }
 
-       }
+    }
 
     private void moveCamera(LatLng latLng, float zoom, GoogleMap googleMap) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     public void deleteRun(View view) {
-        DocumentReference itemRef = db.document(documentRef);
-        new DeleteMessageAsyncTask().execute(itemRef);
-        onBackPressed();
-        finish();
+        getDialog();
     }
 
 
@@ -113,5 +117,27 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
             references[0].delete();
             return null;
         }
+    }
+
+    public void getDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        alertDialogBuilder
+                .setMessage(CONFIRM_DELETE)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, delete message
+                        DocumentReference itemRef = db.document(documentRef);
+                        new DeleteMessageAsyncTask().execute(itemRef);
+                        finish();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

@@ -196,7 +196,7 @@ public class ProgressFragment extends Fragment {
 
 
     public void getDialog(final RecyclerView.ViewHolder viewHolder) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
         alertDialogBuilder
                 .setMessage(CONFIRM_DELETE)
                 .setCancelable(false)
@@ -204,17 +204,6 @@ public class ProgressFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, delete message
                         mAdapter.deleteItem(viewHolder.getAdapterPosition());
-//                        DocumentReference routeRef = mAdapter.getRoute(viewHolder.getAdapterPosition());
-//                        routeRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                                Route route = documentSnapshot.toObject(Route.class);
-//                                if(route != null){
-//                                    sumDistance -= Double.parseDouble(route.getDistance());
-//                                    Toast.makeText(getContext(), "total distance: "+sumDistance, Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
                         updateSumKilometersFromFirestore();
 
                     }

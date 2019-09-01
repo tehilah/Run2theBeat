@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -101,6 +102,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.silver_map));
         loadSavedRoute(googleMap);
     }
 
@@ -159,7 +161,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
             public void onClick(View v) {
                 if (selectedPlaylist.size() > 0) {
                     getDialog(i);
-                }else{
+                } else {
                     getWarningDialog();
                 }
             }
