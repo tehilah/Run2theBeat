@@ -71,6 +71,12 @@ public class SongListFragment extends Fragment {
     private static Song popNum6 = new Song(15, "We Found Love", "Rihanna", "pop", "Rihanna - We Found Love.mp3", 130, R.drawable.bob_marley);
     private static Song popNum7 = new Song(16, "Girls Just Want To Have Fun", "Cyndi Lauper", "pop", "Cyndi Lauper - Girls Just Want To Have Fun.mp3", 120, R.drawable.bob_marley);
     private static Song popNum8 = new Song(17, "Take Back The Night", "Justin Timberlake", "pop", "Justin Timberlake - Take Back The Night.mp3", 109, R.drawable.bob_marley);
+    private static Song soul1 = new Song(18, "Rehab", "Amy Winehouse", "rbandsoul", "Amy Winehouse - Rehab.mp3", 145, R.drawable.bob_marley);
+    private static Song soul2 = new Song(19, "Baby Boy", "Beyoncé ft. Sean Paul", "rbandsoul", "Beyoncé - Baby Boy ft. Sean Paul.mp3", 91, R.drawable.bob_marley);
+    private static Song soul3 = new Song(20, "No Diggity", "Blackstreet ft. Dr. Dre, Queen Pen", "rbandsoul", "Blackstreet - No Diggity ft. Dr. Dre, Queen Pen.mp3", 89, R.drawable.bob_marley);
+    private static Song soul4 = new Song(21, "Bottoms Up", "Trey Songz Nicki Minaj", "rbandsoul", "Bottoms Up -Trey Songz Nicki Minaj.mp3", 148, R.drawable.bob_marley);
+    private static Song soul5 = new Song(22, "Twistin' The Night Away", "Sam Cooke", "rbandsoul", "Sam Cooke-Twistin' The Night Away.mp3", 160, R.drawable.bob_marley);
+    private static Song soul6 = new Song(23, "Waterfalls", "TLC", "rbandsoul", "TLC - Waterfalls.mp3", 172, R.drawable.bob_marley);
 
 
     public interface MyListener {
@@ -140,6 +146,12 @@ public class SongListFragment extends Fragment {
         allSongsList.add(popNum6);
         allSongsList.add(popNum7);
         allSongsList.add(popNum8);
+        allSongsList.add(soul1);
+        allSongsList.add(soul2);
+        allSongsList.add(soul3);
+        allSongsList.add(soul4);
+        allSongsList.add(soul5);
+        allSongsList.add(soul6);
 
         //Collections.sort(allSongsList);
     }

@@ -190,10 +190,20 @@ public class MusicListActivity extends AppCompatActivity {
                         selectedGenres.add(genre.getName());
                     }
                 }
-                intent.putExtra("genres",selectedGenres);
-                startActivity(intent);
-                finish();
+                if(selectedGenres.size() ==0){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Please select a genre or select all ", Toast.LENGTH_LONG);
+                    ViewGroup toastLayout = (ViewGroup) toast.getView();
+                    TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                    toastTV.setTextSize(18);
+                    toast.show();
+
+                }
+                else {
+                    intent.putExtra("genres", selectedGenres);
+                    startActivity(intent);
+                    finish();
 //                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
             }
         });
     }

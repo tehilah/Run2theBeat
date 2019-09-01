@@ -30,15 +30,20 @@ public class NavigationBarActivity extends AppCompatActivity {
             mBroadcastIsRegistered = true;
         }
 
+
         //startService
         intent = new Intent(this, PlayerService.class);
         startService(intent);
 
+        if(savedInstanceState == null) {
+
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navListener);
         bottomNavigation.setSelectedItemId(R.id.nav_run);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new RunFragment()).commit();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new RunFragment()).commit();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -72,5 +77,11 @@ public class NavigationBarActivity extends AppCompatActivity {
         }
         stopService(intent);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+
     }
 }
