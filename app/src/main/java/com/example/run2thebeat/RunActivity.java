@@ -614,7 +614,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     public void getDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         alertDialogBuilder
-                .setMessage("Are you sure you want to exit this run?")
+                .setMessage("Your run will not be saved")
+                .setTitle("Are you sure you want to exit?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
