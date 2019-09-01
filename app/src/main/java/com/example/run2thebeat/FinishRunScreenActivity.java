@@ -9,12 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +35,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -40,8 +45,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static android.widget.LinearLayout.VERTICAL;
+import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
 public class FinishRunScreenActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    public static final String PREFS_NAME = "MyPrefsFile";
 
     private TextView tv_title;
     private TextView tv_avgPace;
@@ -64,6 +72,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
     private AppBarLayout appBar;
     private CollapsingToolbarLayout c;
     private Toolbar toolbar;
+    private CheckBox dontShowAgain;
 
 
     @Override
@@ -102,7 +111,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.silver_map));
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.blue_map));
         loadSavedRoute(googleMap);
     }
 
@@ -262,13 +271,77 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         appBar = findViewById(R.id.appBar);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         c = findViewById(R.id.collapsing_toolbar);
         c.setTitleEnabled(false);
+        toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog();
+            }
+        });
     }
 
 
-    public void finish(View view) {
-        startActivity(new Intent(this, NavigationBarActivity.class));
-        finish();
+    public void getDialog() {
+        Intent intent = new Intent(this, NavigationBarActivity.class);
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        LayoutInflater adbInflater = LayoutInflater.from(this);
+        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        String skipMessage = settings.getString("skipMessage", "NOT checked");
+
+        dontShowAgain = eulaLayout.findViewById(R.id.skip);
+        adb.setView(eulaLayout);
+        adb.setTitle("Attention");
+        adb.setMessage(Html.fromHtml("Your playlist will not be saved"));
+
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, delete message
+                String checkBoxResult = "NOT checked";
+                if (dontShowAgain.isChecked()) {
+                    checkBoxResult = "checked";
+                }
+
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+
+                editor.putString("skipMessage", checkBoxResult);
+                editor.commit();
+
+                startActivity(intent);
+                finish();
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                String checkBoxResult = "NOT checked";
+
+                if (dontShowAgain.isChecked()) {
+                    checkBoxResult = "checked";
+                }
+
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+
+                editor.putString("skipMessage", checkBoxResult);
+                editor.commit();
+
+                dialog.cancel();
+            }
+        });
+        if (!skipMessage.equals("checked")) {
+            adb.show();
+        }else{
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        getDialog();
     }
 }

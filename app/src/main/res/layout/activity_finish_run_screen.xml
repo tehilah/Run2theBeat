@@ -40,24 +40,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:gravity="start"
+                        android:gravity="center"
                         android:text="Title: Sunday Evening Run"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/btn_done"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:gravity="right|center"
-                        android:onClick="finish"
-                        android:text="Done"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
                 </LinearLayout>
 
 

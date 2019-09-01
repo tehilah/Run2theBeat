@@ -59,7 +59,7 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.silver_map));
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.blue_map));
         loadSavedRoute(googleMap);
     }
 

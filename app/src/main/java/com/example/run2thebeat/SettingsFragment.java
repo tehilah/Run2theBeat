@@ -103,7 +103,7 @@ public class SettingsFragment extends Fragment {
     public void sureWantLogout() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
         alertDialogBuilder
-                .setMessage("Are you sure you want to logaout?")
+                .setMessage("Are you sure you want to logout?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
