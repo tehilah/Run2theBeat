@@ -83,6 +83,13 @@ public class SongListFragment extends Fragment {
     private static Song rap1 = new Song(27, "Fireman", "Lil Wayne", "rap", "Lil Wayne - Fireman.mp3", 161, R.drawable.bob_marley);
     private static Song rap2 = new Song(28, "Love The Way You Lie", "Eminem ft. Rihanna", "rap", "Eminem - Love The Way You Lie ft. Rihanna.mp3", 174, R.drawable.bob_marley);
     private static Song rap3 = new Song(29, "Baby Got Back", "Sir Mix-A-Lot", "rap", "Baby Got Back - With Lyrics.mp3", 133, R.drawable.bob_marley);
+    private static Song rock6 = new Song(30, "Bohemian Rhapsody", "Queen", "rock", "Queen - Bohemian Rhapsody.mp3", 72, R.drawable.bob_marley);
+    private static Song rock7 = new Song(31, "Master Of Puppets", " Metallica", "rock", "Metallica-Master Of Puppets.mp3", 220, R.drawable.bob_marley);
+    private static Song rock8 = new Song(32,"Sweet Child O' Mine","Guns N' Roses","rock","Guns N' Roses - Sweet Child O' Mine.mp3",128,R.drawable.bob_marley);
+    private static Song rap4 = new Song(33,"Dirt Off Your Shoulder","JAY-Z","rap","JAY-Z - Dirt Off Your Shoulder.mp3",163,R.drawable.bob_marley);
+    private static Song jazz1= new Song(34,"Don't Know Why","Norah Jones","jazz","Norah Jones - Don't Know Why.mp3",88,R.drawable.bob_marley);
+    private static Song rap5 = new Song(35,"Suge (Yea Yea)","Dababy","rap","Dababy - Suge (Yea Yea).mp3",75,R.drawable.bob_marley);
+
 
 
     public interface MyListener {
@@ -164,6 +171,12 @@ public class SongListFragment extends Fragment {
         allSongsList.add(rap1);
         allSongsList.add(rap2);
         allSongsList.add(rap3);
+        allSongsList.add(rock6);
+        allSongsList.add(rock7);
+        allSongsList.add(rock8);
+        allSongsList.add(rap4);
+        allSongsList.add(jazz1);
+        allSongsList.add(rap5);
 
         //Collections.sort(allSongsList);
     }
