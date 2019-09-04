@@ -455,11 +455,11 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private void updateBPM() {
         if (stepsCounter > 0) {
             tv_bpm.setText(String.valueOf(stepsCounter));
+            curBPM = stepsCounter;
             if (Math.abs(changeMusicBPM - curBPM) > 10) {
                 SongListFragment.curBPMLiveData.postValue(curBPM);      //todo - new!!!!!
                 changeMusicBPM = curBPM;
             }
-            curBPM = stepsCounter;
             stepsCounter = 0;
             Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "updateBPM: cur bpm " + String.valueOf(curBPM));

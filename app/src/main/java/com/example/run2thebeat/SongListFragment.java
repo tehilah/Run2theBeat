@@ -38,8 +38,8 @@ public class SongListFragment extends Fragment {
     private static SongListAdapter mAdapter;
     public static int currentlyPlayingPosition = 1;
     private static boolean isAdded;
-    public int nextToPlay = 0;
-    public static MutableLiveData<Integer> curBPMLiveData;
+    public static int nextToPlay = 0;
+    public static MutableLiveData<Integer> curBPMLiveData = new MutableLiveData<>();
     public ImageButton imageButton;
     private static boolean isPlaying;
     //    Binding variables
@@ -77,6 +77,12 @@ public class SongListFragment extends Fragment {
     private static Song soul4 = new Song(21, "Bottoms Up", "Trey Songz Nicki Minaj", "rbandsoul", "Bottoms Up -Trey Songz Nicki Minaj.mp3", 148, R.drawable.bob_marley);
     private static Song soul5 = new Song(22, "Twistin' The Night Away", "Sam Cooke", "rbandsoul", "Sam Cooke-Twistin' The Night Away.mp3", 160, R.drawable.bob_marley);
     private static Song soul6 = new Song(23, "Waterfalls", "TLC", "rbandsoul", "TLC - Waterfalls.mp3", 172, R.drawable.bob_marley);
+    private static Song hiphop1 = new Song(24, "Gold Digger", "Kanye West ft. Jamie Foxx", "hip hop", "Kanye West - Gold Digger ft. Jamie Foxx.mp3", 92, R.drawable.bob_marley);
+    private static Song hiphop2 = new Song(25, "Pump It", "The Black Eyed Peas", "hip hop", "The Black Eyed Peas - Pump It.mp3", 153, R.drawable.bob_marley);
+    private static Song hiphop3 = new Song(26, "Empire State Of Mind", "Jay feat Alicia Keys", "hip hop", "Jay feat Alicia KeysEmpre State Of Mind.mp3", 173, R.drawable.bob_marley);
+    private static Song rap1 = new Song(27, "Fireman", "Lil Wayne", "rap", "Lil Wayne - Fireman.mp3", 161, R.drawable.bob_marley);
+    private static Song rap2 = new Song(28, "Love The Way You Lie", "Eminem ft. Rihanna", "rap", "Eminem - Love The Way You Lie ft. Rihanna.mp3", 174, R.drawable.bob_marley);
+    private static Song rap3 = new Song(29, "Baby Got Back", "Sir Mix-A-Lot", "rap", "Baby Got Back - With Lyrics.mp3", 133, R.drawable.bob_marley);
 
 
     public interface MyListener {
@@ -152,6 +158,12 @@ public class SongListFragment extends Fragment {
         allSongsList.add(soul4);
         allSongsList.add(soul5);
         allSongsList.add(soul6);
+        allSongsList.add(hiphop1);
+        allSongsList.add(hiphop2);
+        allSongsList.add(hiphop3);
+        allSongsList.add(rap1);
+        allSongsList.add(rap2);
+        allSongsList.add(rap3);
 
         //Collections.sort(allSongsList);
     }
@@ -229,7 +241,13 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
             public void onNextClick() {
-                playSong(currentlyPlayingPosition + 1);
+                if(nextToPlay != 0){
+                    playSong(nextToPlay);
+                    nextToPlay =0;
+                }
+                else {
+                    playSong(currentlyPlayingPosition + 1);
+                }
             }
         });
 
@@ -408,8 +426,15 @@ public class SongListFragment extends Fragment {
             String action = intent.getAction();
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
                 selectedPlaylist.add(songList.get(currentlyPlayingPosition));
-                currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
-                playSong(currentlyPlayingPosition + 1);
+                if(nextToPlay != 0){
+                    playSong(nextToPlay);
+                    nextToPlay =0;
+
+                }
+                else {
+                    currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
+                    playSong(currentlyPlayingPosition + 1);
+                }
             } else {
                 updateUI(intent);
             }
