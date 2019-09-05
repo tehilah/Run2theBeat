@@ -1,9 +1,15 @@
 package com.example.run2thebeat;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -23,17 +30,25 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
+import static android.app.Activity.RESULT_OK;
+
 
 public class SettingsFragment extends Fragment {
+    private static final int PICK_IMAGE = 100;
     private String m_Email = "";
-    private String m_Password ="";
+    private String m_Password = "";
     private String m_NewEmail = "";
     private String m_NewPassword = "";
     private MutableLiveData<String> liveDataEmail = new MutableLiveData<String>();
@@ -41,6 +56,9 @@ public class SettingsFragment extends Fragment {
     private FirebaseUser currentUser;
     private FirebaseAuth firebase = FirebaseAuth.getInstance();
     private String TAG = "SettingsFaragment";
+    private Uri imageUri;
+    private ImageButton profilePic;
+    private SharedPreferences myPrefs;
 
     @Nullable
     @Override
@@ -52,8 +70,21 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+//        profilePic = view.findViewById(R.id.profile_pic);
+//        loadSavedProfilePic();
+//        profilePic.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openGallery();
+//            }
+//        });
+
         Button signoutBtn = view.findViewById(R.id.signout);
         currentUser = ShowPlaylistsFragment.currentUser;
+
+        String email = currentUser.getEmail();
+        TextView currentEmail = view.findViewById(R.id.current_email);
+        currentEmail.setText(email);
 
         signoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +93,7 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        TextView changeEmail = view.findViewById(R.id.edit_email);
+        LinearLayout changeEmail = view.findViewById(R.id.edit_email);
         changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,16 +102,16 @@ public class SettingsFragment extends Fragment {
                 liveDataEmail.observe(getViewLifecycleOwner(), new Observer<String>() {
                     @Override
                     public void onChanged(String s) {
-                        if(!(m_Email.equals(""))&& !(m_Password.equals("")) && !(m_NewEmail.equals(""))) {
+                        if (!(m_Email.equals("")) && !(m_Password.equals("")) && !(m_NewEmail.equals(""))) {
                             changeMail();
-                            m_Email ="";
+                            m_Email = "";
                         }
                     }
                 });
             }
         });
 
-        TextView changePassword = view.findViewById(R.id.edit_password);
+        LinearLayout changePassword = view.findViewById(R.id.edit_password);
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,14 +120,19 @@ public class SettingsFragment extends Fragment {
                 liveDataPassword.observe(getViewLifecycleOwner(), new Observer<String>() {
                     @Override
                     public void onChanged(String s) {
-                        if(!(m_Email.equals(""))&& !(m_Password.equals("")) && !(m_NewPassword.equals(""))){
+                        if (!(m_Email.equals("")) && !(m_Password.equals("")) && !(m_NewPassword.equals(""))) {
                             changePass();
-                            m_Email="";
+                            m_Email = "";
                         }
                     }
                 });
             }
         });
+    }
+
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
     }
 
 
@@ -109,7 +145,7 @@ public class SettingsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, delete message
                         FirebaseAuth.getInstance().signOut();
-                        if(getActivity() != null){
+                        if (getActivity() != null) {
                             getActivity().finish();
                         }
                         startActivity(new Intent(getActivity(), MainActivity.class));
@@ -125,7 +161,7 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    public void changeEmailDialog(){
+    public void changeEmailDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Change email address");
 
@@ -169,7 +205,7 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    public void changePasswordDialog(){
+    public void changePasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Change password");
 
@@ -211,9 +247,9 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    public void changeMail(){
+    public void changeMail() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
+        if (user == null) {
             Toast toast = Toast.makeText(getContext(), "Couldn't perform action. Please reassign and try again", Toast.LENGTH_LONG);
             ViewGroup toastLayout = (ViewGroup) toast.getView();
             TextView toastTV = (TextView) toastLayout.getChildAt(0);
@@ -221,12 +257,11 @@ public class SettingsFragment extends Fragment {
             toast.show();
 
             FirebaseAuth.getInstance().signOut();
-            if(getActivity() != null){
+            if (getActivity() != null) {
                 getActivity().finish();
             }
             startActivity(new Intent(getActivity(), MainActivity.class));
-        }
-        else {
+        } else {
             AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -266,9 +301,9 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    public void changePass(){
+    public void changePass() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
+        if (user == null) {
             Toast toast = Toast.makeText(getContext(), "Couldn't perform action. Please reassign and try again", Toast.LENGTH_LONG);
             ViewGroup toastLayout = (ViewGroup) toast.getView();
             TextView toastTV = (TextView) toastLayout.getChildAt(0);
@@ -276,12 +311,11 @@ public class SettingsFragment extends Fragment {
             toast.show();
 
             FirebaseAuth.getInstance().signOut();
-            if(getActivity() != null){
+            if (getActivity() != null) {
                 getActivity().finish();
             }
             startActivity(new Intent(getActivity(), MainActivity.class));
-        }
-        else {
+        } else {
             AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -320,4 +354,50 @@ public class SettingsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data.getData();
+            profilePic.setImageURI(imageUri);
+            SharedPreferences.Editor editor = myPrefs.edit();
+            String uri = imageUri.toString();
+            editor.putString("PROFILE_PIC", imageUri.toString());
+            editor.apply();
+        }
+    }
+
+    private void loadSavedProfilePic() {
+        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        Uri defaultImageUri = Uri.parse("android.resource://Run2theBeat/" + R.drawable.ic_person_white_24dp);
+        String imageURI = myPrefs.getString("PROFILE_PIC", null);
+        if(imageURI == null){
+            profilePic.setImageResource(R.drawable.ic_person_white_24dp);
+        }else{
+            Uri imgUri = Uri.parse(imageURI);
+            Glide.with(getContext()).load(imgUri).into(profilePic);
+        }
+
+//        Bitmap bitmap = BitmapFactory.decodeFile(imageURI);
+//        profilePic.setImageURI(null);
+//        profilePic.setImageBitmap(bitmap);
+    }
+
+    private Bitmap getImageBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Error getting bitmap", e);
+        }
+        return bm;
+    }
 }

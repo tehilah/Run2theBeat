@@ -5,8 +5,8 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg2"
-    tools:context=".FinishRunScreenActivity">
+    tools:context=".ProgressFragment">
+
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -19,54 +19,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/purple"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|snap">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Music Genres"
+                    android:textColor="@color/purple"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_gravity="fill_horizontal"
-                    android:background="@drawable/gradient_bg2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="5dp"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/select_all_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:theme="@style/CheckBoxTheme" />
 
                     <TextView
-                        android:id="@+id/title"
+                        android:id="@+id/select_all_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:text="Title: Sunday Evening Run"
-                        android:textColor="@color/purple"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/btn_done"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:gravity="right|center"
-                        android:onClick="finish"
-                        android:text="Done"
-                        android:textColor="@color/purple"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:gravity="center"
+                        android:text="Select \n All"
+                        android:textColor="@color/white" />
                 </LinearLayout>
 
-
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp" />
-            </LinearLayout>
+            </RelativeLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -80,287 +73,28 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+
+        <ListView
+            android:id="@+id/list_view1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="30dp"
-                android:useDefaultMargins="true">
-
-                <!--Row 1-->
-                <!--column 1-->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:gravity="center"
-                    app:cardBackgroundColor="@color/button_pressed"
-                    app:cardCornerRadius="10dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center|start"
-                            android:layout_marginStart="20dp"
-                            android:src="@mipmap/pace_colored" />
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/avg_pace"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center|start"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="0"
-                                android:textColor="#ffff"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:id="@+id/avg_pace_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center|start"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="Avg. Pace"
-                                android:textColor="#959DAD"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!--Row 1-->
-                <!--column 2-->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_row="0"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:gravity="center"
-                    app:cardBackgroundColor="@color/button_pressed">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center|start"
-                            android:layout_marginStart="20dp"
-                            android:src="@mipmap/pace_colored" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="0"
-                                android:textColor="#FFFF"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:id="@+id/duration_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="Duration"
-                                android:textColor="#959DAD"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!--Row 2-->
-                <!--column 1-->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_row="1"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:gravity="center"
-                    app:cardBackgroundColor="@color/button_pressed">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center|start"
-                            android:layout_marginStart="20dp"
-                            android:src="@mipmap/pace_colored" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/kilometers"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="0.0"
-                                android:textColor="#ffff"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:id="@+id/kilometers_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="Kilometers"
-                                android:textColor="#959DAD"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!--Row 2-->
-                <!--column 2-->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_row="1"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:gravity="center"
-                    app:cardBackgroundColor="@color/button_pressed">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center|start"
-                            android:layout_marginStart="20dp"
-                            android:src="@mipmap/pace_colored" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/avg_bpm"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="0"
-                                android:textColor="#FFFF"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:id="@+id/bpm_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="Avg. BPM"
-                                android:textColor="#959DAD"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-            </GridLayout>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="Review Playlist"
-                    android:textColor="@color/purple"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:descendantFocusability="blocksDescendants">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/play_list_recycler"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scrollbars="vertical" />
-                </RelativeLayout>
-
-                <Button
-                    android:id="@+id/save_playlist_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/btn_start_run_selector"
-                    android:fontFamily="@font/roboto_regular"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="40dp"
-                    android:text="Save Playlist"
-                    android:textColor="@color/purple"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:padding="4dp" />
     </androidx.core.widget.NestedScrollView>
 
-
+    <Button
+        android:id="@+id/start_run_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/btn_start_run_selector"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:text="START RUN"
+        android:textColor="@color/purple" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

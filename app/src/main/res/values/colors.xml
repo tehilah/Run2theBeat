@@ -16,6 +16,8 @@
     <color name="semitransparent">#88000000</color>
     <color name="color_playlist_item">#20222C</color>
     <color name="button_pressed">#1DFFFFFF</color>
+    <color name="grey">#8B8A8A</color>
+
 </resources>
 
 

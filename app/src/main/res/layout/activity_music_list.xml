@@ -27,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:gravity="center"
             android:layout_marginEnd="5dp"
+            android:gravity="center"
             android:orientation="vertical">
 
             <CheckBox
@@ -52,7 +52,6 @@
 
     </RelativeLayout>
 
-
     <ListView
         android:id="@+id/list_view1"
         android:layout_width="wrap_content"
@@ -64,12 +63,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="20dp"
+        android:layout_weight="0"
         android:background="@drawable/btn_start_run_selector"
         android:paddingStart="40dp"
         android:paddingEnd="40dp"
         android:text="START RUN"
         android:textColor="@color/purple" />
 </LinearLayout>
-
-
