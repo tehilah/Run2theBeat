@@ -30,38 +30,38 @@
         android:background="?android:attr/listDivider" />
 
     <!--<androidx.cardview.widget.CardView-->
-        <!--android:id="@+id/view2"-->
-        <!--android:layout_width="120dp"-->
-        <!--android:layout_height="120dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_marginTop="15dp"-->
-        <!--android:elevation="12dp"-->
-        <!--app:cardCornerRadius="60dp">-->
+    <!--android:id="@+id/view2"-->
+    <!--android:layout_width="120dp"-->
+    <!--android:layout_height="120dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_marginTop="15dp"-->
+    <!--android:elevation="12dp"-->
+    <!--app:cardCornerRadius="60dp">-->
 
-        <!--<ImageButton-->
-            <!--android:id="@+id/profile_pic"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="135dp"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:src="@drawable/run_icon_white" />-->
+    <!--<ImageButton-->
+    <!--android:id="@+id/profile_pic"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="135dp"-->
+    <!--android:scaleType="centerCrop"-->
+    <!--android:src="@drawable/run_icon_white" />-->
     <!--</androidx.cardview.widget.CardView>-->
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
-        android:src="@drawable/run_icon_white"/>
+        android:src="@drawable/run_icon_white" />
 
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="50dp"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:background="@drawable/logout_btn_selector"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="15dp"
+        android:background="@drawable/logout_btn_selector"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:cardCornerRadius="15dp">
 
         <LinearLayout
@@ -77,7 +77,7 @@
                 android:focusable="true"
                 android:onClick="editEmail"
                 android:orientation="horizontal"
-                android:padding="25dp">
+                android:padding="15dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -103,7 +103,7 @@
                         android:id="@+id/current_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="bbb"
+                        android:text="abc@gmail.com"
                         android:textColor="#68000000" />
 
                 </LinearLayout>
@@ -130,7 +130,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                android:padding="25dp">
+                android:padding="15dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -170,6 +170,58 @@
                     android:background="@color/transparent"
                     android:src="@drawable/ic_chevron_right_black_24dp" />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/running_goal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="editEmail"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/ic_run_goal" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Set running goal"
+                        android:textColor="#BF000000" />
+                    <TextView
+                        android:id="@+id/current_goal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5 km"
+                        android:textColor="#68000000" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_chevron_right_black_24dp" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -180,7 +232,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="50dp" />
 
 
     <Button

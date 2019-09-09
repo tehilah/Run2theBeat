@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.protobuf.Type;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -59,6 +61,7 @@ public class SettingsFragment extends Fragment {
     private Uri imageUri;
     private ImageButton profilePic;
     private SharedPreferences myPrefs;
+    private TextView runningGoal;
 
     @Nullable
     @Override
@@ -85,6 +88,11 @@ public class SettingsFragment extends Fragment {
         String email = currentUser.getEmail();
         TextView currentEmail = view.findViewById(R.id.current_email);
         currentEmail.setText(email);
+
+        myPrefs = getActivity().getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
+        String current_goal = myPrefs.getString("GOAL", "Goal not set");
+        runningGoal = view.findViewById(R.id.current_goal);
+        runningGoal.setText(current_goal);
 
         signoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +134,14 @@ public class SettingsFragment extends Fragment {
                         }
                     }
                 });
+            }
+        });
+
+        LinearLayout runningGoal = view.findViewById(R.id.running_goal);
+        runningGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getRunningGoalDialog();
             }
         });
     }
@@ -368,36 +384,52 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void loadSavedProfilePic() {
-        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        Uri defaultImageUri = Uri.parse("android.resource://Run2theBeat/" + R.drawable.ic_person_white_24dp);
-        String imageURI = myPrefs.getString("PROFILE_PIC", null);
-        if(imageURI == null){
-            profilePic.setImageResource(R.drawable.ic_person_white_24dp);
-        }else{
-            Uri imgUri = Uri.parse(imageURI);
-            Glide.with(getContext()).load(imgUri).into(profilePic);
-        }
+//    private void loadSavedProfilePic() {
+//        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+//        Uri defaultImageUri = Uri.parse("android.resource://Run2theBeat/" + R.drawable.ic_person_white_24dp);
+//        String imageURI = myPrefs.getString("PROFILE_PIC", null);
+//        if(imageURI == null){
+//            profilePic.setImageResource(R.drawable.ic_person_white_24dp);
+//        }else{
+//            Uri imgUri = Uri.parse(imageURI);
+//            Glide.with(getContext()).load(imgUri).into(profilePic);
+//        }
+//
+////        Bitmap bitmap = BitmapFactory.decodeFile(imageURI);
+////        profilePic.setImageURI(null);
+////        profilePic.setImageBitmap(bitmap);
+//    }
 
-//        Bitmap bitmap = BitmapFactory.decodeFile(imageURI);
-//        profilePic.setImageURI(null);
-//        profilePic.setImageBitmap(bitmap);
+    private void getRunningGoalDialog() {
+        myPrefs = getActivity().getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
+        androidx.appcompat.app.AlertDialog.Builder alert = new androidx.appcompat.app.AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
+        final EditText edittext = new EditText(getContext());
+        edittext.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        alert.setMessage("Enter running goal:");
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String goal = edittext.getText().toString();
+                if(goal.equals("")){
+                    Toast.makeText(getContext(), "Invalid distance", Toast.LENGTH_SHORT).show();
+                }else{
+                    SharedPreferences.Editor editor = myPrefs.edit();
+                    editor.putString("GOAL", goal);
+                    editor.apply();
+                    runningGoal.setText(goal + " km");
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
     }
 
-    private Bitmap getImageBitmap(String url) {
-        Bitmap bm = null;
-        try {
-            URL aURL = new URL(url);
-            URLConnection conn = aURL.openConnection();
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            bm = BitmapFactory.decodeStream(bis);
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Error getting bitmap", e);
-        }
-        return bm;
-    }
+
 }

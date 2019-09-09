@@ -1,5 +1,8 @@
 package com.example.run2thebeat;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.util.Date;
 
 public class SavedRunItem {
@@ -9,6 +12,8 @@ public class SavedRunItem {
     private Date date;
     private String distance;
     private String avgPace;
+    private Context context;
+    private SharedPreferences myPrefs;
 
 
     public SavedRunItem() {
@@ -21,11 +26,15 @@ public class SavedRunItem {
         date = text2;
         distance = kilometers;
         avgPace = avg_time;
-
     }
 
     public int getImageResource() {
-        if (Double.parseDouble(distance) >= 0.17) { // todo: change this to 5 km
+        myPrefs = context.getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
+        String current_goal = myPrefs.getString("GOAL", "zero");
+        if(current_goal.equals("zero")){
+            return R.drawable.medal;
+        }
+        else if (Double.parseDouble(distance) >= Double.parseDouble(current_goal)) {
             return R.drawable.trophy;
         } else {
             return R.drawable.medal;
@@ -56,9 +65,16 @@ public class SavedRunItem {
         return avgPace;
     }
 
+    public Context getContext() {
+        return context;
+    }
+
     public void setAvgPace(String avgPace) {
         this.avgPace = avgPace;
     }
 
 
+    public void setContext(Context c) {
+        context = c;
+    }
 }

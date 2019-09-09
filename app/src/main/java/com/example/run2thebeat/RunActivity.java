@@ -3,38 +3,25 @@ package com.example.run2thebeat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Icon;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.MediaPlayer;
-import android.media.session.MediaController;
-import android.media.session.MediaSession;
-import android.media.session.MediaSessionManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -49,8 +36,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -65,7 +50,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,7 +60,6 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
 
 public class RunActivity extends AppCompatActivity implements SensorEventListener, SongListFragment.MyListener {
     // constants
@@ -135,6 +118,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private boolean isCountingDown;
     private NotificationManagerCompat mNotificationManagerCompat;
     private boolean exitRun;
+    private TextView runningGoal;
 
 
     @Override
@@ -148,6 +132,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
                     songListFragment);
         startCountDown();
         initVariables();
+        setRunningGoal();
         getLocationPermission();
         initUser();
         getDeviceLocation();
@@ -332,6 +317,18 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         bpm_title = findViewById(R.id.bpm_title);
         distance_title = findViewById(R.id.distance_title);
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
+        runningGoal = findViewById(R.id.goal);
+    }
+
+    private void setRunningGoal(){
+        SharedPreferences myPrefs = getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
+        String current_goal = myPrefs.getString("GOAL", "zero");
+        if(current_goal.equals("zero")){
+            runningGoal.setVisibility(View.INVISIBLE);
+        }else{
+            runningGoal.setText("Goal: "+current_goal + "KM");
+            runningGoal.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateLocation() {
@@ -558,7 +555,6 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         play.setVisibility(View.VISIBLE);
         stop.setVisibility(View.VISIBLE);
         view.setVisibility(View.GONE);
-        locationBtn.setVisibility(View.INVISIBLE);
         startBlinkingAnimation();
     }
 
@@ -569,7 +565,6 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         stop.setVisibility(View.GONE);
         view.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        locationBtn.setVisibility(View.VISIBLE);
     }
 
     public void startBlinkingAnimation() {

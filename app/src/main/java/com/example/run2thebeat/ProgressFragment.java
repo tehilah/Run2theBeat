@@ -130,7 +130,7 @@ public class ProgressFragment extends Fragment {
         FirestoreRecyclerOptions<SavedRunItem> options = new FirestoreRecyclerOptions.Builder<SavedRunItem>()
                 .setQuery(query, SavedRunItem.class)
                 .build();
-        mAdapter = new ProgressAdapter(options);
+        mAdapter = new ProgressAdapter(options, getContext());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);

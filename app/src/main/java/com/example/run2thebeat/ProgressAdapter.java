@@ -1,5 +1,6 @@
 package com.example.run2thebeat;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,18 +10,17 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, ProgressAdapter.MyViewHolder> {
 
     private OnItemClickListener mListener;
+    private Context context;
 
     public interface OnItemClickListener {
         void onItemClick(DocumentSnapshot ds, int position);
@@ -30,14 +30,16 @@ public class ProgressAdapter extends FirestoreRecyclerAdapter<SavedRunItem, Prog
         mListener = listener;
     }
 
-    public ProgressAdapter(@NonNull FirestoreRecyclerOptions<SavedRunItem> options) {
+    public ProgressAdapter(@NonNull FirestoreRecyclerOptions<SavedRunItem> options, Context c) {
         super(options);
+        context = c;
     }
 
     @Override
     protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull SavedRunItem currentItem) {
         DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+        currentItem.setContext(context);
         holder.mImageView.setImageResource(currentItem.getImageResource());
         holder.title.setText(currentItem.getDateDescription());
         holder.date.setText(df.format(currentItem.getDate()));

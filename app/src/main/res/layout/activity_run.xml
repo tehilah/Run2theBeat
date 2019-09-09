@@ -44,30 +44,41 @@
             android:id="@+id/map_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <ImageButton
-            android:id="@+id/location_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/location_btn_selector"
-            android:onClick="openMap"
-            android:src="@drawable/ic_location_24dp" />
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginTop="15dp"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/location_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:background="@drawable/location_btn_selector"
+                android:onClick="openMap"
+                android:src="@drawable/ic_location_24dp" />
+
+            <TextView
+                android:id="@+id/goal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="Goal: 0 KM"
+                android:textColor="@color/white"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/distance"
                 android:layout_width="wrap_content"
-                android:layout_height="153dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/goal"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:fontFamily="@font/impact"
-                android:gravity="top"
                 android:text="0.00"
                 android:textColor="@color/white"
                 android:textSize="120sp" />
@@ -76,20 +87,22 @@
                 android:id="@+id/distance_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/distance"
+                android:layout_centerHorizontal="true"
                 android:fontFamily="@font/impact"
                 android:text="KILOMETERS"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <GridLayout
             android:id="@+id/mainGrid"
             android:layout_width="match_parent"
             android:layout_height="135dp"
-            android:alignmentMode="alignMargins"
-            android:columnCount="3"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:alignmentMode="alignMargins"
+            android:columnCount="3"
             android:columnOrderPreserved="false"
             android:paddingTop="20dp"
             android:rowCount="1"
