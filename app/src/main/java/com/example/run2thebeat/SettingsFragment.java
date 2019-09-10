@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,29 +19,17 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
-
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.protobuf.Type;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-
 import static android.app.Activity.RESULT_OK;
 
 
@@ -90,7 +76,7 @@ public class SettingsFragment extends Fragment {
         currentEmail.setText(email);
 
         myPrefs = getActivity().getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
-        String current_goal = myPrefs.getString("GOAL", "Goal not set");
+        String current_goal = myPrefs.getString(currentUser.getEmail(), "Goal not set");
         runningGoal = view.findViewById(R.id.current_goal);
         runningGoal.setText(current_goal);
 
@@ -415,7 +401,7 @@ public class SettingsFragment extends Fragment {
                     Toast.makeText(getContext(), "Invalid distance", Toast.LENGTH_SHORT).show();
                 }else{
                     SharedPreferences.Editor editor = myPrefs.edit();
-                    editor.putString("GOAL", goal);
+                    editor.putString(currentUser.getEmail(), goal);
                     editor.apply();
                     runningGoal.setText(goal + " km");
                 }

@@ -160,6 +160,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onDeleteClick(int position) {
                 selectedPlaylist.remove(position);
+                mAdapter.notifyDataSetChanged();
                 mAdapter.notifyItemRemoved(position);
             }
         });

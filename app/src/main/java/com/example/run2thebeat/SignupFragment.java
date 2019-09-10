@@ -59,7 +59,14 @@ public class SignupFragment extends Fragment {
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!password.getText().toString().equals(confirmPassword.getText().toString())){
+                if(email.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Invalid email", Toast.LENGTH_SHORT).show();
+                }
+                else if(password.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Invalid password", Toast.LENGTH_SHORT).show();
+                }
+
+                else if(!password.getText().toString().equals(confirmPassword.getText().toString())){
                     Toast.makeText(getActivity(), "passwords don't match", Toast.LENGTH_SHORT).show();
                 }
                 else if(password.getText().toString().length()<6){

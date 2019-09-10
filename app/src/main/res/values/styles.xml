@@ -36,4 +36,7 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="styleA">
+        <item name="android:fontFamily">@font/impact</item>
+    </style>
 </resources>

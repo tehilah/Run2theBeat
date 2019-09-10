@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import java.util.Date;
 
+import static com.example.run2thebeat.ShowPlaylistsFragment.currentUser;
+
 public class SavedRunItem {
 
     private int mImageResource;
@@ -30,7 +32,7 @@ public class SavedRunItem {
 
     public int getImageResource() {
         myPrefs = context.getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
-        String current_goal = myPrefs.getString("GOAL", "zero");
+        String current_goal = myPrefs.getString(currentUser.getEmail(), "zero");
         if(current_goal.equals("zero")){
             return R.drawable.medal;
         }

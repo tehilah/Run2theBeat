@@ -255,5 +255,4 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
-
 }

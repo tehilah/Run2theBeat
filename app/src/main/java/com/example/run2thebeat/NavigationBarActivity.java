@@ -84,4 +84,9 @@ public class NavigationBarActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }

@@ -60,6 +60,8 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.example.run2thebeat.ShowPlaylistsFragment.currentUser;
+
 
 public class RunActivity extends AppCompatActivity implements SensorEventListener, SongListFragment.MyListener {
     // constants
@@ -322,7 +324,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
     private void setRunningGoal(){
         SharedPreferences myPrefs = getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
-        String current_goal = myPrefs.getString("GOAL", "zero");
+        String current_goal = myPrefs.getString(currentUser.getEmail(), "zero");
         if(current_goal.equals("zero")){
             runningGoal.setVisibility(View.INVISIBLE);
         }else{

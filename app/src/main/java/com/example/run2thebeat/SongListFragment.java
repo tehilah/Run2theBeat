@@ -77,9 +77,9 @@ public class SongListFragment extends Fragment {
     private static Song soul4 = new Song(21, "Bottoms Up", "Trey Songz Nicki Minaj", "rbandsoul", "Bottoms Up -Trey Songz Nicki Minaj.mp3", 148, R.drawable.bob_marley);
     private static Song soul5 = new Song(22, "Twistin' The Night Away", "Sam Cooke", "rbandsoul", "Sam Cooke-Twistin' The Night Away.mp3", 160, R.drawable.bob_marley);
     private static Song soul6 = new Song(23, "Waterfalls", "TLC", "rbandsoul", "TLC - Waterfalls.mp3", 172, R.drawable.bob_marley);
-    private static Song hiphop1 = new Song(24, "Gold Digger", "Kanye West ft. Jamie Foxx", "hip hop", "Kanye West - Gold Digger ft. Jamie Foxx.mp3", 92, R.drawable.bob_marley);
-    private static Song hiphop2 = new Song(25, "Pump It", "The Black Eyed Peas", "hip hop", "The Black Eyed Peas - Pump It.mp3", 153, R.drawable.bob_marley);
-    private static Song hiphop3 = new Song(26, "Empire State Of Mind", "Jay feat Alicia Keys", "hip hop", "Jay feat Alicia KeysEmpre State Of Mind.mp3", 173, R.drawable.bob_marley);
+    private static Song hiphop1 = new Song(24, "Gold Digger", "Kanye West ft. Jamie Foxx", "hiphop", "Kanye West - Gold Digger ft. Jamie Foxx.mp3", 92, R.drawable.bob_marley);
+    private static Song hiphop2 = new Song(25, "Pump It", "The Black Eyed Peas", "hiphop", "The Black Eyed Peas - Pump It.mp3", 153, R.drawable.bob_marley);
+    private static Song hiphop3 = new Song(26, "Empire State Of Mind", "Jay feat Alicia Keys", "hiphop", "Jay feat Alicia KeysEmpre State Of Mind.mp3", 173, R.drawable.bob_marley);
     private static Song rap1 = new Song(27, "Fireman", "Lil Wayne", "rap", "Lil Wayne - Fireman.mp3", 161, R.drawable.bob_marley);
     private static Song rap2 = new Song(28, "Love The Way You Lie", "Eminem ft. Rihanna", "rap", "Eminem - Love The Way You Lie ft. Rihanna.mp3", 174, R.drawable.bob_marley);
     private static Song rap3 = new Song(29, "Baby Got Back", "Sir Mix-A-Lot", "rap", "Baby Got Back - With Lyrics.mp3", 133, R.drawable.bob_marley);
