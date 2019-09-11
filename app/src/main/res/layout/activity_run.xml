@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#000"
-            android:visibility="gone">
+            android:visibility="visible">
             <!--todo: make visible-->
 
             <TextView
@@ -257,7 +257,7 @@
                 android:background="@drawable/pause_play_button_selected"
                 android:onClick="pauseChronometer"
                 android:src="@drawable/ic_pause_white"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
 
             <com.eralp.circleprogressview.CircleProgressView
@@ -267,7 +267,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/stop_btn_selected"
                 android:src="@drawable/ic_stop_white"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:cpv_background_circle_color="@color/white"
                 app:cpv_background_circle_width="1dp"
                 app:cpv_circle_color="@color/light_purple"
@@ -292,7 +292,7 @@
                 android:background="@drawable/pause_play_button_selected"
                 android:onClick="startChronometer"
                 android:src="@drawable/ic_play_white"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintHorizontal_weight="0.5" />
 
 
