@@ -406,7 +406,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         if (curDist >= 10) {
             distance += curDist;
 //            prevDist = curDist;
-            Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Distance: " + FormatDateTimeDist.getDist(distance), Toast.LENGTH_LONG).show();
             previewDist.setText(FormatDateTimeDist.getDist(distance));
             return true;
         }

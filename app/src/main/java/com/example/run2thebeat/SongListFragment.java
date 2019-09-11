@@ -256,7 +256,7 @@ public class SongListFragment extends Fragment {
             public void onNextClick() {
                 if(nextToPlay != 0){
                     playSong(nextToPlay);
-                    nextToPlay =0;
+//                    nextToPlay =0;
                 }
                 else {
                     playSong(currentlyPlayingPosition + 1);
@@ -348,11 +348,12 @@ public class SongListFragment extends Fragment {
 //        Song curSong = songList.get(currentlyPlayingPosition);
 //        int curSongBPM = curSong.getSongBPM();
 //
+        nextToPlay = 0;
         Song currentlyPlaying = songList.get(currentlyPlayingPosition);
         if (currentlyPlaying.getSongBPM() < BPM) {
             for (int i = currentlyPlayingPosition + 1; i < songList.size(); i++) {
                 int bpm = songList.get(i).getSongBPM();
-                if (bpm <= BPM + 10 && bpm >= BPM - 10) {
+                if (bpm <= BPM + 5 && bpm >= BPM - 5) {
                     nextToPlay = i;
                     Log.d(TAG, "the index to play " + nextToPlay);
                     break;
@@ -361,7 +362,7 @@ public class SongListFragment extends Fragment {
         } else {
             for (int i = currentlyPlayingPosition - 1; i > 0; i--) {
                 int bpm = songList.get(i).getSongBPM();
-                if (bpm <= BPM + 10 && bpm >= BPM - 10) {
+                if (bpm <= BPM + 5 && bpm >= BPM - 5) {
                     nextToPlay = i;
                     break;
                 }
@@ -440,7 +441,7 @@ public class SongListFragment extends Fragment {
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
                 if(nextToPlay != 0){
                     playSong(nextToPlay);
-                    nextToPlay =0;
+//                    nextToPlay =0;
 
                 }
                 else {

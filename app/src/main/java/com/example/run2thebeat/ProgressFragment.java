@@ -150,7 +150,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 new RecyclerViewSwipeDecorator.Builder(getContext(), c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_purple))
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorRed))
                         .addSwipeRightActionIcon(R.drawable.delete_white)
                         .addSwipeRightLabel(getString(R.string.action_delete))
                         .setSwipeRightLabelColor(Color.WHITE)

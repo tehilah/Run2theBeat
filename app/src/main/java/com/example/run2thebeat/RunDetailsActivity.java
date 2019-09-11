@@ -65,9 +65,14 @@ public class RunDetailsActivity extends AppCompatActivity implements OnMapReadyC
 
     private void drawPolyline(GoogleMap googleMap) {
         PolylineOptions rectLine = new PolylineOptions().width(20)
-                .color(Color.parseColor("#035aff"))
+                .color(Color.parseColor("#2ea4dd"))
                 .addAll(latLngs);
         googleMap.addPolyline(rectLine);
+        PolylineOptions line = new PolylineOptions()
+                .width(4)
+                .color(Color.WHITE).addAll(latLngs);
+        googleMap.addPolyline(line);
+//#eca42d, blue- 2ea4dd
 
     }
 
