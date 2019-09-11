@@ -438,7 +438,6 @@ public class SongListFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
-                selectedPlaylist.add(songList.get(currentlyPlayingPosition));
                 if(nextToPlay != 0){
                     playSong(nextToPlay);
                     nextToPlay =0;

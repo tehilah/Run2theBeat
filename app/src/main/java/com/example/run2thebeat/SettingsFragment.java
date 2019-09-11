@@ -267,12 +267,12 @@ public class SettingsFragment extends Fragment {
             }
             startActivity(new Intent(getActivity(), MainActivity.class));
         } else {
-            AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
+            AuthCredential credential = EmailAuthProvider.getCredential(m_Email.trim(), m_Password);
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        user.updateEmail(m_NewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        user.updateEmail(m_NewEmail.trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -321,7 +321,7 @@ public class SettingsFragment extends Fragment {
             }
             startActivity(new Intent(getActivity(), MainActivity.class));
         } else {
-            AuthCredential credential = EmailAuthProvider.getCredential(m_Email, m_Password);
+            AuthCredential credential = EmailAuthProvider.getCredential(m_Email.trim(), m_Password);
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
