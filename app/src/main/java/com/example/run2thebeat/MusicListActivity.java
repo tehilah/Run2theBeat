@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 
 public class MusicListActivity extends AppCompatActivity {
-    String[] GENRE_NAMES = {"pop", "avant-garde", "electronic", "hip hop", "latin", "country",
+    String[] GENRE_NAMES = {"pop", "avant-garde", "electronic", "hiphop", "latin", "country",
             "jazz", "rock", "rap", "rbandsoul"};
     MyCustomAdapter dataAdapter = null;
     public static final String PREFS_NAME = "MyPref";
