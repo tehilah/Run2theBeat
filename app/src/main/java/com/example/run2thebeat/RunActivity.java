@@ -7,6 +7,9 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import info.abdolahi.CircularMusicProgressBar;
+import info.abdolahi.OnCircularSeekBarChangeListener;
+
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -27,6 +30,7 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.Chronometer;
@@ -36,6 +40,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.eralp.circleprogressview.ProgressAnimationListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -50,6 +56,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.SphericalUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,6 +66,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.eralp.circleprogressview.CircleProgressView;
+import com.eralp.circleprogressview.ProgressAnimationListener;
 
 import static com.example.run2thebeat.ShowPlaylistsFragment.currentUser;
 
@@ -77,7 +87,8 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
     private TextView bpm_title;
     private TextView distance_title;
     private LinearLayout layout;
-    private ImageButton stop;
+    private CircleProgressView stop;
+    //    private CircularMusicProgressBar stop;
     private ImageButton play;
     private ImageButton pause;
     private Double distance = 0.0;
@@ -128,10 +139,10 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         updateValuesFromBundle(savedInstanceState);
-            SongListFragment songListFragment = new SongListFragment();
-            songListFragment.setFragmentListener(this);
-            fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
-                    songListFragment);
+        SongListFragment songListFragment = new SongListFragment();
+        songListFragment.setFragmentListener(this);
+        fragmentTransaction = getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,
+                songListFragment);
         startCountDown();
         initVariables();
         setRunningGoal();
@@ -153,14 +164,61 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
             }
         });
 
+//        stop.setValue(40);
+//        stop.setOnCircularBarChangeListener(new OnCircularSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(CircularMusicProgressBar circularBar, int progress, boolean fromUser) {
+//                circularBar.setValue(progress);
+//            }
+//
+//            @Override
+//            public void onClick(CircularMusicProgressBar circularBar) {
+//
+//            }
+//
+//            @Override
+//            public void onLongPress(CircularMusicProgressBar circularBar) {
+//                circularBar.setProgressAnimationState(true);
+//                circularBar.setValue(100);
+//                stop.setValue(100);
+//                try {
+//                    stopChronometer();
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+
+
+        stop.setTextEnabled(false);
+
         stop.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                try {
-                    stopChronometer();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                stop.setInterpolator(new AccelerateDecelerateInterpolator());
+                stop.setStartAngle(-90);
+                stop.setProgressWithAnimation(100, 2000);
+
+                stop.addAnimationListener(new ProgressAnimationListener() {
+                    @Override
+                    public void onValueChanged(float v) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd() {
+                        try {
+                            stopChronometer();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+//                try {
+//                    stopChronometer();
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
                 return true;
             }
         });
@@ -312,7 +370,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         tv_avg_pace = findViewById(R.id.avg_pace);
         pause = findViewById(R.id.pause);
         play = findViewById(R.id.play);
-        stop = findViewById(R.id.stop);
+        stop = findViewById(R.id.stop2);
         layout = findViewById(R.id.linear_layout);
         avg_pace_icon = findViewById(R.id.avg_pace_img);
         elapsed_time_icon = findViewById(R.id.elapsed_time_img);
@@ -322,13 +380,13 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         runningGoal = findViewById(R.id.goal);
     }
 
-    private void setRunningGoal(){
+    private void setRunningGoal() {
         SharedPreferences myPrefs = getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
         String current_goal = myPrefs.getString(currentUser.getEmail(), "zero");
-        if(current_goal.equals("zero")){
+        if (current_goal.equals("zero")) {
             runningGoal.setVisibility(View.INVISIBLE);
-        }else{
-            runningGoal.setText("Goal: "+current_goal + "KM");
+        } else {
+            runningGoal.setText("Goal: " + current_goal + "KM");
             runningGoal.setVisibility(View.VISIBLE);
         }
     }
@@ -637,15 +695,15 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         Long thetime = chronometer.getBase();
-        outState.putLong("CHRONOMETER_TIME",thetime);
+        outState.putLong("CHRONOMETER_TIME", thetime);
         super.onSaveInstanceState(outState);
 
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState){
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         chronometer.setBase(savedInstanceState.getLong("CHRONOMETER_TIME"));
 

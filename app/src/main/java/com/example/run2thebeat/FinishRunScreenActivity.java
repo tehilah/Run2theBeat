@@ -46,6 +46,7 @@ import java.util.concurrent.Executors;
 
 import static android.widget.LinearLayout.VERTICAL;
 import static com.example.run2thebeat.ProgressFragment.CONFIRM_DELETE;
+import static com.example.run2thebeat.ShowPlaylistsFragment.currentUser;
 
 public class FinishRunScreenActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -292,7 +293,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
         LayoutInflater adbInflater = LayoutInflater.from(this);
         View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        String skipMessage = settings.getString("skipMessage", "NOT checked");
+        String skipMessage = settings.getString(currentUser.getEmail(), "NOT checked");
 
         dontShowAgain = eulaLayout.findViewById(R.id.skip);
         adb.setView(eulaLayout);
@@ -310,7 +311,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
 
-                editor.putString("skipMessage", checkBoxResult);
+                editor.putString(currentUser.getEmail(), checkBoxResult);
                 editor.commit();
 
                 startActivity(intent);
@@ -327,7 +328,7 @@ public class FinishRunScreenActivity extends AppCompatActivity implements OnMapR
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
 
-                editor.putString("skipMessage", checkBoxResult);
+                editor.putString(currentUser.getEmail(), checkBoxResult);
                 editor.commit();
 
                 dialog.cancel();
