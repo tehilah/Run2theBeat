@@ -35,6 +35,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class SettingsFragment extends Fragment {
     private static final int PICK_IMAGE = 100;
+    public static final String UNBIND_SERVICE = "com.example.run2thebeat.SettingsFragment.UNBIND_SERVICE";
+
+
     private String m_Email = "";
     private String m_Password = "";
     private String m_NewEmail = "";
@@ -149,8 +152,8 @@ public class SettingsFragment extends Fragment {
                         FirebaseAuth.getInstance().signOut();
                         if (getActivity() != null) {
                             getActivity().finish();
+                            startActivity(new Intent(getActivity(), MainActivity.class));
                         }
-                        startActivity(new Intent(getActivity(), MainActivity.class));
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

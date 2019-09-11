@@ -119,6 +119,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public void onDestroy() {
         Toast.makeText(this, "--Service Destroyed--", Toast.LENGTH_SHORT).show();
+        hasMusicStarted = false;
         super.onDestroy();
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {

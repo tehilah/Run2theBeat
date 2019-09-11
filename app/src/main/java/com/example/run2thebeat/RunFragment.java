@@ -183,6 +183,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
 
     private void doUnbindService() {
         if (mIsBound) {
+            Toast.makeText(getContext(), "--Service unbound--", Toast.LENGTH_SHORT).show();
             // Detach our existing connection.
             getContext().unbindService(mConnection);
             mIsBound = false;
@@ -202,6 +203,10 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
                 updateTextViews(SongListFragment.currentlyPlayingPosition + 1);
             }
+//            if(action != null && action.equals(SettingsFragment.UNBIND_SERVICE)){
+//                doUnbindService();
+//                getContext().stopService(new Intent(getContext(), PlayerService.class));
+//            }
             updateUI(intent);
         }
     };
@@ -223,6 +228,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(PlayerService.SONG_ENDED);
             intentFilter.addAction(PlayerService.BROADCAST_ACTION);
+            intentFilter.addAction(SettingsFragment.UNBIND_SERVICE);
             getActivity().registerReceiver(broadcastReceiver, intentFilter);
             mBroadcastIsRegistered = true;
             Toast.makeText(getContext(), "register broadcast receiver", Toast.LENGTH_SHORT).show();
