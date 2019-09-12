@@ -38,7 +38,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "--Service Created--", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "--Service Created--", Toast.LENGTH_SHORT).show();
 
         seekIntent = new Intent(BROADCAST_ACTION); // intent for moving seekbar (not user changing it)
 
@@ -54,7 +54,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "--Service Started--", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "--Service Started--", Toast.LENGTH_SHORT).show();
 
         // register broadcast receiver
         if (!mIsBroadcastRegistered) {

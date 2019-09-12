@@ -191,6 +191,26 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
 
         stop.setTextEnabled(false);
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stop.setInterpolator(new AccelerateDecelerateInterpolator());
+                stop.setStartAngle(-90);
+                stop.setProgressWithAnimation(20, 1000);
+                stop.addAnimationListener(new ProgressAnimationListener() {
+                    @Override
+                    public void onValueChanged(float v) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd() {
+                        stop.setProgressWithAnimation(0, 1000);
+                    }
+                });
+//
+            }
+        });
 
         stop.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

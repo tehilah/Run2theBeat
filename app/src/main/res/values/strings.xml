@@ -5,4 +5,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
     <string name="action_delete">Delete</string>
+    <string name="loginfailed">Sign In Failed. Try Again!</string>
+    <string name="loginsuccess">Signed In Successful</string>
 </resources>

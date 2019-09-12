@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/bg_login"
+    android:background="@drawable/gradient_bg_run"
     android:backgroundTint="@color/darkGrey"
     android:backgroundTintMode="multiply"
     android:gravity="center"
@@ -114,19 +114,36 @@
                 android:singleLine="true"
                 android:textColorHint="#8085A4" />
 
-            <Button
+
+            <com.ekalips.fancybuttonproj.FancyButton
                 android:id="@+id/btn_sign_in"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|center"
+                android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/sign_in_selector"
-                android:drawablePadding="10dp"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
-                android:text="SIGN IN"
-                android:textColor="@color/white"
-                android:textColorHint="#B2FFFFFF" />
+                app:f_btnStyle="fill"
+                app:f_fillColor="@android:color/transparent"
+                app:f_hideFillAfterCollapse="false"
+                app:f_progressColor="@android:color/white"
+                app:f_text="SIGN IN"
+                app:f_textColor="@color/white" />
+
+
+            <!--<Button-->
+            <!--android:id="@+id/btn_sign_in"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="top|center"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:background="@drawable/sign_in_selector"-->
+            <!--android:drawablePadding="10dp"-->
+            <!--android:paddingStart="30dp"-->
+            <!--android:paddingEnd="30dp"-->
+            <!--android:text="SIGN IN"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textColorHint="#B2FFFFFF" />-->
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

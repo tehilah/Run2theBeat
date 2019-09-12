@@ -161,14 +161,13 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mBoundService = ((PlayerService.LocalBinder) service).getService();
-            Toast.makeText(getContext(), "local service connected", Toast.LENGTH_SHORT).show();
             checkForUpdates();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mBoundService = null;
-            Toast.makeText(getContext(), "local service disconnected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "local service disconnected", Toast.LENGTH_SHORT).show();
 
         }
     };
@@ -183,7 +182,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
 
     private void doUnbindService() {
         if (mIsBound) {
-            Toast.makeText(getContext(), "--Service unbound--", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "--Service unbound--", Toast.LENGTH_SHORT).show();
             // Detach our existing connection.
             getContext().unbindService(mConnection);
             mIsBound = false;
@@ -231,7 +230,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
             intentFilter.addAction(SettingsFragment.UNBIND_SERVICE);
             getActivity().registerReceiver(broadcastReceiver, intentFilter);
             mBroadcastIsRegistered = true;
-            Toast.makeText(getContext(), "register broadcast receiver", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "register broadcast receiver", Toast.LENGTH_SHORT).show();
         }
         if (mBoundService != null) {
             checkForUpdates();
@@ -244,7 +243,7 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         if (mBroadcastIsRegistered) {
             getActivity().unregisterReceiver(broadcastReceiver);
             mBroadcastIsRegistered = false;
-            Toast.makeText(getContext(), "unregister broadcast receiver", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "unregister broadcast receiver", Toast.LENGTH_SHORT).show();
         }
         super.onPause();
     }

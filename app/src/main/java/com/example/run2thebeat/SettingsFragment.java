@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import static android.app.Activity.RESULT_OK;
 
 
 public class SettingsFragment extends Fragment {
@@ -47,8 +44,6 @@ public class SettingsFragment extends Fragment {
     private FirebaseUser currentUser;
     private FirebaseAuth firebase = FirebaseAuth.getInstance();
     private String TAG = "SettingsFaragment";
-    private Uri imageUri;
-    private ImageButton profilePic;
     private SharedPreferences myPrefs;
     private TextView runningGoal;
 
@@ -62,14 +57,6 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        profilePic = view.findViewById(R.id.profile_pic);
-//        loadSavedProfilePic();
-//        profilePic.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openGallery();
-//            }
-//        });
 
         Button signoutBtn = view.findViewById(R.id.signout);
         currentUser = ShowPlaylistsFragment.currentUser;
@@ -151,6 +138,7 @@ public class SettingsFragment extends Fragment {
                         // if this button is clicked, delete message
                         FirebaseAuth.getInstance().signOut();
                         if (getActivity() != null) {
+                            getActivity().stopService(new Intent(getActivity(), PlayerService.class));
                             getActivity().finish();
                             startActivity(new Intent(getActivity(), MainActivity.class));
                         }
@@ -359,35 +347,6 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
-            imageUri = data.getData();
-            profilePic.setImageURI(imageUri);
-            SharedPreferences.Editor editor = myPrefs.edit();
-            String uri = imageUri.toString();
-            editor.putString("PROFILE_PIC", imageUri.toString());
-            editor.apply();
-        }
-    }
-
-//    private void loadSavedProfilePic() {
-//        myPrefs = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-//        Uri defaultImageUri = Uri.parse("android.resource://Run2theBeat/" + R.drawable.ic_person_white_24dp);
-//        String imageURI = myPrefs.getString("PROFILE_PIC", null);
-//        if(imageURI == null){
-//            profilePic.setImageResource(R.drawable.ic_person_white_24dp);
-//        }else{
-//            Uri imgUri = Uri.parse(imageURI);
-//            Glide.with(getContext()).load(imgUri).into(profilePic);
-//        }
-//
-////        Bitmap bitmap = BitmapFactory.decodeFile(imageURI);
-////        profilePic.setImageURI(null);
-////        profilePic.setImageBitmap(bitmap);
-//    }
 
     private void getRunningGoalDialog() {
         myPrefs = getActivity().getSharedPreferences("GOAL_PREF", Context.MODE_PRIVATE);
