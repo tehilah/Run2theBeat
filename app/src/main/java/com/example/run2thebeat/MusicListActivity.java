@@ -69,7 +69,7 @@ public class MusicListActivity extends AppCompatActivity {
 
                 dataAdapter.updateRecords(genresList);
 //                view.setSelected(true);
-                Toast.makeText(getApplicationContext(), "clicked on row: " + genre.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "clicked on row: " + genre.getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -146,7 +146,7 @@ public class MusicListActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
                         Genre genre = (Genre) cb.getTag();
-                        Toast.makeText(getApplicationContext(), "clicked on Checkbox: " + genre.getName(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "clicked on Checkbox: " + genre.getName(), Toast.LENGTH_SHORT).show();
                         genre.setSelected(cb.isChecked());
                     }
                 });

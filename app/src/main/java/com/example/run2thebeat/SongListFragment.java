@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 
 public class SongListFragment extends Fragment {
@@ -384,7 +383,7 @@ public class SongListFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mBoundService = ((PlayerService.LocalBinder) service).getService();
-            Toast.makeText(getContext(), "local service connected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "local service connected", Toast.LENGTH_SHORT).show();
             playSong(1);
 
         }
@@ -392,7 +391,7 @@ public class SongListFragment extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mBoundService = null;
-            Toast.makeText(getContext(), "local service disconnected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "local service disconnected", Toast.LENGTH_SHORT).show();
 
         }
     };

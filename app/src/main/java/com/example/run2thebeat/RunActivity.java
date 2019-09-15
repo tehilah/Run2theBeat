@@ -502,7 +502,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
         // todo: figure out why this crashes the app
         stopLocationUpdates();
         mRequestingLocationUpdates = false;
-        Toast.makeText(this, "in on pause", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "in on pause", Toast.LENGTH_SHORT).show();
 //        startMediaPlayerService();
 
     }
@@ -538,7 +538,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
                 changeMusicBPM = curBPM;
             }
             stepsCounter = 0;
-            Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "one minute passed", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "updateBPM: cur bpm " + String.valueOf(curBPM));
             sumBPM += curBPM;
             countBPM++;
@@ -576,7 +576,7 @@ public class RunActivity extends AppCompatActivity implements SensorEventListene
 
         });
         chronometer.setBase(SystemClock.elapsedRealtime());
-        Toast.makeText(RunActivity.this, "map saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(RunActivity.this, "route saved", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, FinishRunScreenActivity.class);
         intent.putExtra("AVG_PACE", avg_pace);
         intent.putExtra("DURATION", duration);

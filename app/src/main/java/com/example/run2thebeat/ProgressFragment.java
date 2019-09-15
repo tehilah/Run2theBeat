@@ -13,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
@@ -27,14 +25,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -165,7 +161,6 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onItemClick(DocumentSnapshot ds, int position) {
                 Route route = ds.toObject(Route.class);
-                Toast.makeText(getContext(), "clicked item: " + ("" + position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getContext(), RunDetailsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("POINTS", route.getPoints());
