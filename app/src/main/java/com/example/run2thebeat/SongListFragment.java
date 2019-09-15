@@ -2,6 +2,7 @@ package com.example.run2thebeat;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,12 +22,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.widget.ImageButton;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
+
 import android.widget.SeekBar;
 
 
@@ -40,7 +45,7 @@ public class SongListFragment extends Fragment {
     public static int nextToPlay = 0;
     public static MutableLiveData<Integer> curBPMLiveData = new MutableLiveData<>();
     public ImageButton imageButton;
-    private static boolean isPlaying;
+    public static boolean isPlaying;
     //    Binding variables
     private static PlayerService mBoundService;
     private boolean mIsBound;
@@ -84,11 +89,10 @@ public class SongListFragment extends Fragment {
     private static Song rap3 = new Song(29, "Baby Got Back", "Sir Mix-A-Lot", "rap", "Baby Got Back - With Lyrics.mp3", 133, R.drawable.baby_got_back);
     private static Song rock6 = new Song(30, "Bohemian Rhapsody", "Queen", "rock", "Queen - Bohemian Rhapsody.mp3", 72, R.drawable.bohemian_rhapsody);
     private static Song rock7 = new Song(31, "Master Of Puppets", " Metallica", "rock", "Metallica-Master Of Puppets.mp3", 220, R.drawable.master_of_puppets);
-    private static Song rock8 = new Song(32,"Sweet Child O' Mine","Guns N' Roses","rock","Guns N' Roses - Sweet Child O' Mine.mp3",128,R.drawable.sweet_child_of_mine);
-    private static Song rap4 = new Song(33,"Dirt Off Your Shoulder","JAY-Z","rap","JAY-Z - Dirt Off Your Shoulder.mp3",163,R.drawable.dirt_off_your_shoulder);
-    private static Song jazz1= new Song(34,"Don't Know Why","Norah Jones","jazz","Norah Jones - Don't Know Why.mp3",88,R.drawable.dont_know_why);
-    private static Song rap5 = new Song(35,"Suge (Yea Yea)","Dababy","rap","Dababy - Suge (Yea Yea).mp3",75,R.drawable.suge);
-
+    private static Song rock8 = new Song(32, "Sweet Child O' Mine", "Guns N' Roses", "rock", "Guns N' Roses - Sweet Child O' Mine.mp3", 128, R.drawable.sweet_child_of_mine);
+    private static Song rap4 = new Song(33, "Dirt Off Your Shoulder", "JAY-Z", "rap", "JAY-Z - Dirt Off Your Shoulder.mp3", 163, R.drawable.dirt_off_your_shoulder);
+    private static Song jazz1 = new Song(34, "Don't Know Why", "Norah Jones", "jazz", "Norah Jones - Don't Know Why.mp3", 88, R.drawable.dont_know_why);
+    private static Song rap5 = new Song(35, "Suge (Yea Yea)", "Dababy", "rap", "Dababy - Suge (Yea Yea).mp3", 75, R.drawable.suge);
 
 
     public interface MyListener {
@@ -101,10 +105,9 @@ public class SongListFragment extends Fragment {
         void onListViewCreated(RecyclerView recyclerView);
     }
 
-    public void setFragmentListener(MyListener listener){
+    public void setFragmentListener(MyListener listener) {
         mListener = listener;
     }
-
 
 
     @Override
@@ -253,11 +256,10 @@ public class SongListFragment extends Fragment {
         mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
             @Override
             public void onNextClick() {
-                if(nextToPlay != 0){
+                if (nextToPlay != 0) {
                     playSong(nextToPlay);
 //                    nextToPlay =0;
-                }
-                else {
+                } else {
                     playSong(currentlyPlayingPosition + 1);
                 }
             }
@@ -384,6 +386,7 @@ public class SongListFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mBoundService = ((PlayerService.LocalBinder) service).getService();
 //            Toast.makeText(getContext(), "local service connected", Toast.LENGTH_SHORT).show();
+            mBoundService.initPlayPauseBtn(imageButton);
             playSong(1);
 
         }
@@ -423,7 +426,7 @@ public class SongListFragment extends Fragment {
                 int seekMax = Integer.parseInt(mediaMax);
                 mseekBar.setMax(seekMax);
                 mseekBar.setProgress(seekBarProgress);
-                if(!isAdded && seekBarProgress >= seekMax /2){
+                if (!isAdded && seekBarProgress >= seekMax / 2) {
                     selectedPlaylist.add(songList.get(currentlyPlayingPosition));
                     isAdded = true;
                 }
@@ -438,12 +441,11 @@ public class SongListFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null && action.equals(PlayerService.SONG_ENDED)) {
-                if(nextToPlay != 0){
+                if (nextToPlay != 0) {
                     playSong(nextToPlay);
 //                    nextToPlay =0;
 
-                }
-                else {
+                } else {
                     currentlyPlayingPosition = currentlyPlayingPosition >= songList.size() ? 0 : currentlyPlayingPosition; // check if last song was reached. if it has then play the first song again
                     playSong(currentlyPlayingPosition + 1);
                 }
@@ -463,8 +465,13 @@ public class SongListFragment extends Fragment {
             mListener.onListViewCreated(songRecyclerView);
         }
         super.onResume();
+    }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        Song curSong = songList.get(currentlyPlayingPosition);
+        mBoundService.sendNotification(curSong.getTitle(), curSong.getArtist(), curSong.getSongCover(), mBoundService.isPlaying());
     }
 }
 
