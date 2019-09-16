@@ -295,6 +295,8 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             mController.getTransportControls().pause();
         } else if (action.equalsIgnoreCase(ACTION_NEXT)) {
             mController.getTransportControls().skipToNext();
+        } else if (action.equalsIgnoreCase(ACTION_STOP)) {
+            mController.getTransportControls().stop();
         }
     }
 
@@ -325,9 +327,8 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                                  @Override
                                  public void onSkipToNext() {
                                      super.onSkipToNext();
-//                                     SongListFragment.playSong(SongListFragment.currentlyPlayingPosition + 1);
-                                     //Change media here
-//                                     buildNotification( generateAction( android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE ) );
+                                     SongListFragment.chooseNext();
+                                     sendNotification(mTitle, mArtist, mSongCover, true);
                                  }
 
                                  @Override

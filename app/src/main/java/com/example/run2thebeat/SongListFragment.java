@@ -10,6 +10,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.RemoteException;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +37,15 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 
-public class SongListFragment extends Fragment {
+public class SongListFragment extends Fragment implements SongListAdapter.OnNextClickListener{
 
+    private MediaBrowserCompat mMediaBrowser;
+    private MediaControllerCompat mMediaController;
+    private MediaControllerCompat.TransportControls mPlaybackTransportControls;
+    private static boolean isNotificationOpen;
     private static String TAG = "SongListFragment";
     public static ArrayList<Song> songList;
     public static ArrayList<Song> selectedPlaylist;
@@ -93,6 +103,65 @@ public class SongListFragment extends Fragment {
     private static Song rap4 = new Song(33, "Dirt Off Your Shoulder", "JAY-Z", "rap", "JAY-Z - Dirt Off Your Shoulder.mp3", 163, R.drawable.dirt_off_your_shoulder);
     private static Song jazz1 = new Song(34, "Don't Know Why", "Norah Jones", "jazz", "Norah Jones - Don't Know Why.mp3", 88, R.drawable.dont_know_why);
     private static Song rap5 = new Song(35, "Suge (Yea Yea)", "Dababy", "rap", "Dababy - Suge (Yea Yea).mp3", 75, R.drawable.suge);
+
+
+
+//    private MediaBrowserCompat.ConnectionCallback mediaBrowserCallbacks = new MediaBrowserCompat.ConnectionCallback(){
+//        @Override
+//        public void onConnected() {
+//            super.onConnected();
+//            try {
+//                //create the media controller and register the callbacks to stay in sync
+//                Toast.makeText(getContext(), "here7", Toast.LENGTH_SHORT).show();
+//
+//                mMediaController = new MediaControllerCompat(getActivity(), mMediaBrowser.getSessionToken());
+//                mMediaController.registerCallback(mediaControllerCallbacks);
+//                Toast.makeText(getContext(), "here8", Toast.LENGTH_SHORT).show();
+//
+//                //save the controller and define the easy access transport controls in the object
+//                MediaControllerCompat.setMediaController(getActivity(), mMediaController);
+//                mPlaybackTransportControls = mMediaController.getTransportControls();
+//                //gesPlaybackTransportControls.playFromMediaId(String.valueOf(R.raw.warner_tautz_off_broadway), null);
+//
+//                PlaybackStateCompat pbState = mMediaController.getPlaybackState();
+//
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//                e.getMessage();
+//                Toast.makeText(getContext(), "here1", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        @Override
+//        public void onConnectionSuspended() {
+//            // The Service has crashed. Disable transport controls until it automatically reconnects
+//            mPlaybackTransportControls = null;
+//            Toast.makeText(getContext(), "here2", Toast.LENGTH_SHORT).show();
+//
+//        }
+//    };
+//
+//    private MediaControllerCompat.Callback mediaControllerCallbacks = new MediaControllerCompat.Callback(){
+//        @Override
+//        public void onPlaybackStateChanged(PlaybackStateCompat state) {
+//            super.onPlaybackStateChanged(state);
+//            if( state == null ) {
+//                return;
+//            }
+//            switch( state.getState() ) {
+//                case PlaybackStateCompat.STATE_PLAYING: {
+//                    imageButton.setImageResource(R.drawable.ic_pause);
+//                    break;
+//                }
+//                case PlaybackStateCompat.STATE_PAUSED: {
+//                    imageButton.setImageResource(R.drawable.ic_play);
+//                    break;
+//                }
+//            }
+//
+//        }
+//    };
+
 
 
     public interface MyListener {
@@ -239,6 +308,21 @@ public class SongListFragment extends Fragment {
                 mseekBar = seekBar;
             }
         });
+        mAdapter.setOnNextClickListener(this);
+    }
+
+    @Override
+    public void onNextClick() {
+       chooseNext();
+
+    }
+
+    public static void chooseNext(){
+        if (nextToPlay != 0) {
+            playSong(nextToPlay);
+        } else {
+            playSong(currentlyPlayingPosition + 1);
+        }
     }
 
     private void startListeners(View view) {
@@ -253,17 +337,17 @@ public class SongListFragment extends Fragment {
             }
         });
 
-        mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
-            @Override
-            public void onNextClick() {
-                if (nextToPlay != 0) {
-                    playSong(nextToPlay);
-//                    nextToPlay =0;
-                } else {
-                    playSong(currentlyPlayingPosition + 1);
-                }
-            }
-        });
+//        mAdapter.setOnNextClickListener(new SongListAdapter.OnNextClickListener() {
+//            @Override
+//            public void onNextClick() {
+//                if (nextToPlay != 0) {
+//                    playSong(nextToPlay);
+////                    nextToPlay =0;
+//                } else {
+//                    playSong(currentlyPlayingPosition + 1);
+//                }
+//            }
+//        });
 
         mAdapter.setOnPlayClickListener(new SongListAdapter.OnPlayClickListener() {
             @Override
@@ -298,6 +382,9 @@ public class SongListFragment extends Fragment {
 
         Song song = songList.get(position);
         final int pos = position;
+        if(isNotificationOpen){
+            mBoundService.sendNotification(song.getTitle(), song.getArtist(), song.getSongCover(), true);
+        }
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -332,6 +419,12 @@ public class SongListFragment extends Fragment {
 
 
     public void playOrPause(View view) {
+//        if( mMediaController.getPlaybackState().getState() == PlaybackStateCompat.STATE_PAUSED ) {
+//            mPlaybackTransportControls.play();
+//        }
+//        else if( mMediaController.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
+//            mPlaybackTransportControls.pause();
+//        }
         if (isPlaying) {
             mBoundService.pausePlayer();
             imageButton.setImageResource(R.drawable.ic_play);
@@ -472,7 +565,36 @@ public class SongListFragment extends Fragment {
         super.onPause();
         Song curSong = songList.get(currentlyPlayingPosition);
         mBoundService.sendNotification(curSong.getTitle(), curSong.getArtist(), curSong.getSongCover(), mBoundService.isPlaying());
+        isNotificationOpen = true;
     }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Toast.makeText(getContext(), "here3", Toast.LENGTH_SHORT).show();
+//        mMediaBrowser = new MediaBrowserCompat(getContext(),
+//                new ComponentName(getContext(), PlayerService.class),
+//                mediaBrowserCallbacks, getActivity().getIntent().getExtras());
+//        mMediaBrowser.connect();
+//        Toast.makeText(getContext(), "here4", Toast.LENGTH_SHORT).show();
+//
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Toast.makeText(getContext(), "here5", Toast.LENGTH_SHORT).show();
+//
+//        if (mMediaController != null) {
+//            Toast.makeText(getContext(), "here6", Toast.LENGTH_SHORT).show();
+//
+//            mMediaController.unregisterCallback(mediaControllerCallbacks);
+//        }
+//        mMediaBrowser.disconnect();
+//        if(mMediaBrowser.isConnected()){
+//            Log.d(TAG, "mediaBrowser is somehow still connected");
+//        }
+//    }
 }
 
 
